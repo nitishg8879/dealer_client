@@ -1,4 +1,4 @@
-package com.example.bike_client_dealer
+package com.bizboost.bike.client
 
 import io.flutter.embedding.android.FlutterActivity
 

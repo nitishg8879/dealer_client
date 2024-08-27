@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "71168357334",
+    "firebase_url": "https://dealerclient-408b4-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "dealerclient-408b4",
+    "storage_bucket": "dealerclient-408b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71168357334:android:c9511218b64a544b27aa77",
+        "android_client_info": {
+          "package_name": "com.bizboost.bike.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZgR2iF_6K0dZ9A-mFMEwVB0ddSub9OrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,5 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
+import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,7 +13,12 @@ class AppRoutes {
     debugLogDiagnostics: true,
     navigatorKey: rootNavigatorKey,
     routes: [
-      
+      GoRoute(
+        path: Routes.home,
+        name: Routes.home,
+        builder: (context, state) => const HomeScreen(),
+
+      ),
     ],
   );
 }
