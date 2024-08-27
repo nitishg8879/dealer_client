@@ -13,7 +13,6 @@ class ProductRepoImpl implements ProductRepo {
 
   @override
   Future<List<ProductModel>> getProducts(ProductFilterReq req) {
-    // TODO: implement getProducts
-    throw UnimplementedError();
+    return _productFireStore.getProducts(req);
   }
 }

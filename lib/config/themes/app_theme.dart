@@ -1,5 +1,5 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
-import 'package:bike_client_dealer/core/app_extension.dart';
+import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
