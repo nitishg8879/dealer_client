@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static String fontFamily = "Inter";
-  static TextTheme lightTextTheme() {
+  static TextTheme get lightTextTheme {
     return TextTheme(
       bodySmall: TextStyle(
         fontFamily: fontFamily,
@@ -99,8 +99,24 @@ class AppTheme {
     );
   }
 
+  static List<BoxShadow> get boxShadows => [
+        BoxShadow(
+          color: Colors.grey.shade400,
+          spreadRadius: 1,
+          blurRadius: 15,
+          offset: const Offset(5, 5),
+        ),
+        const BoxShadow(
+          color: Colors.white,
+          offset: Offset(-5, -5),
+          blurRadius: 15,
+          spreadRadius: 1,
+        ),
+      ];
+
   static final lightTheme = ThemeData(
-    scaffoldBackgroundColor: AppColors.kGrey100,
+    scaffoldBackgroundColor: AppColors.kGrey50,
+    useMaterial3: false,
     primaryColor: AppColors.kPrimaryColor,
     fontFamily: fontFamily,
     menuTheme: MenuThemeData(
@@ -185,7 +201,7 @@ class AppTheme {
         ),
       ),
     ),
-    textTheme: lightTextTheme(),
+    textTheme: lightTextTheme,
     inputDecorationTheme: InputDecorationTheme(
       // contentPadding: 10,
       hintStyle: TextStyle(

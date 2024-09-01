@@ -1,6 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension AppSizedBox on num {
   SizedBox get spaceW => SizedBox(width: toDouble());
@@ -8,13 +9,17 @@ extension AppSizedBox on num {
 
   BorderRadiusGeometry get borderRadius => BorderRadius.circular(toDouble());
   BorderRadius get borderRadius2 => BorderRadius.circular(toDouble());
+  SmoothBorderRadius get smoothBorderRadius => SmoothBorderRadius.all(
+        SmoothRadius(cornerRadius: toDouble(), cornerSmoothing: 1),
+      );
+  SmoothRadius get smoothRadius => SmoothRadius(cornerRadius: toDouble(), cornerSmoothing: 1);
 }
 
 extension AppDeviceSize on BuildContext {
   double get width => MediaQuery.of(this).size.width;
   double get height => MediaQuery.of(this).size.height;
   TextTheme get textTheme => Theme.of(this).textTheme;
-  AppLocalizations get appLocalizations => AppLocalizations.of(this)!;
+  // AppLocalizations get appLocalizations => AppLocalizations.of(this)!;
 }
 
 extension AppDateFormat on DateTime {

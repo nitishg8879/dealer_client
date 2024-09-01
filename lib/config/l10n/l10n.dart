@@ -10,13 +10,13 @@ class L10n {
     const Locale('hi', "Hindi"),
   ];
 
-  static String getFlagByCountryCode(String code) {
-    return switch (code) {
-      "ar" => AppAssets.arabic,
-      "hi" => AppAssets.indonesia,
-      _ => AppAssets.englishUs,
-    };
-  }
+  // static String getFlagByCountryCode(String code) {
+  //   return switch (code) {
+  //     "ar" => AppAssets.arabic,
+  //     "hi" => AppAssets.indonesia,
+  //     _ => AppAssets.englishUs,
+  //   };
+  // }
 
   static List<LocalizationsDelegate<dynamic>> localizationsDelegates = [
     GlobalMaterialLocalizations.delegate,
