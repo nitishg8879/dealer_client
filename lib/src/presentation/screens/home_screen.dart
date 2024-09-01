@@ -17,12 +17,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((frame) {
-      getIt<HomeCubit>().getAllPost();
+      // getIt<HomeCubit>().getAllPost();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      // body: ,
+    );
     // return SizedBox();
     return Scaffold(
       body: BlocBuilder(

@@ -38,33 +38,23 @@ flutter:
   assets:
     - assets/fonts/
   fonts:
-    - family: Switzer
+    - family: Inter
       fonts:
-        - asset: assets/fonts/Switzer-Thin.otf
+        - asset: assets/fonts/Inter_Thin.ttf
           weight: 100
-          style: normal
-        - asset: assets/fonts/Switzer-Extralight.otf
+        - asset: assets/fonts/Inter_ExtraLight.ttf
           weight: 200
-          style: normal
-        - asset: assets/fonts/Switzer-Light.otf
-          weight: 300
-          style: normal
-        - asset: assets/fonts/Switzer-Regular.otf
-          weight: 400
-          style: normal
-        - asset: assets/fonts/Switzer-Medium.otf
-          weight: 500
-          style: normal
-        - asset: assets/fonts/Switzer-SemiBold.otf
-          weight: 600
-          style: normal
-        - asset: assets/fonts/Switzer-Bold.otf
-          weight: 700
-          style: normal
-        - asset: assets/fonts/Switzer-Black.otf
-          weight: 800
-          style: normal
-        - asset: assets/fonts/Switzer-Extrabold.otf
-          weight: 900
-          style: normal
-
+        - asset: assets/fonts/Inter_Light.ttf
+          weight: 300                    
+        - asset: assets/fonts/Inter_Regular.ttf
+          weight: 400                    
+        - asset: assets/fonts/Inter_Medium.ttf
+          weight: 500                    
+        - asset: assets/fonts/Inter_SemiBold.ttf
+          weight: 600                    
+        - asset: assets/fonts/Inter_Bold.ttf
+          weight: 700                    
+        - asset: assets/fonts/Inter_ExtraBold.ttf
+          weight: 800                    
+        - asset: assets/fonts/Inter_Black.ttf
+          weight: 900                    

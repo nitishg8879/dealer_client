@@ -1,53 +1,95 @@
 import 'package:flutter/material.dart';
 
-class AppColors {
-  static const Color transparent = Colors.transparent;
-  static final Color whiteColor = HexColor.fromHex('#FFFFFF');
-  static final Color primaryColor = HexColor.fromHex('#3BC7F3');
-  static final Color black900 = HexColor.fromHex('#101010');
-  static final Color cardBlue = HexColor.fromHex('#3BC7F3');
-  static final Color redColor = HexColor.fromHex('#F04438');
-  static final Color hintColor = HexColor.fromHex('#A3A3A3');
-  static final Color darkGrey = HexColor.fromHex('#4B5563');
-  static final Color borderColor = HexColor.fromHex('#DBDBDB');
-  static final Color hintTextColor = HexColor.fromHex('#9CA4AB');
-//green
-  static final Color green500 = HexColor.fromHex('#12B76A');
-  static final Color green400 = HexColor.fromHex('#32D583');
-  //grey
-  static final Color lightgreyE2 = HexColor.fromHex('#E2E8F0');
-  static final Color grey100 = HexColor.fromHex("#F8F8F8");
-  static final Color grey150 = HexColor.fromHex('#EDEEF2');
-  static final Color grey200 = HexColor.fromHex('#E2E4EA');
-  static final Color grey300 = HexColor.fromHex("#D1D5DB");
-  static final Color grey400 = HexColor.fromHex('#9CA3AF');
-  static final Color grey500 = HexColor.fromHex('#6B7280');
-  static final Color grey900 = HexColor.fromHex('#111827');
-  static final Color greyLightF2 = HexColor.fromHex("#F2F2F2");
-  static final Color greyTextSecondary = HexColor.fromHex('#737373');
-  static final Color neutralGrey = HexColor.fromHex('#F5F5F5');
+abstract class AppColors {
+  static const Color kPrimaryColor = Color(0xFF1976D2);
+  static const Color mineShaft = Color(0xFF2B2B2B);
+  static const Color doveGray = Color(0xFF646464);
+  static const Color caribbeanGreen = Color(0xFF06C5AC);
+  static const Color amaranth = Color(0xFFea435d);
+  static const Color black = Colors.black;
+  static const Color white = Colors.white;
+  static const Color kSuccessGreen = Color(0xff0A7D00);
+  static const Color kActiveBg = Color(0xffC9F1C9);
+  static const Color kSuccessGreenAccent = Color(0xffCAFFDC);
+  static const Color blueColor = Color(0xff0B72E7);
+  static const Color phoneBgColor = Color(0xffFFFFFF);
 
-  static final Color grey50 = HexColor.fromHex('#F8FAFC');
-  static final Color greyFa = HexColor.fromHex('#FAFAFA');
+  static const Color kInactiveBg = Color(0xffFFDEBF);
+  static const Color kFailureRed = Color(0xffD74425);
+  static const Color kFailureRedAccent = Color(0xffE73A15);
+  static const Color kExpiredBg = Color(0xffFED5CC);
 
-  //blue
-  static final Color lightBlue = HexColor.fromHex('#ECFAFE');
-  static final Color darkBlue = HexColor.fromHex('#0075A5');
-  static final Color darkBlue18 = HexColor.fromHex('#1877F2');
+  static const Color kBlack900 = Color(0xff1F1F25);
+  static const Color kPurple800 = Color(0xff360083);
 
-  //yellow
-  static final yellowColor = HexColor.fromHex('#F6C33F');
-}
+  static const Color kOrange600 = Color(0xffE97A14);
+  static const Color kOrange500 = Color(0xffE96D14);
+  static const Color kOrange400 = Color(0xffF49B48);
+  static const Color kOrange900 = Color(0xffF82B00);
+  static const Color kRed = Color(0xffF82B00);
 
-extension HexColor on Color {
-  static Color fromHex(String hexColorString) {
-    hexColorString = hexColorString.replaceAll('#', '');
-    if (hexColorString.length == 6) {
-      hexColorString = "FF$hexColorString";
-    }
-    if (hexColorString == "") {
-      return Colors.black;
-    }
-    return Color(int.parse(hexColorString, radix: 16));
-  }
+  // # 1C74DA
+  static const Color kBlue600 = Color(0xff1C74DA);
+  static const Color kBlue900 = Color(0xff236DC5);
+  static const Color kUserIndicatorBg = Color(0xffEDF2F9);
+
+  // #F1F1F1 what would i name this color
+  static const Color kGrey50 = Color(0xffF9F9F9);
+  static const Color kGrey100 = Color(0xffF1F1F1);
+  static const Color kGrey300 = Color(0xffB2B2B2);
+  static const Color kCardGrey500 = Color(0xff353F4A);
+  static const Color kCardGrey400 = Color(0xff444F5B);
+
+  static const Color kCreditCardColor = Color(0xff1A2836);
+
+  static const Color sideDrawerColor = Color(0xffFCFBFF);
+  static const Color sideDrawerSelectedMenuColor = Color(0xffF6F4FD);
+
+  static const Color kWhite = Color(0xffFFFFFF);
+  static const Color kdarkDelete = Color(0xffEC4927);
+
+  static const Color kPurpleBackground = Color(0xffFBFAFF);
+  static const Color kFoundationPurple50 = Color(0xffEFECFC);
+  static const Color kFoundationPurple200 = Color(0xffB78AF7);
+  static const Color kFoundationPurple250 = Color(0xffD2B2FF);
+  static const Color kFoundationPurple300 = Color(0xff9654F4);
+  static const Color kFoundationPurple400 = Color(0xff8133F1);
+  static const Color kFoundationPurple100 = Color(0xffDFCCFB);
+  static const Color kFoundationPurple600 = Color(0xff5900D9);
+  static const Color kFoundationPurple700 = Color(0xff4600A9);
+  static const Color kFoundatiionPurple800 = Color(0xff360083);
+  static const Color kFoundationWhite600 = Color(0xffE4E4E4);
+  static const Color kFoundationWhite700 = Color(0xffE8E8E8);
+  static const Color kFoundationWhite750 = Color(0xffE0E0E0);
+  static const Color kFoundationWhite800 = Color(0xff8A8A8A);
+  static const Color kWebOtpBackground = Color(0xffFCFAFF);
+
+  static const Color kGrey200 = Color(0xffF5F5F5);
+  static const Color kborderColor = Color(0xffEAEAEA);
+
+  // give a name for this color #372652
+  static const Color kPurple900 = Color(0xff372652);
+
+  static const Color kBorderColor = Color(0xffEAE6FF);
+  static const Color kTableBorderColor = Color(0xffF1F1F1);
+
+  static const Color kCommonGrey = Color(0xffF5F5F5);
+
+  static const Color kDropdownBlue = Color(0xffEDF2F9);
+
+  static const Color kDelete = Color(0xffF82B00);
+  static const Color kYellow300 = Color(0xffF2B21C);
+  static const Color kYellow800 = Color(0xffB48716);
+  static const Color kYellow100 = Color(0xffFFF0BA);
+
+  static const Color kGreen50 = Color(0xffE6F7EB);
+  static const Color kGreen600 = Color(0xff03A000);
+  static const Color kGreen700 = Color(0xff0A7D00);
+  static const Color kGreen800 = Color(0xff1F6100);
+
+  static const Color kTableEye = Color(0xff1C74DA);
+  static const Color kTableEyeBg = Color(0xffDDEAF9);
+
+  static const Color kFoundationBlue50 = Color(0xffF1EFFD);
+  static const Color kPurple60 = Color(0xffEEE2FF);
 }
