@@ -1,13 +1,13 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/config/themes/app_theme.dart';
-import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
-import 'package:bike_client_dealer/core/util/widgets/custom_svg_icon.dart';
-import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
-import 'package:figma_squircle/figma_squircle.dart';
+import 'package:bike_client_dealer/src/data/model/category_model.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +17,73 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final category = <CategoryModel>[
+    CategoryModel(
+      name: "Sports Bike",
+      url:
+          "https://s3-alpha-sig.figma.com/img/4d3b/a655/0ff0c971c0313662e6934e300f33aa3b?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dPTqtYnCGeRBeIgyM8jBpwwacH8ioCyjciSxlB85LqxLpDkNKnRFpkA9iIAl1B0txCpJI9~xKTC1J5uSs~csSucWm5KjA9x4Ms53ytNr4OoFKSRJ7OZPhxIh8xZek2oW2nJAgjVAhuGYJflkXesyK9NYjfkIK4UdBNIEZDeykNjPo~~DGkIpzStTmhxIey7xpAH62Jq5ioUytdqIPwt6a1Dc70je9kstfcrySJuRibq1GfNtEoGCPiY0Vv~0jwQzvKRZRp23tbNhRwwh3I05P1Nq1sOw0F09LBdKa1U5aYVg1cilloRO8LILRziB1mdg9btt7zytz1cuDT1I3GBxwg__",
+    ),
+    CategoryModel(
+      name: "Scooter",
+      url:
+          "https://s3-alpha-sig.figma.com/img/716a/8167/e312326673548fb33982359e61d5ec4e?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5545GD8~iNBWWWeog7tjKb6DM4CHCq~bE95FX4Y32066t9g8MOWNtlocrjwIiTEXE1sfQPHhZITk1GF-xaXaHaeLr8TLHLes5iT1T9BTsINSB~0pIrdqULHs2Kzl8JEQYSlDnWTLjXiDdN7cPVyNxWTPaoXh3s2~wqL--GXhB9LLLVg0apd9gfuyRV3E1PZPZKpx6dyjqWJoLsL7w8PNOPm5EdyfQ5o9mNPEDpoK~Hguk3HLICIAMOYtHcEsmYVV3rNHXptr9hDNkNc1r0ip5f7lPclxFW3IkSl8dZLSx5xXQDJX3lgxZGFnK7nZaI8mVn-MCEbVMA~3n7CczjYvA__",
+    ),
+    CategoryModel(
+      name: "Cruiser",
+      url:
+          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
+    ),
+    CategoryModel(
+      name: "Cruiser",
+      url:
+          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
+    ),
+    CategoryModel(
+      name: "Cruiser",
+      url:
+          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
+    ),
+  ];
   // final homeBloc = HomeCubit(ProductFetchUsecases(getIt()));
+  final scroController = ScrollController();
+  final products = <ProductModel>[
+    ProductModel(
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      kmDriven: 2000,
+      name: "KTM 200 Duke",
+      ownerType: "1st Owner",
+      price: 75000,
+      year: 2023,
+      branch: "Andheri,Mumbai",
+    ),
+    ProductModel(
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      kmDriven: 2000,
+      name: "KTM 200 Duke",
+      ownerType: "1st Owner",
+      price: 75000,
+      year: 2023,
+      branch: "Andheri,Mumbai",
+    ),
+    ProductModel(
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      kmDriven: 2000,
+      name: "KTM 200 Duke",
+      ownerType: "1st Owner",
+      price: 75000,
+      year: 2023,
+      branch: "Andheri,Mumbai",
+    ),
+    ProductModel(
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      kmDriven: 2000,
+      name: "KTM 200 Duke",
+      ownerType: "1st Owner",
+      price: 75000,
+      year: 2023,
+      branch: "Andheri,Mumbai",
+    ),
+  ];
   @override
   void initState() {
     super.initState();
@@ -26,14 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  String dummyImage =
-      "https://images.unsplash.com/photo-1691493261970-1b4afc2391be?q=80&w=2831&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+  String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: ListView(
+          controller: scroController,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
             12.spaceH,
@@ -63,13 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: AppColors.kWhite,
                     borderRadius: 50.borderRadius,
                     border: Border.all(
-                      color: AppColors.kGrey300,
+                      color: AppColors.kborderColor,
                     ),
-                    boxShadow: AppTheme.boxShadows,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: const CustomSvgIcon(
+                  child: const Padding(
+                    padding: EdgeInsets.all(6.0),
+                    child: CustomSvgIcon(
                       assetName: AppAssets.notification,
                       color: AppColors.kBlack900,
                     ),
@@ -83,13 +148,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: AppColors.kWhite,
                     borderRadius: 50.borderRadius,
                     border: Border.all(
-                      color: AppColors.kGrey300,
+                      color: AppColors.kborderColor,
                     ),
-                    boxShadow: AppTheme.boxShadows,
+                    // boxShadow: AppTheme.boxShadows,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: const CustomSvgIcon(
+                  child: const Padding(
+                    padding: EdgeInsets.all(6.0),
+                    child: CustomSvgIcon(
                       assetName: AppAssets.search,
                       color: AppColors.kBlack900,
                     ),
@@ -98,9 +163,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             16.spaceH,
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            SizedBox(
+              height: 200,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: List.generate(
                   10,
                   (index) => Container(
@@ -109,97 +175,106 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       boxShadow: AppTheme.boxShadows,
                     ),
-                    margin: const EdgeInsets.only(right: 16),
+                    margin: const EdgeInsets.only(right: 16, bottom: 2),
                     child: ClipRRect(
                       borderRadius: 16.borderRadius,
                       child: Image.network(
                         dummyImage,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            32.spaceH,
-            Text(
-              "Categories",
-              style: context.textTheme.displayLarge,
+            16.spaceH,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Category",
+                  style: context.textTheme.labelLarge,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "View All",
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: AppColors.kFoundatiionPurple800,
+                      ),
+                    ),
+                    4.spaceW,
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: AppColors.kFoundatiionPurple800,
+                    )
+                  ],
+                )
+              ],
             ),
             8.spaceH,
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  10,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: SizedBox(
-                      height: 64,
-                      width: 64,
-                      child: Material(
-                        shape: const SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius.all(
-                            SmoothRadius(cornerRadius: 12, cornerSmoothing: 1),
-                          ),
-                          // side: BorderSide(
-                          //   color: AppColors.kRed,
-                          // ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: 16.borderRadius,
-                          child: Image.network(
-                            "https://thumbs.dreamstime.com/b/web-183281772.jpg",
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
+            SizedBox(
+              height: 100,
+              child: ListView.separated(
+                itemCount: category.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: CategoryView(
+                      category: category[index],
                     ),
-                  ),
-                ),
+                  );
+                },
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) {
+                  return 16.spaceW;
+                },
               ),
             ),
+            16.spaceH,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Most Popular",
+                  style: context.textTheme.labelLarge,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "View All",
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: AppColors.kFoundatiionPurple800,
+                      ),
+                    ),
+                    4.spaceW,
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: AppColors.kFoundatiionPurple800,
+                    )
+                  ],
+                ),
+              ],
+            ),
+            8.spaceH,
+            SizedBox(
+              height: context.height,
+              child: ListView.separated(
+                controller: scroController,
+                itemBuilder: (context, index) {
+                  return ProductView(product: products[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return 10.spaceH;
+                },
+                itemCount: products.length,
+              ),
+            )
           ],
         ),
       ),
     );
-    // return SizedBox();
-    return Scaffold(
-      body: BlocBuilder(
-        bloc: getIt<HomeCubit>(),
-        builder: (context, state) {
-          return switch (state) {
-            HomeLoading _ => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            HomeLoaded _ => _buildProductList(state),
-            HomeHasError _ => const Center(
-                child: Text('Error happen!!'),
-              ),
-            _ => const Center(
-                child: Text('Something went wrong'),
-              )
-          };
-        },
-      ),
-    );
-  }
-
-  Widget _buildProductList(HomeLoaded state) {
-    if (state.products.isEmpty) {
-      return const Center(
-        child: Text("No Data"),
-      );
-    } else {
-      return ListView.builder(
-        itemCount: state.products.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(state.products[index].name ?? "-"),
-            subtitle: Image.network(state.products[index].images!.first),
-          );
-        },
-      );
-    }
   }
 }

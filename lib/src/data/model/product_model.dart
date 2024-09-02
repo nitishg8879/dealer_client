@@ -1,14 +1,23 @@
 class ProductModel {
   ProductModel({
-    required this.name,
-    required this.images,
+    this.name,
+    this.year,
+    this.kmDriven,
+    this.price,
+    this.images,
+    this.ownerType,
+    this.branch,
   });
 
   final String? name;
-  final List<String> images;
+  final String? branch;
+  final num? year;
+  final num? kmDriven;
+  final num? price;
+  final String? ownerType;
+  final List<String>? images;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
-    print(json);
     return ProductModel(
       name: json["name"],
       images: json["images"] == null ? [] : List<String>.from(json["images"]!.map((x) => x)),
@@ -17,6 +26,6 @@ class ProductModel {
 
   Map<String, dynamic> toJson() => {
         "name": name,
-        "images": images.map((x) => x).toList(),
+        "images": images?.map((x) => x).toList(),
       };
 }
