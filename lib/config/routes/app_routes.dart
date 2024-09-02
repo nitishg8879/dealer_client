@@ -1,13 +1,11 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _shellNavigatorHome = GlobalKey<NavigatorState>(debugLabel: 'shellHome');
-  static final _shellNavigatorWallet = GlobalKey<NavigatorState>(debugLabel: 'shellWallet');
-  static final _shellNavigatorProfile = GlobalKey<NavigatorState>(debugLabel: 'shellProfile');
   static GoRouter router = GoRouter(
     initialLocation: Routes.home,
     debugLogDiagnostics: true,
@@ -17,7 +15,13 @@ class AppRoutes {
         path: Routes.home,
         name: Routes.home,
         builder: (context, state) => const HomeScreen(),
-
+        routes: [
+          GoRoute(
+            path: Routes.allProduct,
+            name: Routes.allProduct,
+            builder: (context, state) => const AllProductScreen(),
+          ),
+        ],
       ),
     ],
   );

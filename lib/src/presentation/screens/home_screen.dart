@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/config/themes/app_theme.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
@@ -8,6 +9,7 @@ import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -102,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: scroController,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
-            12.spaceH,
+            16.spaceH,
             Row(
               children: [
                 Ink(
@@ -234,27 +236,37 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             16.spaceH,
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Most Popular",
-                  style: context.textTheme.labelLarge,
+                Expanded(
+                  child: Text(
+                    "Most Popular",
+                    style: context.textTheme.labelLarge,
+                  ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      "View All",
-                      style: context.textTheme.displaySmall?.copyWith(
-                        color: AppColors.kFoundatiionPurple800,
-                      ),
+                InkWell(
+                  onTap: () {
+                    context.goNamed(Routes.allProduct);
+                  },
+                  borderRadius: 4.borderRadius2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "View All",
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: AppColors.kFoundatiionPurple800,
+                          ),
+                        ),
+                        4.spaceW,
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: AppColors.kFoundatiionPurple800,
+                        )
+                      ],
                     ),
-                    4.spaceW,
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 14,
-                      color: AppColors.kFoundatiionPurple800,
-                    )
-                  ],
+                  ),
                 ),
               ],
             ),

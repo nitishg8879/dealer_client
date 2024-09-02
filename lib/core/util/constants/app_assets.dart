@@ -11,4 +11,5 @@ class AppAssets {
   static const search = "$iconsPath/search.svg";
   static const notification = "$iconsPath/notification.svg";
   static const location = "$iconsPath/location.svg";
+  static const filter = "$iconsPath/filter.svg";
 }
