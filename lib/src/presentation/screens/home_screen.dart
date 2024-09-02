@@ -5,6 +5,7 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/category_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
@@ -95,6 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  
+
   String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
 
   @override
@@ -125,49 +128,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const Spacer(),
-                Ink(
-                  width: 38,
-                  height: 38,
-                  decoration: const ShapeDecoration(
-                    color: AppColors.kFoundationBlue50,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                        SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
-                      ),
-                      side: BorderSide(
-                        color: AppColors.kFoundationPurple100,
-                      ),
-                    ),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(6.0),
-                    child: CustomSvgIcon(
-                      assetName: AppAssets.notification,
-                      color: AppColors.kCardGrey400,
-                    ),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const CustomSvgIcon(
+                    assetName: AppAssets.notification,
+                    color: AppColors.kCardGrey400,
+                    size: 20,
                   ),
                 ),
                 16.spaceW,
-                Ink(
-                  width: 38,
-                  height: 38,
-                  decoration: const ShapeDecoration(
-                    color: AppColors.kFoundationBlue50,
-                    shape: SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                        SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
-                      ),
-                      side: BorderSide(
-                        color: AppColors.kFoundationPurple100,
-                      ),
-                    ),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(6.0),
-                    child: CustomSvgIcon(
-                      assetName: AppAssets.search,
-                      color: AppColors.kCardGrey400,
-                    ),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: const CustomSvgIcon(
+                    assetName: AppAssets.search,
+                    color: AppColors.kCardGrey400,
+                    size: 20,
                   ),
                 ),
               ],

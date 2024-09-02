@@ -2,6 +2,7 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +144,22 @@ class _AllProductScreenState extends State<AllProductScreen> {
       branch: "Andheri,Mumbai",
     ),
   ];
+  void showFilterPopUp() {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: 16.smoothRadius),
+      ),
+      showDragHandle: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return const ProductFilterView();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,7 +194,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                     ),
                     16.spaceW,
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: showFilterPopUp,
                       child: const CustomSvgIcon(
                         assetName: AppAssets.filter,
                         color: AppColors.kCardGrey400,

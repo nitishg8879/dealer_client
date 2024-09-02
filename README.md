@@ -6,12 +6,12 @@ https://github.dev/AhmedAbdoElhawary/flutter-clean-architecture-instagram/tree/m
 
 
 filter
-    1. Price Range
-    2. Brands 
-    3. Category 
-    4. Model Year
-    5. KM Driven
-    6. Owner Type
+    2. Brands -- done
+    3. Category -- done
+    6. Owner Type -- done
+    4. Model Year -- done 
+    5. KM Driven -- done
+    1. Price Range -- done
 https://dribbble.com/shots/23613150-Filter-options
 
     

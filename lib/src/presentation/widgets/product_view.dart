@@ -57,8 +57,9 @@ class ProductView extends StatelessWidget {
                     // 10.spaceH,
                     Row(
                       children: [
-                        CustomSvgIcon(
+                        const CustomSvgIcon(
                           assetName: AppAssets.location,
+                          size: 16,
                         ),
                         5.spaceW,
                         Text(
@@ -78,8 +79,11 @@ class ProductView extends StatelessWidget {
                 ),
               ),
               10.spaceW,
-              CustomSvgIcon(
-                assetName: AppAssets.fav,
+              InkWell(
+                onTap: () {},
+                child: CustomSvgIcon(
+                  assetName: AppAssets.fav,
+                ),
               )
             ],
           ),

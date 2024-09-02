@@ -100,6 +100,32 @@ class AppTheme {
     );
   }
 
+  static get outlineSecondaryButtomTheme => OutlinedButton.styleFrom(
+        elevation: 0,
+        textStyle: TextStyle(
+          fontFamily: fontFamily,
+          color: AppColors.kBlack900,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+        overlayColor: AppColors.kFoundationPurple300,
+        padding: const EdgeInsets.all(6),
+        visualDensity: VisualDensity.compact,
+        minimumSize: const Size(42, 42),
+        side: const BorderSide(
+          color: AppColors.kFoundationPurple100,
+        ),
+        backgroundColor: AppColors.kFoundationBlue50,
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+            SmoothRadius(cornerRadius: 12, cornerSmoothing: 1),
+          ),
+          side: BorderSide(
+            color: AppColors.kFoundationPurple100,
+          ),
+        ),
+      );
+
   static List<BoxShadow> get boxShadows => [
         BoxShadow(
           color: Colors.grey.shade400,
@@ -157,8 +183,8 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
-        padding: const EdgeInsets.all(6),
         overlayColor: AppColors.kFoundationPurple300,
+        padding: const EdgeInsets.all(6),
         visualDensity: VisualDensity.compact,
         minimumSize: const Size(42, 42),
         side: const BorderSide(
@@ -178,20 +204,6 @@ class AppTheme {
     buttonTheme: const ButtonThemeData(
       shape: StadiumBorder(),
     ),
-    filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(
-        textStyle: TextStyle(
-          fontFamily: fontFamily,
-          color: AppColors.kWhite,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        backgroundColor: AppColors.blueColor,
-        foregroundColor: AppColors.kWhite,
-        shape: RoundedRectangleBorder(borderRadius: 20.borderRadius),
-      ),
-    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         elevation: 0,
@@ -202,7 +214,7 @@ class AppTheme {
           fontSize: 14,
         ),
         fixedSize: const Size(double.maxFinite, 45),
-        backgroundColor: AppColors.kPrimaryColor,
+        backgroundColor: AppColors.kFoundationPurple700,
         foregroundColor: AppColors.kWhite,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(40),
@@ -210,24 +222,5 @@ class AppTheme {
       ),
     ),
     textTheme: lightTextTheme,
-    inputDecorationTheme: InputDecorationTheme(
-      // contentPadding: 10,
-      hintStyle: TextStyle(
-        fontFamily: fontFamily,
-        color: AppColors.kBlack900,
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-      ),
-      labelStyle: TextStyle(
-        fontFamily: fontFamily,
-        color: AppColors.kBlack900,
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.kGrey300, width: 1),
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-    ),
   );
 }
