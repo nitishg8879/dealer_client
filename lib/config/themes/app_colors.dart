@@ -90,6 +90,6 @@ abstract class AppColors {
   static const Color kTableEye = Color(0xff1C74DA);
   static const Color kTableEyeBg = Color(0xffDDEAF9);
 
-  static const Color kFoundationBlue50 = Color(0xffF1EFFD);
+  static const Color kFoundationBlue50 = Color.fromARGB(255, 243, 243, 251);
   static const Color kPurple60 = Color(0xffEEE2FF);
 }

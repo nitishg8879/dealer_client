@@ -3,7 +3,6 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 class ProductView extends StatelessWidget {
@@ -15,18 +14,8 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const ShapeDecoration(
-        color: AppColors.kFoundationBlue50,
-        shape: SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
-          ),
-          side: BorderSide(
-            color: AppColors.kFoundationPurple100,
-          ),
-        ),
-      ),
+    return OutlinedButton(
+      onPressed: () {},
       child: SizedBox(
         width: double.infinity,
         height: 113,

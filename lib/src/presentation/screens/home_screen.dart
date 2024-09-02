@@ -8,6 +8,7 @@ import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -127,18 +128,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 Ink(
                   width: 38,
                   height: 38,
-                  decoration: BoxDecoration(
-                    color: AppColors.kWhite,
-                    borderRadius: 50.borderRadius,
-                    border: Border.all(
-                      color: AppColors.kborderColor,
+                  decoration: const ShapeDecoration(
+                    color: AppColors.kFoundationBlue50,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                        SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
+                      ),
+                      side: BorderSide(
+                        color: AppColors.kFoundationPurple100,
+                      ),
                     ),
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(6.0),
                     child: CustomSvgIcon(
                       assetName: AppAssets.notification,
-                      color: AppColors.kBlack900,
+                      color: AppColors.kCardGrey400,
                     ),
                   ),
                 ),
@@ -146,19 +151,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 Ink(
                   width: 38,
                   height: 38,
-                  decoration: BoxDecoration(
-                    color: AppColors.kWhite,
-                    borderRadius: 50.borderRadius,
-                    border: Border.all(
-                      color: AppColors.kborderColor,
+                  decoration: const ShapeDecoration(
+                    color: AppColors.kFoundationBlue50,
+                    shape: SmoothRectangleBorder(
+                      borderRadius: SmoothBorderRadius.all(
+                        SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
+                      ),
+                      side: BorderSide(
+                        color: AppColors.kFoundationPurple100,
+                      ),
                     ),
-                    // boxShadow: AppTheme.boxShadows,
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(6.0),
                     child: CustomSvgIcon(
                       assetName: AppAssets.search,
-                      color: AppColors.kBlack900,
+                      color: AppColors.kCardGrey400,
                     ),
                   ),
                 ),

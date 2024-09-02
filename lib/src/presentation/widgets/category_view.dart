@@ -15,18 +15,8 @@ class CategoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DecoratedBox(
-          decoration: const ShapeDecoration(
-            color: AppColors.kFoundationBlue50,
-            shape: SmoothRectangleBorder(
-              borderRadius: SmoothBorderRadius.all(
-                SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
-              ),
-              side: BorderSide(
-                color: AppColors.kFoundationPurple100,
-              ),
-            ),
-          ),
+        OutlinedButton(
+          onPressed: () {},
           child: SizedBox(
             width: 80,
             height: 73,

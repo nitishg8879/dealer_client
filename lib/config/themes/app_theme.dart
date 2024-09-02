@@ -1,5 +1,6 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -156,14 +157,21 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
-        fixedSize: const Size(double.maxFinite, 45),
-        foregroundColor: AppColors.kPrimaryColor,
+        padding: const EdgeInsets.all(6),
+        overlayColor: AppColors.kFoundationPurple300,
+        visualDensity: VisualDensity.compact,
+        minimumSize: const Size(48, 48),
         side: const BorderSide(
-          color: AppColors.kPrimaryColor,
-          width: 1,
+          color: AppColors.kFoundationPurple100,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),
+        backgroundColor: AppColors.kFoundationBlue50,
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+            SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
+          ),
+          side: BorderSide(
+            color: AppColors.kFoundationPurple100,
+          ),
         ),
       ),
     ),

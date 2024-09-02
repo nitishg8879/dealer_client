@@ -12,4 +12,5 @@ class AppAssets {
   static const notification = "$iconsPath/notification.svg";
   static const location = "$iconsPath/location.svg";
   static const filter = "$iconsPath/filter.svg";
+  static const arrowLeft = "$iconsPath/arrow_left.svg";
 }
