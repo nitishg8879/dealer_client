@@ -160,14 +160,14 @@ class AppTheme {
         padding: const EdgeInsets.all(6),
         overlayColor: AppColors.kFoundationPurple300,
         visualDensity: VisualDensity.compact,
-        minimumSize: const Size(48, 48),
+        minimumSize: const Size(42, 42),
         side: const BorderSide(
           color: AppColors.kFoundationPurple100,
         ),
         backgroundColor: AppColors.kFoundationBlue50,
         shape: const SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 14, cornerSmoothing: 1),
+            SmoothRadius(cornerRadius: 12, cornerSmoothing: 1),
           ),
           side: BorderSide(
             color: AppColors.kFoundationPurple100,

@@ -1,12 +1,9 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
-import 'package:bike_client_dealer/config/themes/app_theme.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_chips.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -166,6 +163,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                       child: const CustomSvgIcon(
                         assetName: AppAssets.arrowLeft,
                         color: AppColors.kCardGrey400,
+                        size: 20,
                       ),
                     ),
                     const Spacer(),
@@ -174,6 +172,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                       child: const CustomSvgIcon(
                         assetName: AppAssets.search,
                         color: AppColors.kCardGrey400,
+                        size: 20,
                       ),
                     ),
                     16.spaceW,
@@ -182,26 +181,19 @@ class _AllProductScreenState extends State<AllProductScreen> {
                       child: const CustomSvgIcon(
                         assetName: AppAssets.filter,
                         color: AppColors.kCardGrey400,
+                        size: 20,
                       ),
                     ),
                     16.spaceW,
-                    // 16.spaceW,
-                    // Expanded(
-                    //   child: Material(
-                    //     child: SingleChildScrollView(
-                    //       scrollDirection: Axis.horizontal,
-                    //       child: Row(
-                    //         children: List.generate(
-                    //           10,
-                    //           (index) => Padding(
-                    //             padding: const EdgeInsets.only(right: 8.0),
-                    //             child: ProductFilterChips(label: "Test $index"),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    OutlinedButton(
+                      onPressed: () {},
+                      child: const CustomSvgIcon(
+                        assetName: AppAssets.favFill,
+                        color: AppColors.kRed,
+                        size: 20,
+                      ),
+                    ),
+                    16.spaceW,
                   ],
                 ),
               ),
