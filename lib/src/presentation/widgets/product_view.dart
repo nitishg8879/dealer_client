@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 
 class ProductView extends StatelessWidget {
   final ProductModel product;
+  final bool row;
   const ProductView({
     super.key,
     required this.product,
+    this.row = true,
   });
 
   @override
@@ -18,77 +20,130 @@ class ProductView extends StatelessWidget {
       onPressed: () {},
       child: SizedBox(
         width: double.infinity,
-        height: 113,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
+          padding: EdgeInsets.all(row ? 10 : 4.0),
+          child: row ? rowWise(context) : columnWise(context),
+        ),
+      ),
+    );
+  }
+
+  Widget columnWise(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: 10.borderRadius,
+          child: Image.network(
+            product.images!.first,
+            width: double.infinity,
+            height: 93,
+            fit: BoxFit.cover,
+          ),
+        ),
+        8.spaceH,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                product.name ?? '-',
+                style: context.textTheme.displaySmall,
+                maxLines: 1,
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: const CustomSvgIcon(
+                assetName: AppAssets.fav,
+              ),
+            )
+          ],
+        ),
+        8.spaceH,
+        Text(
+          "${product.year} | ${product.kmDriven} Km | ${product.ownerType}",
+          style: context.textTheme.displayMedium?.copyWith(
+            fontSize: 12,
+            color: AppColors.kCardGrey400,
+          ),
+          maxLines: 1,
+        ),
+        6.spaceH,
+        Text(
+          product.price.toINR,
+          style: context.textTheme.labelSmall,
+        ),
+      ],
+    );
+  }
+
+  Widget rowWise(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ClipRRect(
+            borderRadius: 10.borderRadius,
+            child: Image.network(
+              product.images!.first,
+              width: 100,
+              height: 93,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        10.spaceW,
+        Expanded(
+          flex: 2,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: 10.borderRadius,
-                  child: Image.network(
-                    product.images!.first,
-                    width: 100,
-                    height: 93,
-                    fit: BoxFit.cover,
+              Text(
+                product.name ?? '-',
+                style: context.textTheme.labelSmall,
+              ),
+              6.spaceH,
+              Text(
+                "${product.year}  |  ${product.kmDriven} Km  |  ${product.ownerType}",
+                style: context.textTheme.displayMedium?.copyWith(
+                  fontSize: 12,
+                  color: AppColors.kCardGrey400,
+                ),
+              ),
+              6.spaceH,
+              Row(
+                children: [
+                  const CustomSvgIcon(
+                    assetName: AppAssets.location,
+                    size: 16,
                   ),
-                ),
+                  5.spaceW,
+                  Text(
+                    product.branch ?? '',
+                    style: context.textTheme.displayMedium?.copyWith(
+                      fontSize: 12,
+                      color: AppColors.kCardGrey400,
+                    ),
+                  )
+                ],
               ),
-              10.spaceW,
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      product.name ?? '-',
-                      style: context.textTheme.labelSmall,
-                    ),
-                    // 10.spaceH,
-                    Text(
-                      "${product.year}  |  ${product.kmDriven} Km  |  ${product.ownerType}",
-                      style: context.textTheme.displayMedium?.copyWith(
-                        fontSize: 12,
-                        color: AppColors.kCardGrey400,
-                      ),
-                    ),
-                    // 10.spaceH,
-                    Row(
-                      children: [
-                        const CustomSvgIcon(
-                          assetName: AppAssets.location,
-                          size: 16,
-                        ),
-                        5.spaceW,
-                        Text(
-                          product.branch ?? '',
-                          style: context.textTheme.displayMedium?.copyWith(
-                            fontSize: 12,
-                            color: AppColors.kCardGrey400,
-                          ),
-                        )
-                      ],
-                    ),
-                    Text(
-                      product.price.toINR,
-                      style: context.textTheme.labelSmall,
-                    ),
-                  ],
-                ),
+              6.spaceH,
+              Text(
+                product.price.toINR,
+                style: context.textTheme.labelSmall,
               ),
-              10.spaceW,
-              InkWell(
-                onTap: () {},
-                child: CustomSvgIcon(
-                  assetName: AppAssets.fav,
-                ),
-              )
             ],
           ),
         ),
-      ),
+        10.spaceW,
+        InkWell(
+          onTap: () {},
+          child: const CustomSvgIcon(
+            assetName: AppAssets.fav,
+          ),
+        )
+      ],
     );
   }
 }

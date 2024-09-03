@@ -52,7 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final scroController = ScrollController();
   final products = <ProductModel>[
     ProductModel(
-      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      images: [
+        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
+      ],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -61,7 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      images: [
+        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
+      ],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -70,7 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      images: [
+        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
+      ],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -79,7 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
+      images: [
+        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
+      ],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -96,9 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  
-
-  String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
+  String dummyImage =
+      "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
 
   @override
   Widget build(BuildContext context) {
@@ -256,15 +263,18 @@ class _HomeScreenState extends State<HomeScreen> {
             8.spaceH,
             SizedBox(
               height: context.height,
-              child: ListView.separated(
+              child: GridView.builder(
                 controller: scroController,
                 itemBuilder: (context, index) {
-                  return ProductView(product: products[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return 10.spaceH;
+                  return ProductView(product: products[index], row: false);
                 },
                 itemCount: products.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  childAspectRatio: 1,
+                ),
               ),
             )
           ],
