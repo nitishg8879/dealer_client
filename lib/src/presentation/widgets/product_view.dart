@@ -55,6 +55,7 @@ class ProductView extends StatelessWidget {
               onTap: () {},
               child: const CustomSvgIcon(
                 assetName: AppAssets.fav,
+                size: 14,
               ),
             )
           ],
@@ -71,7 +72,7 @@ class ProductView extends StatelessWidget {
         6.spaceH,
         Text(
           product.price.toINR,
-          style: context.textTheme.labelSmall,
+          style: context.textTheme.displaySmall,
         ),
       ],
     );

@@ -6,10 +6,18 @@ class AppTextField extends StatefulWidget {
   final String? label;
   final String? hintText;
   final bool isPassword;
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
+  final String? initialValue;
+  final void Function(String val)? onChanged;
   const AppTextField({
     super.key,
     this.label,
     this.hintText,
+    this.controller,
+    this.initialValue,
+    this.keyboardType,
+    this.onChanged,
     this.isPassword = false,
   });
 
@@ -34,7 +42,11 @@ class _AppTextFieldState extends State<AppTextField> {
         ],
         2.spaceH,
         TextFormField(
+          initialValue: widget.initialValue,
+          onChanged: widget.onChanged,
+          controller: widget.controller,
           obscureText: isObsecure,
+          keyboardType: widget.keyboardType,
           style: context.textTheme.displayMedium,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(14),
@@ -51,7 +63,9 @@ class _AppTextFieldState extends State<AppTextField> {
                       setState(() {});
                     },
                     icon: Icon(
-                      !isObsecure ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                      !isObsecure
+                          ? Icons.remove_red_eye
+                          : Icons.remove_red_eye_outlined,
                     ),
                   )
                 : null,
@@ -66,5 +80,10 @@ class _AppTextFieldState extends State<AppTextField> {
         )
       ],
     );
+  }
+  @override
+  void dispose() {
+    widget.controller?.dispose();
+    super.dispose();
   }
 }

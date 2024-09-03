@@ -1,11 +1,13 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ProductFilterView extends StatefulWidget {
-  const ProductFilterView({super.key});
+  final ProductsFilterController controller;
+  const ProductFilterView({super.key, required this.controller});
 
   @override
   State<ProductFilterView> createState() => _ProductFilterViewState();
@@ -13,9 +15,15 @@ class ProductFilterView extends StatefulWidget {
 
 class _ProductFilterViewState extends State<ProductFilterView> {
   @override
+  void initState() {
+    widget.controller;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        minChildSize: .5,
+        minChildSize: .2,
         maxChildSize: 1,
         expand: false,
         initialChildSize: .5,
@@ -35,25 +43,37 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                   scrollController: scrollController,
                 ),
                 12.spaceH,
-                const AppRangeSelector(
+                AppRangeSelector(
                   label: "Price",
                   minlabel: "Min",
                   maxlabel: "Max",
-                  selectedRange: RangeValues(0, 20),
+                  selectedRange: widget.controller.priceMinMaxSelected,
+                  rangeValues: widget.controller.priceMinMax,
+                  onChangeRange: (val) {
+                    widget.controller.priceMinMaxSelected = val;
+                  },
                 ),
                 12.spaceH,
-                const AppRangeSelector(
+                AppRangeSelector(
                   label: "Year",
                   minlabel: "Min",
                   maxlabel: "Max",
-                  selectedRange: RangeValues(0, 20),
+                  selectedRange: widget.controller.yearMinMaxSelected,
+                  rangeValues: widget.controller.yearMinMax,
+                  onChangeRange: (val) {
+                    widget.controller.yearMinMaxSelected = val;
+                  },
                 ),
                 12.spaceH,
-                const AppRangeSelector(
+                AppRangeSelector(
                   label: "Km Driven",
                   minlabel: "Min",
                   maxlabel: "Max",
-                  selectedRange: RangeValues(0, 20),
+                  selectedRange: widget.controller.kmMinMaxSelected,
+                  rangeValues: widget.controller.kmMinMax,
+                  onChangeRange: (val) {
+                    widget.controller.kmMinMaxSelected = val;
+                  },
                 ),
                 32.spaceH,
                 Row(
@@ -61,19 +81,24 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: context.pop,
-                        style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                              backgroundColor: WidgetStatePropertyAll(AppColors.doveGray),
+                        style: Theme.of(context)
+                            .elevatedButtonTheme
+                            .style
+                            ?.copyWith(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppColors.doveGray),
                             ),
                         child: Text("Cancel"),
                       ),
                     ),
                     16.spaceW,
                     Expanded(
-                      child: ElevatedButton(onPressed: () {}, child: Text("Apply")),
+                      child: ElevatedButton(
+                          onPressed: () {}, child: Text("Apply")),
                     ),
                   ],
                 ),
-                32.spaceH,
+                context.isKeyboardOpen ? 300.spaceH : 32.spaceH,
               ],
             ),
           );
@@ -91,12 +116,16 @@ class AppRangeSelector extends StatefulWidget {
   final String minlabel;
   final String maxlabel;
   final RangeValues selectedRange;
+  final RangeValues rangeValues;
+  final void Function(RangeValues val)? onChangeRange;
   const AppRangeSelector({
     super.key,
     required this.label,
     required this.minlabel,
     required this.maxlabel,
     required this.selectedRange,
+    required this.rangeValues,
+    this.onChangeRange,
   });
 
   @override
@@ -104,10 +133,14 @@ class AppRangeSelector extends StatefulWidget {
 }
 
 class _AppRangeSelectorState extends State<AppRangeSelector> {
-  var selectedPriceRange = const RangeValues(0, 20);
+  late RangeValues selectedRange;
+  final startTc = TextEditingController();
+  final endTc = TextEditingController();
   @override
   void initState() {
-    selectedPriceRange = widget.selectedRange;
+    selectedRange = widget.selectedRange;
+    startTc.text = selectedRange.start.toString();
+    endTc.text = selectedRange.end.toString();
     super.initState();
   }
 
@@ -136,14 +169,21 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
           RangeSlider(
             activeColor: AppColors.kFoundationPurple600,
             inactiveColor: AppColors.kFoundationPurple200,
-            values: selectedPriceRange,
-            divisions: 50,
-            labels: RangeLabels("${selectedPriceRange.start}", "${selectedPriceRange.end}"),
-            min: 0,
-            max: 100,
+            values: selectedRange,
+            labels:
+                RangeLabels("${selectedRange.start}", "${selectedRange.end}"),
+            min: widget.rangeValues.start,
+            max: widget.rangeValues.end,
             onChanged: (value) {
-              selectedPriceRange = value;
+              selectedRange = value;
+              if (widget.onChangeRange != null) {
+                widget.onChangeRange!(value);
+              }
               setState(() {});
+              WidgetsBinding.instance.addPostFrameCallback((frame) {
+                startTc.text = selectedRange.start.toStringAsFixed(0);
+                endTc.text = selectedRange.end.toStringAsFixed(0);
+              });
             },
           ),
           Padding(
@@ -153,12 +193,70 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
                 Expanded(
                   child: AppTextField(
                     label: widget.minlabel,
+                    keyboardType: TextInputType.number,
+                    controller: startTc,
+                    onChanged: (val) {
+                      final tempStart = (num.tryParse(val) ?? 0).toDouble();
+                      if (tempStart > widget.rangeValues.end) {
+                        print("HEYYY A");
+                        selectedRange = RangeValues(0, widget.rangeValues.end);
+                        startTc.text = selectedRange.start.toStringAsFixed(0);
+                      } else if (tempStart < widget.rangeValues.start) {
+                        print("HEYYY B");
+                        selectedRange = RangeValues(0, widget.rangeValues.end);
+                        startTc.text = selectedRange.start.toStringAsFixed(0);
+                      } else if (tempStart >= selectedRange.end) {
+                        print("HEYYY C");
+                        selectedRange = RangeValues(
+                            tempStart < widget.rangeValues.end ? tempStart : 0,
+                            widget.rangeValues.end);
+                        startTc.text = selectedRange.start.toStringAsFixed(0);
+                        endTc.text = widget.rangeValues.end.toStringAsFixed(0);
+                      } else {
+                        print("HEYYY D");
+                        selectedRange = RangeValues(tempStart,
+                            (num.tryParse(endTc.text) ?? 0).toDouble());
+                      }
+                      if (widget.onChangeRange != null) {
+                        widget.onChangeRange!(selectedRange);
+                      }
+                      setState(() {});
+                    },
                   ),
                 ),
                 16.spaceW,
                 Expanded(
                   child: AppTextField(
                     label: widget.maxlabel,
+                    controller: endTc,
+                    keyboardType: TextInputType.number,
+                    onChanged: (val) {
+                      final tempEnd = (num.tryParse(val) ?? 0).toDouble();
+
+                      if (tempEnd > widget.rangeValues.end) {
+                        print("HEYYY A");
+                        selectedRange = RangeValues(
+                            selectedRange.start, widget.rangeValues.end);
+                        endTc.text = selectedRange.end.toStringAsFixed(0);
+                      } else if (tempEnd <= selectedRange.start) {
+                        print("HEYYY C");
+                        selectedRange = RangeValues(0, selectedRange.start);
+                        endTc.text = selectedRange.end.toStringAsFixed(0);
+                      } else if (tempEnd < widget.rangeValues.start) {
+                        print("HEYYY B");
+                        selectedRange = RangeValues(
+                            selectedRange.start, widget.rangeValues.end);
+                        endTc.text = selectedRange.end.toStringAsFixed(0);
+                      } else {
+                        print("HEYYY D");
+                        selectedRange =
+                            RangeValues(widget.selectedRange.start, tempEnd);
+                      }
+                      if (widget.onChangeRange != null) {
+                        widget.onChangeRange!(selectedRange);
+                      }
+                      setState(() {});
+                    },
                   ),
                 ),
               ],
@@ -168,6 +266,11 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 

@@ -261,22 +261,72 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             8.spaceH,
-            SizedBox(
-              height: context.height,
-              child: GridView.builder(
-                controller: scroController,
-                itemBuilder: (context, index) {
-                  return ProductView(product: products[index], row: false);
-                },
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  childAspectRatio: 1,
-                ),
+            GridView.builder(
+              shrinkWrap: true,
+              controller: scroController,
+              itemBuilder: (context, index) {
+                return ProductView(product: products[index], row: false);
+              },
+              itemCount: products.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 1,
               ),
-            )
+            ),
+            16.spaceH,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Most Selling",
+                    style: context.textTheme.labelLarge,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    context.goNamed(Routes.allProduct);
+                  },
+                  borderRadius: 4.borderRadius2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "View All",
+                          style: context.textTheme.displaySmall?.copyWith(
+                            color: AppColors.kFoundatiionPurple800,
+                          ),
+                        ),
+                        4.spaceW,
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: AppColors.kFoundatiionPurple800,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            8.spaceH,
+            GridView.builder(
+              shrinkWrap: true,
+              controller: scroController,
+              itemBuilder: (context, index) {
+                return ProductView(product: products[index], row: false);
+              },
+              itemCount: products.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 1,
+              ),
+            ),
+            32.spaceH,
           ],
         ),
       ),
