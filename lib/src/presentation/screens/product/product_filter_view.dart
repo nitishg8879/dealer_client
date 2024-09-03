@@ -3,6 +3,7 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class ProductFilterView extends StatefulWidget {
@@ -14,6 +15,7 @@ class ProductFilterView extends StatefulWidget {
 }
 
 class _ProductFilterViewState extends State<ProductFilterView> {
+  final pageController = PageController();
   @override
   void initState() {
     widget.controller;
@@ -23,86 +25,207 @@ class _ProductFilterViewState extends State<ProductFilterView> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        minChildSize: .2,
-        maxChildSize: 1,
-        expand: false,
-        initialChildSize: .5,
-        builder: (context, scrollController) {
-          return Material(
-            color: AppColors.kGrey50,
-            surfaceTintColor: AppColors.kGrey50,
-            child: ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                ProductFilterTile(
-                  items: [
-                    ProductFilterTileModel("Brands", () {}),
-                    ProductFilterTileModel("Category", () {}),
-                  ],
-                  scrollController: scrollController,
+      minChildSize: .2,
+      maxChildSize: 1,
+      expand: false,
+      initialChildSize: .5,
+      builder: (context, scrollController) {
+        return Material(
+          color: AppColors.kGrey50,
+          surfaceTintColor: AppColors.kGrey50,
+          child: PageView(
+            controller: pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildFilterView(scrollController, context),
+              _buildBrandList(scrollController, context),
+              _buildCategoryList(scrollController, context),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBrandList(
+      ScrollController scrollController, BuildContext context) {
+    return Column(
+      // controller: scrollController,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  pageController.animateToPage(0,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeIn);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20,
                 ),
-                12.spaceH,
-                AppRangeSelector(
-                  label: "Price",
-                  minlabel: "Min",
-                  maxlabel: "Max",
-                  selectedRange: widget.controller.priceMinMaxSelected,
-                  rangeValues: widget.controller.priceMinMax,
-                  onChangeRange: (val) {
-                    widget.controller.priceMinMaxSelected = val;
-                  },
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints.expand(width: 24, height: 24),
+              ),
+              8.spaceW,
+              const Expanded(
+                child: AppTextField(
+                  hintText: "Search Brands",
                 ),
-                12.spaceH,
-                AppRangeSelector(
-                  label: "Year",
-                  minlabel: "Min",
-                  maxlabel: "Max",
-                  selectedRange: widget.controller.yearMinMaxSelected,
-                  rangeValues: widget.controller.yearMinMax,
-                  onChangeRange: (val) {
-                    widget.controller.yearMinMaxSelected = val;
-                  },
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 100,
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return CheckboxListTile(
+                value: true,
+                title: Text("Brands $index"),
+                onChanged: (value) {},
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryList(
+      ScrollController scrollController, BuildContext context) {
+    return Column(
+      // controller: scrollController,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  pageController.animateToPage(0,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeIn);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20,
                 ),
-                12.spaceH,
-                AppRangeSelector(
-                  label: "Km Driven",
-                  minlabel: "Min",
-                  maxlabel: "Max",
-                  selectedRange: widget.controller.kmMinMaxSelected,
-                  rangeValues: widget.controller.kmMinMax,
-                  onChangeRange: (val) {
-                    widget.controller.kmMinMaxSelected = val;
-                  },
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints.expand(width: 24, height: 24),
+              ),
+              8.spaceW,
+              const Expanded(
+                child: AppTextField(
+                  hintText: "Search Category",
                 ),
-                32.spaceH,
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: context.pop,
-                        style: Theme.of(context)
-                            .elevatedButtonTheme
-                            .style
-                            ?.copyWith(
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppColors.doveGray),
-                            ),
-                        child: Text("Cancel"),
-                      ),
-                    ),
-                    16.spaceW,
-                    Expanded(
-                      child: ElevatedButton(
-                          onPressed: () {}, child: Text("Apply")),
-                    ),
-                  ],
-                ),
-                context.isKeyboardOpen ? 300.spaceH : 32.spaceH,
-              ],
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 100,
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return CheckboxListTile(
+                value: true,
+                title: Text("Category $index"),
+                onChanged: (value) {},
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  ListView _buildFilterView(
+      ScrollController scrollController, BuildContext context) {
+    return ListView(
+      controller: scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      children: [
+        ProductFilterTile(
+          items: [
+            ProductFilterTileModel(
+              "Brands",
+              () {
+                pageController.animateToPage(1,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeIn);
+              },
             ),
-          );
-        });
+            ProductFilterTileModel("Category", () {
+              pageController.animateToPage(2,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeIn);
+            }),
+          ],
+          scrollController: scrollController,
+        ),
+        12.spaceH,
+        AppRangeSelector(
+          label: "Price",
+          minlabel: "Min",
+          maxlabel: "Max",
+          selectedRange: widget.controller.priceMinMaxSelected,
+          rangeValues: widget.controller.priceMinMax,
+          onChangeRange: (val) {
+            widget.controller.priceMinMaxSelected = val;
+          },
+        ),
+        12.spaceH,
+        AppRangeSelector(
+          label: "Year",
+          minlabel: "Min",
+          maxlabel: "Max",
+          selectedRange: widget.controller.yearMinMaxSelected,
+          rangeValues: widget.controller.yearMinMax,
+          onChangeRange: (val) {
+            widget.controller.yearMinMaxSelected = val;
+          },
+        ),
+        12.spaceH,
+        AppRangeSelector(
+          label: "Km Driven",
+          minlabel: "Min",
+          maxlabel: "Max",
+          selectedRange: widget.controller.kmMinMaxSelected,
+          rangeValues: widget.controller.kmMinMax,
+          onChangeRange: (val) {
+            widget.controller.kmMinMaxSelected = val;
+          },
+        ),
+        32.spaceH,
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: context.pop,
+                style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+                      backgroundColor:
+                          WidgetStatePropertyAll(AppColors.doveGray),
+                    ),
+                child: const Text("Cancel"),
+              ),
+            ),
+            16.spaceW,
+            Expanded(
+              child: ElevatedButton(onPressed: () {}, child: Text("Apply")),
+            ),
+          ],
+        ),
+        context.isKeyboardOpen ? 300.spaceH : 32.spaceH,
+      ],
+    );
   }
 
   @override
@@ -299,28 +422,33 @@ class ProductFilterTile extends StatelessWidget {
           controller: scrollController,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      items[index].label,
-                      style: context.textTheme.headlineSmall?.copyWith(
-                        fontSize: 16,
+            return Material(
+              child: InkWell(
+                onTap: items[index].onTap,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          items[index].label,
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
-                    ),
+                      Text(
+                        "View All",
+                        style: context.textTheme.titleMedium,
+                      ),
+                      8.spaceW,
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 16,
+                      )
+                    ],
                   ),
-                  Text(
-                    "View All",
-                    style: context.textTheme.titleMedium,
-                  ),
-                  8.spaceW,
-                  const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 16,
-                  )
-                ],
+                ),
               ),
             );
           },
@@ -340,4 +468,13 @@ class ProductFilterTileModel {
   String label;
   void Function() onTap;
   ProductFilterTileModel(this.label, this.onTap);
+}
+
+class AppCheckBoxListTile extends StatelessWidget {
+  const AppCheckBoxListTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }

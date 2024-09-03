@@ -48,7 +48,9 @@ class _AppTextFieldState extends State<AppTextField> {
           obscureText: isObsecure,
           keyboardType: widget.keyboardType,
           style: context.textTheme.displayMedium,
+          
           decoration: InputDecoration(
+            hintText: widget.hintText,
             contentPadding: const EdgeInsets.all(14),
             border: OutlineInputBorder(
               borderRadius: 10.borderRadius2,
