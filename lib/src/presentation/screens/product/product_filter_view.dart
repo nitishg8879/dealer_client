@@ -153,6 +153,21 @@ class _ProductFilterViewState extends State<ProductFilterView> {
       controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
+        SwitchListTile(
+          value: widget.controller.gridViewtype,
+          title: Text(
+            widget.controller.gridViewtype ? "ListView" : "GridView",
+            style: context.textTheme.headlineSmall?.copyWith(
+              fontSize: 16,
+            ),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 4),
+          onChanged: (value) {
+            setState(() {
+              widget.controller.gridViewtype = !widget.controller.gridViewtype;
+            });
+          },
+        ),
         ProductFilterTile(
           items: [
             ProductFilterTileModel(

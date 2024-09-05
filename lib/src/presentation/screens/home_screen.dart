@@ -316,7 +316,11 @@ class _HomeScreenState extends State<HomeScreen> {
               shrinkWrap: true,
               controller: scroController,
               itemBuilder: (context, index) {
-                return ProductView(product: products[index], row: false);
+                return ProductView(
+                  product: products[index],
+                  row: false,
+                  
+                );
               },
               itemCount: products.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

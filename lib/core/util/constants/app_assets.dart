@@ -13,4 +13,6 @@ class AppAssets {
   static const location = "$iconsPath/location.svg";
   static const filter = "$iconsPath/filter.svg";
   static const arrowLeft = "$iconsPath/arrow_left.svg";
+  static const share = "$iconsPath/share.svg";
+  static const gridView = "$iconsPath/gridview.svg";
 }

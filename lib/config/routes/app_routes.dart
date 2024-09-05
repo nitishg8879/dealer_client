@@ -1,6 +1,9 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/favourite_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/product_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,6 +15,13 @@ class AppRoutes {
     navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
+        path: Routes.productDetails,
+        name: Routes.productDetails,
+        builder: (context, state) => ProductDetailsScreen(
+          product: state.extra as ProductModel,
+        ),
+      ),
+      GoRoute(
         path: Routes.home,
         name: Routes.home,
         builder: (context, state) => const HomeScreen(),
@@ -20,6 +30,14 @@ class AppRoutes {
             path: Routes.allProduct,
             name: Routes.allProduct,
             builder: (context, state) => const AllProductScreen(),
+            routes: [
+              GoRoute(
+                path: Routes.favourite,
+                name: Routes.favourite,
+                builder: (context, state) => const FavouriteScreen(),
+                routes: [],
+              ),
+            ],
           ),
         ],
       ),

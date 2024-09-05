@@ -9,26 +9,17 @@ import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-class AllProductScreen extends StatefulWidget {
-  const AllProductScreen({super.key});
+class FavouriteScreen extends StatefulWidget {
+  const FavouriteScreen({super.key});
 
   @override
-  State<AllProductScreen> createState() => _AllProductScreenState();
+  State<FavouriteScreen> createState() => _FavouriteScreenState();
 }
 
-class _AllProductScreenState extends State<AllProductScreen> {
-  var productFilterController = ProductsFilterController(
-    priceMinMax: const RangeValues(0, 100),
-    priceMinMaxSelected: const RangeValues(0, 20),
-    yearMinMax: const RangeValues(0, 100),
-    kmMinMaxSelected: const RangeValues(0, 20),
-    kmMinMax: const RangeValues(0, 100),
-    yearMinMaxSelected: const RangeValues(0, 20),
-    gridViewtype: true,
-  );
+class _FavouriteScreenState extends State<FavouriteScreen> {
+  bool row = true;
   final products = <ProductModel>[
     ProductModel(
       images: [
@@ -185,23 +176,6 @@ class _AllProductScreenState extends State<AllProductScreen> {
       branch: "Andheri,Mumbai",
     ),
   ];
-  void showFilterPopUp() {
-    showModalBottomSheet(
-      context: context,
-      useSafeArea: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: 16.smoothRadius),
-      ),
-      showDragHandle: true,
-      enableDrag: true,
-      isScrollControlled: true,
-      builder: (context) {
-        return ProductFilterView(controller: productFilterController);
-      },
-    ).whenComplete(() {
-      setState(() {});
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +185,11 @@ class _AllProductScreenState extends State<AllProductScreen> {
         actions: [
           UnconstrainedBox(
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  row = !row;
+                });
+              },
               child: const CustomSvgIcon(
                 assetName: AppAssets.search,
                 color: AppColors.kCardGrey400,
@@ -220,36 +198,13 @@ class _AllProductScreenState extends State<AllProductScreen> {
             ),
           ),
           16.spaceW,
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: showFilterPopUp,
-              child: const CustomSvgIcon(
-                assetName: AppAssets.filter,
-                color: AppColors.kCardGrey400,
-                size: 20,
-              ),
-            ),
-          ),
-          16.spaceW,
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: () {
-                context.goNamed(Routes.favourite);
-              },
-              child: const CustomSvgIcon(
-                assetName: AppAssets.favFill,
-                color: AppColors.kRed,
-                size: 20,
-              ),
-            ),
-          ),
-          16.spaceW,
         ],
       ),
       body: Visibility(
-        visible: productFilterController.gridViewtype,
+        visible: row,
         replacement: GridView.builder(
           shrinkWrap: true,
+          // controller: scroController,
           padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
           itemBuilder: (context, index) {
             return ProductView(product: products[index], row: false);

@@ -10,12 +10,14 @@ class ProductsFilterController {
   RangeValues yearMinMaxSelected;
   RangeValues kmMinMax;
   RangeValues kmMinMaxSelected;
+  bool gridViewtype;
   ProductsFilterController({
     required this.priceMinMax,
     required this.priceMinMaxSelected,
     required this.yearMinMax,
     required this.yearMinMaxSelected,
     required this.kmMinMax,
+    required this.gridViewtype,
     required this.kmMinMaxSelected,
   });
 }
