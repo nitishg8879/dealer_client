@@ -43,7 +43,7 @@ class AppAppbar extends AppBar {
         systemStatusBarContrastEnforced: true,
         systemNavigationBarColor: AppColors.kGrey50,
         systemNavigationBarContrastEnforced: true,
-        // systemNavigationBarDividerColor: AppColors.kBlack900,
+        systemNavigationBarDividerColor: AppColors.white,
         systemNavigationBarIconBrightness: Brightness.dark,
       );
 }

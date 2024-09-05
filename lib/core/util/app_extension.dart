@@ -12,28 +12,15 @@ extension AppSizedBox on num {
   SmoothBorderRadius get smoothBorderRadius => SmoothBorderRadius.all(
         SmoothRadius(cornerRadius: toDouble(), cornerSmoothing: 1),
       );
-  SmoothRadius get smoothRadius =>
-      SmoothRadius(cornerRadius: toDouble(), cornerSmoothing: 1);
+  SmoothRadius get smoothRadius => SmoothRadius(cornerRadius: toDouble(), cornerSmoothing: 1);
 }
 
 extension currencyApp on num? {
-  String get toINR => this == null
-      ? '₹ 0'
-      : NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 0)
-          .format(this);
-  String get to2DecimalINR => this == null
-      ? '₹ 0'
-      : NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2)
-          .format(this ?? 0);
+  String get toINR => this == null ? '₹ 0' : NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(this);
+  String get to2DecimalINR => this == null ? '₹ 0' : NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(this ?? 0);
 
-  String get to2DecimalWithoutInr => this == null
-      ? '0'
-      : NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2)
-          .format(this ?? 0);
-  String get readableNumber => this == null
-      ? '0'
-      : NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 0)
-          .format(this ?? 0);
+  String get to2DecimalWithoutInr => this == null ? '0' : NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 2).format(this ?? 0);
+  String get readableNumber => this == null ? '0' : NumberFormat.currency(locale: 'en_IN', symbol: '', decimalDigits: 0).format(this ?? 0);
 }
 
 extension AppDeviceSize on BuildContext {
