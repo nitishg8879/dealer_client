@@ -23,29 +23,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final category = <CategoryModel>[
     CategoryModel(
-      name: "Sports Bike",
+      name: "Bike",
       url:
           "https://s3-alpha-sig.figma.com/img/4d3b/a655/0ff0c971c0313662e6934e300f33aa3b?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dPTqtYnCGeRBeIgyM8jBpwwacH8ioCyjciSxlB85LqxLpDkNKnRFpkA9iIAl1B0txCpJI9~xKTC1J5uSs~csSucWm5KjA9x4Ms53ytNr4OoFKSRJ7OZPhxIh8xZek2oW2nJAgjVAhuGYJflkXesyK9NYjfkIK4UdBNIEZDeykNjPo~~DGkIpzStTmhxIey7xpAH62Jq5ioUytdqIPwt6a1Dc70je9kstfcrySJuRibq1GfNtEoGCPiY0Vv~0jwQzvKRZRp23tbNhRwwh3I05P1Nq1sOw0F09LBdKa1U5aYVg1cilloRO8LILRziB1mdg9btt7zytz1cuDT1I3GBxwg__",
     ),
     CategoryModel(
-      name: "Scooter",
+      name: "Scooty",
       url:
           "https://s3-alpha-sig.figma.com/img/716a/8167/e312326673548fb33982359e61d5ec4e?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=h5545GD8~iNBWWWeog7tjKb6DM4CHCq~bE95FX4Y32066t9g8MOWNtlocrjwIiTEXE1sfQPHhZITk1GF-xaXaHaeLr8TLHLes5iT1T9BTsINSB~0pIrdqULHs2Kzl8JEQYSlDnWTLjXiDdN7cPVyNxWTPaoXh3s2~wqL--GXhB9LLLVg0apd9gfuyRV3E1PZPZKpx6dyjqWJoLsL7w8PNOPm5EdyfQ5o9mNPEDpoK~Hguk3HLICIAMOYtHcEsmYVV3rNHXptr9hDNkNc1r0ip5f7lPclxFW3IkSl8dZLSx5xXQDJX3lgxZGFnK7nZaI8mVn-MCEbVMA~3n7CczjYvA__",
     ),
     CategoryModel(
-      name: "Cruiser",
+      name: "Car",
       url:
-          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
-    ),
-    CategoryModel(
-      name: "Cruiser",
-      url:
-          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
-    ),
-    CategoryModel(
-      name: "Cruiser",
-      url:
-          "https://s3-alpha-sig.figma.com/img/1673/2fdc/036350d7e963fff0950fd5bfa6ca4471?Expires=1726444800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qKhNn2D8wm1Q4EGwWFijTyLOJXSSr5Cr~JHwC6JHxmfmMwdsoKFw0r8hS4rSyMNzOhYnwBQe3QObhOXvjoTcsIjh-F4In-IBk3TJ48iu0MX7kSZEAKReGUMb-22JG-SHsoQjmRMEkxLRDucCpMLWqgblYu1Ti-DCwsbhMybInkMSUNyNpWF45C5~QRBKatnt~JAIOzrvV6fVPv7F9~lhIhK2840kjxHgy9Edn3-nYftwTAUKBlkYTQITmHzs74UoFMdS8-LRn6nlbFSIkNbOUZatXnrjL0L6Bdw9NnJJdjlngxTfTSHY~gpevAmzkYShc3IscPwWkGQs3qS8QuOZGw__",
+          "https://purepng.com/public/uploads/thumbnail//purepng.com-audi-caraudicars-961524670909l0kif.png",
     ),
   ];
   // final homeBloc = HomeCubit(ProductFetchUsecases(getIt()));
@@ -193,22 +183,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   "Category",
                   style: context.textTheme.labelLarge,
                 ),
-                Row(
-                  children: [
-                    Text(
-                      "View All",
-                      style: context.textTheme.displaySmall?.copyWith(
-                        color: AppColors.kFoundatiionPurple800,
-                      ),
-                    ),
-                    4.spaceW,
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 14,
-                      color: AppColors.kFoundatiionPurple800,
-                    )
-                  ],
-                )
+                // Row(
+                //   children: [
+                //     Text(
+                //       "View All",
+                //       style: context.textTheme.displaySmall?.copyWith(
+                //         color: AppColors.kFoundatiionPurple800,
+                //       ),
+                //     ),
+                //     4.spaceW,
+                //     const Icon(
+                //       Icons.arrow_forward_ios_rounded,
+                //       size: 14,
+                //       color: AppColors.kFoundatiionPurple800,
+                //     )
+                //   ],
+                // )
               ],
             ),
             8.spaceH,
@@ -325,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 return ProductView(
                   product: products[index],
                   row: false,
-                  
                 );
               },
               itemCount: products.length,

@@ -193,9 +193,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           16.spaceH,
-          Text(
-            "X Pulse  200",
-            style: context.textTheme.headlineSmall,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "X Pulse  200",
+                  style: context.textTheme.headlineSmall,
+                ),
+              ),
+              const CustomSvgIcon(
+                assetName: AppAssets.favFill,
+                color: AppColors.kRed,
+              )
+            ],
           ),
           4.spaceH,
           Text(
