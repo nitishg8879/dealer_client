@@ -22,4 +22,7 @@ class AppAssets {
   static const calender = "$iconsPath/productdetail/calendar.svg";
   static const users  = "$iconsPath/productdetail/users.svg";
   static const fine  = "$iconsPath/productdetail/fine.svg";
+  static const company  = "$iconsPath/productdetail/company.svg";
+  static const mileage  = "$iconsPath/productdetail/mileage.svg";
+  static const wheel  = "$iconsPath/productdetail/wheel.svg";
 }
