@@ -1,17 +1,15 @@
-import 'package:bike_client_dealer/core/util/app_enums.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ChatModel {
   final String message;
-  final chatsRowType chatType;
   final bool isSender;
   final DateTime dateTime;
-  final String? image;
+  final List<PlatformFile>? doc;
   ChatModel({
     required this.message,
     required this.isSender,
     required this.dateTime,
-    this.chatType = chatsRowType.normalText,
-    this.image,
+    this.doc,
   });
 }
 

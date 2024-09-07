@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_enums.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/src/data/model/chat_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/chats/chat_doc_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +19,7 @@ class MessageUI extends StatelessWidget {
       alignment: chatModel.isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: DecoratedBox(
         decoration: ShapeDecoration(
-          color: AppColors.kFoundationPurple700,
+          color: AppColors.kFoundationPurple100,
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius.only(
               topRight: borderRadius,
@@ -30,29 +33,45 @@ class MessageUI extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            // crossAxisAlignment: chatModel.isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (chatModel.chatType == chatsRowType.imageWithText)
-                Image.asset(
-                  chatModel.image!,
-                ),
-              Text(
-                chatModel.message,
-                style: context.textTheme.displayMedium?.copyWith(
-                  color: AppColors.kWhite,
-                  fontSize: 14,
-                ),
+              ChatDocView(
+                files: chatModel.doc ?? [],
+                width: (chatModel.doc ?? []).length < 4 ? (80 * (chatModel.doc ?? []).length).toDouble() : (80 * 4),
+                readOnly: true,
               ),
-              Text(
-                chatModel.dateTime.hhmma,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.kFoundationWhite600,
-                ),
-              ),
+              ChatUIForNormalText(chatModel: chatModel),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class ChatUIForNormalText extends StatelessWidget {
+  final ChatModel chatModel;
+  const ChatUIForNormalText({
+    super.key,
+    required this.chatModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          chatModel.message,
+          style: context.textTheme.displayMedium,
+        ),
+        Text(
+          chatModel.dateTime.hhmma,
+          style: context.textTheme.bodySmall,
+        ),
+      ],
     );
   }
 }

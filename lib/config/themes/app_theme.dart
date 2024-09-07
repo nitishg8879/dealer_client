@@ -148,7 +148,6 @@ class AppTheme {
     fontFamily: fontFamily,
     menuTheme: MenuThemeData(
       style: MenuStyle(
-        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 200)),
         surfaceTintColor: const WidgetStatePropertyAll<Color>(Colors.white),
         maximumSize: const WidgetStatePropertyAll<Size>(Size.infinite),
         backgroundColor: const WidgetStatePropertyAll<Color>(Colors.white),
@@ -162,9 +161,7 @@ class AppTheme {
           ),
         ),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          SmoothRectangleBorder(borderRadius: 16.smoothBorderRadius),
         ),
       ),
     ),
