@@ -33,6 +33,7 @@ extension AppDeviceSize on BuildContext {
 
 extension AppDateFormat on DateTime {
   String get dhhmma => DateFormat('d, hh:mm a').format(this);
+  String get hhmma => DateFormat('hh:mm a').format(this);
 
   String get monthYear => DateFormat('MMMM  yyyy').format(this);
   String get dayWeekdayYear => DateFormat('d EEEE yyyy').format(this);

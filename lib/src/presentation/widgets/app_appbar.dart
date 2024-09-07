@@ -10,6 +10,8 @@ class AppAppbar extends AppBar {
     super.key,
     this.onback,
     super.actions,
+    // super.leading,
+    super.flexibleSpace,
     super.elevation,
   });
   @override

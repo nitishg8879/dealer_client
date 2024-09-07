@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
@@ -56,7 +57,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => context.push(Routes.chats),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.kBlack900,
                     shape: const SmoothRectangleBorder(
@@ -165,8 +166,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         child: Text(
                           "1 / 2",
                           style: context.textTheme.bodyLarge?.copyWith(
@@ -238,21 +238,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     style: context.textTheme.labelMedium,
                   ),
                   16.spaceH,
-                  titleSubtitle("KM Driven", "1,000",
-                      assetName: AppAssets.distance),
+                  titleSubtitle("KM Driven", "1,000", assetName: AppAssets.distance),
                   titleSubtitle("Model", "2014", assetName: AppAssets.calender),
-                  titleSubtitle("Insaurance Validity", "2 Sep 2024",
-                      assetName: AppAssets.calender),
-                  titleSubtitle("Valid Till", "2 Sep 2036",
-                      assetName: AppAssets.calenderTill),
-                  titleSubtitle("Number Plate", "MH-04 2626",
-                      assetName: AppAssets.distance),
-                  titleSubtitle("Tyre Condition", "Good",
-                      assetName: AppAssets.distance),
-                  titleSubtitle("Fine", "Yes (${3345.toINR})",
-                      assetName: AppAssets.fine),
-                  titleSubtitle("Owners", "3",
-                      wantDivider: false, assetName: AppAssets.users),
+                  titleSubtitle("Insaurance Validity", "2 Sep 2024", assetName: AppAssets.calender),
+                  titleSubtitle("Valid Till", "2 Sep 2036", assetName: AppAssets.calenderTill),
+                  titleSubtitle("Number Plate", "MH-04 2626", assetName: AppAssets.distance),
+                  titleSubtitle("Tyre Condition", "Good", assetName: AppAssets.distance),
+                  titleSubtitle("Fine", "Yes (${3345.toINR})", assetName: AppAssets.fine),
+                  titleSubtitle("Owners", "3", wantDivider: false, assetName: AppAssets.users),
                 ],
               ),
             ),
@@ -280,14 +273,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   16.spaceH,
                   titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
                   titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
-                  titleSubtitle("Launch date", "2 Sep 2024",
-                      assetName: AppAssets.calender),
-                  titleSubtitle("On Road Price", "1,75,000",
-                      assetName: AppAssets.wheel),
-                  titleSubtitle("Company", "Honda",
-                      assetName: AppAssets.company),
-                  titleSubtitle("Mileage", "30-40km",
-                      wantDivider: false, assetName: AppAssets.mileage),
+                  titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
+                  titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
+                  titleSubtitle("Company", "Honda", assetName: AppAssets.company),
+                  titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
                 ],
               ),
             ),

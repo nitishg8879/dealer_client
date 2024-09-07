@@ -1,5 +1,6 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/chats/chat_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/favourite_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
@@ -20,6 +21,11 @@ class AppRoutes {
         builder: (context, state) => ProductDetailsScreen(
           product: state.extra as ProductModel,
         ),
+      ),
+      GoRoute(
+        path: Routes.chats,
+        name: Routes.chats,
+        builder: (context, state) => const ChatScreen(),
       ),
       GoRoute(
         path: Routes.home,

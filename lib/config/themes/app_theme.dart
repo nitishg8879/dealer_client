@@ -141,9 +141,6 @@ class AppTheme {
         ),
       ];
 
-
-      
-
   static final lightTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.kGrey50,
     useMaterial3: false,
@@ -151,14 +148,24 @@ class AppTheme {
     fontFamily: fontFamily,
     menuTheme: MenuThemeData(
       style: MenuStyle(
-        fixedSize: const WidgetStatePropertyAll(Size(double.infinity, 200)),
+        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 200)),
         surfaceTintColor: const WidgetStatePropertyAll<Color>(Colors.white),
         maximumSize: const WidgetStatePropertyAll<Size>(Size.infinite),
         backgroundColor: const WidgetStatePropertyAll<Color>(Colors.white),
         elevation: const WidgetStatePropertyAll<double>(30),
-        shadowColor: const WidgetStatePropertyAll<Color>(Color.fromRGBO(77, 45, 136, 0.15)),
-        side: WidgetStatePropertyAll<BorderSide>(BorderSide(color: AppColors.kGrey300.withOpacity(0.2))),
-        shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+        shadowColor: const WidgetStatePropertyAll<Color>(
+          Color.fromRGBO(77, 45, 136, 0.15),
+        ),
+        side: WidgetStatePropertyAll<BorderSide>(
+          BorderSide(
+            color: AppColors.kGrey300.withOpacity(0.2),
+          ),
+        ),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
       ),
     ),
     cardTheme: const CardTheme(

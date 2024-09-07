@@ -40,6 +40,8 @@ flutter:
   assets:
     - assets/fonts/
     - assets/icons/
+    - assets/company/
+    - assets/icons/chats/
     - assets/icons/productdetail/
   fonts:
     - family: Inter

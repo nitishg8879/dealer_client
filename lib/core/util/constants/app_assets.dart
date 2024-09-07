@@ -2,6 +2,7 @@ const String backgroundsPath = 'assets/backgrounds';
 const String imagesPath = 'assets/images';
 const String logosPath = 'assets/logos';
 const String iconsPath = "assets/icons";
+const String companyPath = "assets/company";
 const String dummyPath = "assets/dummy";
 
 class AppAssets {
@@ -20,9 +21,14 @@ class AppAssets {
   static const distance = "$iconsPath/productdetail/distance.svg";
   static const calenderTill = "$iconsPath/productdetail/calendar_till.svg";
   static const calender = "$iconsPath/productdetail/calendar.svg";
-  static const users  = "$iconsPath/productdetail/users.svg";
-  static const fine  = "$iconsPath/productdetail/fine.svg";
-  static const company  = "$iconsPath/productdetail/company.svg";
-  static const mileage  = "$iconsPath/productdetail/mileage.svg";
-  static const wheel  = "$iconsPath/productdetail/wheel.svg";
+  static const users = "$iconsPath/productdetail/users.svg";
+  static const fine = "$iconsPath/productdetail/fine.svg";
+  static const company = "$iconsPath/productdetail/company.svg";
+  static const mileage = "$iconsPath/productdetail/mileage.svg";
+  static const wheel = "$iconsPath/productdetail/wheel.svg";
+  static const call = "$iconsPath/chats/call.svg";
+
+  //? PNG
+  //? Company
+  static const appLogo = "$companyPath/logo.png";
 }
