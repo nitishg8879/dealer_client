@@ -68,19 +68,17 @@ class _ChatScreenState extends State<ChatScreen> {
             bottom: context.height * .08,
             left: 0,
             right: 0,
-            child: Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                reverse: true,
-                scrollDirection: Axis.vertical,
-                itemCount: dummyMessage.length,
-                itemBuilder: (context, index) {
-                  return MessageUI(chatModel: dummyMessage[index]);
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return 8.spaceH;
-                },
-              ),
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              reverse: true,
+              scrollDirection: Axis.vertical,
+              itemCount: dummyMessage.length,
+              itemBuilder: (context, index) {
+                return MessageUI(chatModel: dummyMessage[index]);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return 8.spaceH;
+              },
             ),
           ),
 
@@ -113,24 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
           ),
-          IconButton(
-            padding: const EdgeInsets.all(0),
-            constraints: const BoxConstraints.expand(width: 24, height: 24),
-            splashRadius: 15,
-            visualDensity: VisualDensity.compact,
-            onPressed: () {
-              // HelperFun.pickFile().then((files) {
-              //   if (files != null) {
-              //     _filePickerResult = files;
-              //     setState(() {});
-              //   }
-              // });
-            },
-            icon: const Icon(
-              Icons.attach_file_outlined,
-              size: 18,
-            ),
-          ),
+
           // ?? chat Textfield and send button
           Positioned(
             bottom: 0,
