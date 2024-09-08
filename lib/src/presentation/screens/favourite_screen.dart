@@ -1,10 +1,7 @@
-import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_view.dart';
-import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
@@ -22,9 +19,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   bool row = true;
   final products = <ProductModel>[
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -33,9 +28,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -44,9 +37,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -55,9 +46,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -66,9 +55,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -77,9 +64,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -88,9 +73,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -99,9 +82,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -110,9 +91,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -121,9 +100,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -132,9 +109,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -143,9 +118,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -154,9 +127,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -165,9 +136,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -182,6 +151,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     return Scaffold(
       appBar: AppAppbar(
         onback: context.pop,
+        pageName: "Favourite",
         actions: [
           UnconstrainedBox(
             child: OutlinedButton(

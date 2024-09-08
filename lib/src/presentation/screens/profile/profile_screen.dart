@@ -129,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileTileTileModel(
                 icon: Icons.password,
                 titile: "Favourites",
-                routePath: Routes.home,
+                routePath: Routes.favourite,
               ),
             ],
           ),
