@@ -97,28 +97,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: "General",
             items: [
               ProfileTileTileModel(
-                icon: Icons.password,
-                titile: "Change Password",
-                routePath: Routes.home,
-              ),
-              ProfileTileTileModel(
-                icon: Icons.account_balance,
-                titile: "Bank Account",
-                routePath: Routes.home,
-              ),
-              ProfileTileTileModel(
-                icon: Icons.person_add_alt,
-                titile: "Refer And Earn",
-                routePath: Routes.home,
-              ),
-              ProfileTileTileModel(
                 icon: Icons.notification_important_outlined,
-                titile: "Notification",
+                titile: "Chats",
                 routePath: Routes.home,
               ),
               ProfileTileTileModel(
                 icon: Icons.support_agent,
                 titile: "Support",
+                routePath: Routes.home,
+              ),
+            ],
+          ),
+
+          24.spaceH,
+          ProfileTileSelection(
+            title: "Products",
+            items: [
+              ProfileTileTileModel(
+                icon: Icons.account_balance,
+                titile: "Transactions",
+                routePath: Routes.home,
+              ),
+              ProfileTileTileModel(
+                icon: Icons.person_add_alt,
+                titile: "Orders",
+                routePath: Routes.home,
+              ),
+              ProfileTileTileModel(
+                icon: Icons.password,
+                titile: "Favourites",
                 routePath: Routes.home,
               ),
             ],
