@@ -25,7 +25,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppAppbar(onback: context.pop),
+      appBar: AppAppbar(
+        onback: context.pop,
+        pageName: "Profile",
+      ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
@@ -116,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileTileTileModel(
                 icon: Icons.account_balance,
                 titile: "Transactions",
-                routePath: Routes.home,
+                routePath: Routes.transaction,
               ),
               ProfileTileTileModel(
                 icon: Icons.person_add_alt,

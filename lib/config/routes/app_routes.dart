@@ -6,6 +6,7 @@ import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/product_details_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/transaction/transaction_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,6 +38,13 @@ class AppRoutes {
             path: Routes.profile,
             name: Routes.profile,
             builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: Routes.transaction,
+                name: Routes.transaction,
+                builder: (context, state) => const TransactionScreen(),
+              ),
+            ],
           ),
           GoRoute(
             path: Routes.allProduct,
