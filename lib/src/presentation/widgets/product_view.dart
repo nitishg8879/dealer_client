@@ -10,14 +10,21 @@ import 'package:go_router/go_router.dart';
 class ProductView extends StatelessWidget {
   final ProductModel product;
   final bool row;
+  final bool fromChatPin;
+  final void Function()? onChatPinCLose;
+  final bool fromChatReadyOnly;
   const ProductView({
     super.key,
     required this.product,
     this.row = true,
+    this.fromChatPin = false,
+    this.onChatPinCLose,
+    this.fromChatReadyOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    print(fromChatPin);
     return OutlinedButton(
       onPressed: () {
         context.push(Routes.productDetails, extra: product);
@@ -142,12 +149,22 @@ class ProductView extends StatelessWidget {
           ),
         ),
         10.spaceW,
-        InkWell(
-          onTap: () {},
-          child: const CustomSvgIcon(
-            assetName: AppAssets.fav,
-          ),
-        )
+        if (!fromChatReadyOnly)
+          InkWell(
+            onTap: () {
+              if (onChatPinCLose != null) {
+                onChatPinCLose!();
+              }
+            },
+            child: fromChatPin
+                ? const Icon(
+                    Icons.close,
+                    color: AppColors.black,
+                  )
+                : const CustomSvgIcon(
+                    assetName: AppAssets.fav,
+                  ),
+          )
       ],
     );
   }

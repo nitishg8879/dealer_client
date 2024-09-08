@@ -1,15 +1,18 @@
-import 'package:file_picker/file_picker.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:file_picker/file_picker.dart' show PlatformFile;
 
 class ChatModel {
   final String message;
   final bool isSender;
   final DateTime dateTime;
   final List<PlatformFile>? doc;
+  final ProductModel? product;
   ChatModel({
     required this.message,
     required this.isSender,
     required this.dateTime,
     this.doc,
+    this.product,
   });
 }
 

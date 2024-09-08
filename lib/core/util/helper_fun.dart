@@ -3,7 +3,7 @@ import 'package:open_file/open_file.dart';
 // import 'package:open_file/open_file.dart' as open;
 
 class HelperFun {
-  static List<String> imageAllowed = ["JPEG", "WEBP", "GIF", "GIF", "PNG", "BMP", "WBMP"];
+  static List<String> imageAllowed = ["JPEG", "WEBP", "GIF", "GIF", "PNG", "BMP", "WBMP", "JPG"];
   static Future<FilePickerResult?> pickFile({
     List<String>? allowedExtensions,
   }) async {
