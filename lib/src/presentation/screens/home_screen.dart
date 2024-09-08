@@ -5,11 +5,9 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/category_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,8 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     CategoryModel(
       name: "Car",
-      url:
-          "https://purepng.com/public/uploads/thumbnail//purepng.com-audi-caraudicars-961524670909l0kif.png",
+      url: "https://purepng.com/public/uploads/thumbnail//purepng.com-audi-caraudicars-961524670909l0kif.png",
     ),
   ];
   // final homeBloc = HomeCubit(ProductFetchUsecases(getIt()));
@@ -59,9 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -70,9 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -81,9 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
       branch: "Andheri,Mumbai",
     ),
     ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
+      images: ['https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'],
       kmDriven: 2000,
       name: "KTM 200 Duke",
       ownerType: "1st Owner",
@@ -100,8 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  String dummyImage =
-      "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
+  String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
 
   @override
   Widget build(BuildContext context) {
@@ -114,19 +104,25 @@ class _HomeScreenState extends State<HomeScreen> {
             16.spaceH,
             Row(
               children: [
-                Ink(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: AppColors.kWhite,
-                    borderRadius: 50.borderRadius,
-                    boxShadow: AppTheme.boxShadows,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: 50.borderRadius,
-                    child: Image.network(
-                      dummyImage,
-                      fit: BoxFit.fill,
+                InkWell(
+                  borderRadius: 50.borderRadius2,
+                  onTap: () {
+                    context.pushNamed(Routes.profile);
+                  },
+                  child: Ink(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.kWhite,
+                      borderRadius: 50.borderRadius,
+                      boxShadow: AppTheme.boxShadows,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: 50.borderRadius,
+                      child: Image.network(
+                        dummyImage,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
                 ),

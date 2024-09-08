@@ -10,6 +10,8 @@ abstract class AppColors {
   static const Color white = Colors.white;
   static const Color kSuccessGreen = Color(0xff0A7D00);
   static const Color kActiveBg = Color(0xffC9F1C9);
+    static const Color grey500 = Color(0xff6B7280);
+
   static const Color kSuccessGreenAccent = Color(0xffCAFFDC);
   static const Color blueColor = Color(0xff0B72E7);
   static const Color phoneBgColor = Color(0xffFFFFFF);
