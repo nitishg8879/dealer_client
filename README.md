@@ -14,4 +14,12 @@ filter
     1. Price Range -- done
 https://dribbble.com/shots/23613150-Filter-options
 
+
+if new user create necess field in user table
+user
+
+mapped user id in transaction table
+mapped user id in favourite table
+create user chat and do mapping of conversation
+
     
