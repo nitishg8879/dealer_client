@@ -1,3 +1,5 @@
+import 'package:bike_client_dealer/core/di/injector.dart';
+import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -20,8 +22,11 @@ class AuthDataSource {
   }
 
   Future<bool> logout() async {
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut();
+    await Future.wait([
+      FirebaseAuth.instance.signOut(),
+      GoogleSignIn().signOut(),
+      getIt<AppLocalService>().logout(),
+    ]);
     return true;
   }
 }

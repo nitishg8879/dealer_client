@@ -13,7 +13,20 @@
           "package_name": "com.bizboost.bike.client"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "71168357334-sb83ta3ekajdvjrt1mh3a16eklgm5ijj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bizboost.bike.client",
+            "certificate_hash": "f00fd3676f656298c005c8c07bf4adda0ed6fc95"
+          }
+        },
+        {
+          "client_id": "71168357334-jskle3f8q7dbuv5jj9t8iofe9he0m9hu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDZgR2iF_6K0dZ9A-mFMEwVB0ddSub9OrA"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71168357334-jskle3f8q7dbuv5jj9t8iofe9he0m9hu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

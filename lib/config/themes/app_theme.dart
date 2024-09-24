@@ -2,6 +2,7 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+export 'package:bike_client_dealer/core/util/app_extension.dart';
 
 class AppTheme {
   static String fontFamily = "Inter";

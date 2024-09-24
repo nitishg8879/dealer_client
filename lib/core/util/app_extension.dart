@@ -1,7 +1,6 @@
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension AppSizedBox on num {
   SizedBox get spaceW => SizedBox(width: toDouble());
@@ -34,6 +33,7 @@ extension AppDeviceSize on BuildContext {
 extension AppDateFormat on DateTime {
   String get dhhmma => DateFormat('d, hh:mm a').format(this);
   String get hhmma => DateFormat('hh:mm a').format(this);
+  String get ddMMYYYYHHMMSS => DateFormat('dd/MM/yyyy HH:mm:ss a').format(this);
 
   String get monthYear => DateFormat('MMMM  yyyy').format(this);
   String get dayWeekdayYear => DateFormat('d EEEE yyyy').format(this);

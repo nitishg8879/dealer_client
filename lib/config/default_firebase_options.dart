@@ -11,11 +11,6 @@ class DefaultFirebaseOptions {
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -40,6 +35,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '71168357334',//
     projectId: 'dealerclient-408b4',
     storageBucket: 'dealerclient-408b4.appspot.com',
+
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

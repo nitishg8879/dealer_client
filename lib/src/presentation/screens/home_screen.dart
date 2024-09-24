@@ -5,6 +5,7 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/category_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
@@ -86,9 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((frame) {
-      // getIt<HomeCubit>().getAllPost();
-    });
   }
 
   String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";

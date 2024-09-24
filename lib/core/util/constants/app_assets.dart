@@ -4,6 +4,7 @@ const String logosPath = 'assets/logos';
 const String iconsPath = "assets/icons";
 const String companyPath = "assets/company";
 const String dummyPath = "assets/dummy";
+const String pngPath = "assets/icons/png";
 
 class AppAssets {
   //? SVG
@@ -31,4 +32,5 @@ class AppAssets {
   //? PNG
   //? Company
   static const appLogo = "$companyPath/logo.png";
+  static const googlePNG = "$pngPath/google.png";
 }

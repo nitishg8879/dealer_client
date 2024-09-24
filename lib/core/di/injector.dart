@@ -5,7 +5,10 @@ import 'package:bike_client_dealer/src/data/repo_impl/auth_repo_impl.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/product_repo_impl.dart';
 import 'package:bike_client_dealer/src/domain/repositories/auth_repo.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/auth/login_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/auth/logout_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product_fetch_usecases.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,12 +20,13 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton(appLocalService);
   getIt.registerSingleton(AppFireBaseLoc());
 
-
   getIt.registerLazySingleton(() => AuthDataSource());
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(getIt.get()));
+  getIt.registerLazySingleton(() => LoginUsecase(getIt.get()));
+  getIt.registerLazySingleton(() => LogoutUsecase(getIt.get()));
+  getIt.registerLazySingleton<AuthCubit>(() => AuthCubit(getIt.get(), getIt.get()));
 
-  
   getIt.registerLazySingleton<ProductRepo>(() => ProductRepoImpl());
   getIt.registerLazySingleton<ProductFetchUsecases>(() => ProductFetchUsecases(getIt()));
-  getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt()));
+  // getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt()));
 }
