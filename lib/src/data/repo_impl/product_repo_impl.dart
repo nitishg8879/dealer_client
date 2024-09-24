@@ -1,18 +1,18 @@
-import 'package:bike_client_dealer/src/data/data_sources/product_firestore.dart';
-import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:bike_client_dealer/src/domain/entities/product_filter_req.dart';
+import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
+import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 
 class ProductRepoImpl implements ProductRepo {
-  ProductFireStore _productFireStore = ProductFireStore();
+  final ProductDataSource _productDataSource;
+  ProductRepoImpl(this._productDataSource);
   @override
-  Future<ProductModel> getProductDetails(int productID) {
-    // TODO: implement getProductDetails
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<ProductModel>> getProducts(ProductFilterReq req) {
-    return _productFireStore.getProducts(req);
+  Future<DataState<HomeAnalyticsDataModel?>> fetchHomeAnalyticsData() async {
+    final state = await _productDataSource.fetchHomeAnalyticsData();
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
   }
 }

@@ -73,7 +73,7 @@ class ProductView extends StatelessWidget {
         ),
         8.spaceH,
         Text(
-          "${product.year} | ${product.kmDriven} Km | ${product.ownerType}",
+          "${product.bikeBooked} | ${product.kmDriven} Km | ${product.owners}",
           style: context.textTheme.displayMedium?.copyWith(
             fontSize: 12,
             color: AppColors.kCardGrey400,
@@ -117,7 +117,7 @@ class ProductView extends StatelessWidget {
               ),
               6.spaceH,
               Text(
-                "${product.year}  |  ${product.kmDriven} Km  |  ${product.ownerType}",
+                "${product.bikeBuyDate}  |  ${product.kmDriven} Km  |  ${product.owners}",
                 style: context.textTheme.displayMedium?.copyWith(
                   fontSize: 12,
                   color: AppColors.kCardGrey400,
@@ -132,7 +132,7 @@ class ProductView extends StatelessWidget {
                   ),
                   5.spaceW,
                   Text(
-                    product.branch ?? '',
+                    product.company ?? '',
                     style: context.textTheme.displayMedium?.copyWith(
                       fontSize: 12,
                       color: AppColors.kCardGrey400,

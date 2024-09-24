@@ -45,10 +45,10 @@ class _ChatScreenState extends State<ChatScreen> {
     ],
     kmDriven: 2000,
     name: "KTM 200 Duke 1",
-    ownerType: "1st Owner",
-    price: 75000,
-    year: 2023,
-    branch: "Andheri,Mumbai",
+    // ownerType: "1st Owner",
+    // price: 75000,
+    // year: 2023,
+    // branch: "Andheri,Mumbai",
   );
 
   @override
