@@ -1,14 +1,13 @@
-import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
-import 'package:bike_client_dealer/src/data/model/category_model.dart';
-import 'package:figma_squircle/figma_squircle.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CategoryView extends StatelessWidget {
-  final CategoryModel category;
+  final String image, name;
   const CategoryView({
     super.key,
-    required this.category,
+    required this.image,
+    required this.name,
   });
 
   @override
@@ -22,15 +21,18 @@ class CategoryView extends StatelessWidget {
             height: 73,
             child: ClipRRect(
               borderRadius: 16.borderRadius,
-              child: Image.network(
-                category.url ?? '-',
+              child: CachedNetworkImage(
+                imageUrl: image,
+                errorWidget: (context, url, error) {
+                  return const Center(child: Icon(Icons.error));
+                },
               ),
             ),
           ),
         ),
         4.spaceH,
         Text(
-          category.name ?? '-',
+          name,
           style: context.textTheme.displayMedium?.copyWith(
             fontSize: 12,
           ),

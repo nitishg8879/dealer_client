@@ -4,8 +4,10 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductView extends StatelessWidget {
   final ProductModel product;
@@ -24,7 +26,6 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(fromChatPin);
     return OutlinedButton(
       onPressed: () {
         context.push(Routes.productDetails, extra: product);
@@ -45,11 +46,17 @@ class ProductView extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: 10.borderRadius,
-          child: Image.network(
-            product.images!.first,
+          child: CachedNetworkImage(
+            imageUrl:
+                product.images != null && (product.images?.isNotEmpty ?? false)
+                    ? product.images!.first
+                    : '',
             width: double.infinity,
             height: 93,
             fit: BoxFit.cover,
+            errorWidget: (context, url, error) {
+              return const Center(child: Icon(Icons.error));
+            },
           ),
         ),
         8.spaceH,
@@ -62,18 +69,20 @@ class ProductView extends StatelessWidget {
                 maxLines: 1,
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: const CustomSvgIcon(
-                assetName: AppAssets.fav,
-                size: 14,
+            Skeleton.ignore(
+              child: InkWell(
+                onTap: () {},
+                child: const CustomSvgIcon(
+                  assetName: AppAssets.fav,
+                  size: 14,
+                ),
               ),
             )
           ],
         ),
         8.spaceH,
         Text(
-          "${product.bikeBooked} | ${product.kmDriven} Km | ${product.owners}",
+          "${product.bikeBuyDate?.toDate().dhhmma} | ${product.kmDriven} Km | ${product.owners}",
           style: context.textTheme.displayMedium?.copyWith(
             fontSize: 12,
             color: AppColors.kCardGrey400,
@@ -96,11 +105,17 @@ class ProductView extends StatelessWidget {
         Expanded(
           child: ClipRRect(
             borderRadius: 10.borderRadius,
-            child: Image.network(
-              product.images!.first,
+            child: CachedNetworkImage(
               width: 100,
               height: 93,
               fit: BoxFit.cover,
+              errorWidget: (context, url, error) {
+                return const Center(child: Icon(Icons.error));
+              },
+              imageUrl: product.images != null &&
+                      (product.images?.isNotEmpty ?? false)
+                  ? product.images!.first
+                  : '',
             ),
           ),
         ),
@@ -112,12 +127,12 @@ class ProductView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                product.name ?? '-',
+                product.name ?? '   -    ',
                 style: context.textTheme.labelSmall,
               ),
               6.spaceH,
               Text(
-                "${product.bikeBuyDate}  |  ${product.kmDriven} Km  |  ${product.owners}",
+                "${product.bikeBuyDate?.toDate().dhhmma} | ${product.kmDriven} Km | ${product.owners}",
                 style: context.textTheme.displayMedium?.copyWith(
                   fontSize: 12,
                   color: AppColors.kCardGrey400,

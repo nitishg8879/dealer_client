@@ -1,6 +1,9 @@
+import 'package:bike_client_dealer/src/data/model/company_model.dart';
+
 class HomeAnalyticsDataModel {
   List<Carsouel>? carsouel;
   List<HomeProducts>? products;
+  List<CompanyModel>? company;
 
   HomeAnalyticsDataModel({this.carsouel, this.products});
 

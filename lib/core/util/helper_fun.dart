@@ -1,11 +1,22 @@
+import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:open_file/open_file.dart' as open;
 
 class HelperFun {
-  static List<String> imageAllowed = ["JPEG", "WEBP", "GIF", "GIF", "PNG", "BMP", "WBMP", "JPG"];
+  static List<String> imageAllowed = [
+    "JPEG",
+    "WEBP",
+    "GIF",
+    "GIF",
+    "PNG",
+    "BMP",
+    "WBMP",
+    "JPG"
+  ];
   static Future<FilePickerResult?> pickFile({
     List<String>? allowedExtensions,
   }) async {
@@ -28,9 +39,23 @@ class HelperFun {
     // }
   }
 
-  static void showSuccessSnack(String message, BuildContext context) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
+  static void goBack({int round = 1}) {
+    for (var i = 0; i < round; i++) {
+      AppRoutes.rootNavigatorKey.currentContext?.pop();
+    }
+  }
+
+  static void goNextPage(String routeName) {
+    AppRoutes.rootNavigatorKey.currentContext?.goNamed(
+      routeName,
+    );
+  }
+
+  static void showSuccessSnack(String message) {
+    ScaffoldMessenger.of(AppRoutes.rootNavigatorKey.currentContext!)
+        .clearSnackBars();
+    ScaffoldMessenger.of(AppRoutes.rootNavigatorKey.currentContext!)
+        .showSnackBar(
       SnackBar(
         content: Text(
           message,
@@ -43,14 +68,17 @@ class HelperFun {
         closeIconColor: AppColors.kWhite,
         backgroundColor: AppColors.kGreen700,
         showCloseIcon: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
       ),
     );
   }
 
-  static void showErrorSnack(String message, BuildContext context) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
+  static void showErrorSnack(String message) {
+    ScaffoldMessenger.of(AppRoutes.rootNavigatorKey.currentContext!)
+        .clearSnackBars();
+    ScaffoldMessenger.of(AppRoutes.rootNavigatorKey.currentContext!)
+        .showSnackBar(
       SnackBar(
         content: Text(
           message,
@@ -63,7 +91,8 @@ class HelperFun {
         closeIconColor: AppColors.kWhite,
         backgroundColor: AppColors.kRed,
         showCloseIcon: true,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
       ),
     );
   }

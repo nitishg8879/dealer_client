@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/config/themes/app_theme.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
@@ -7,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthPopupViewDialogShow {
-  static show(BuildContext context) {
+  static show({void Function()? tap}) {
     showModalBottomSheet(
-      context: context,
+      context: AppRoutes.rootNavigatorKey.currentContext!,
       isDismissible: true,
       showDragHandle: true,
       backgroundColor: AppColors.kCommonGrey,
@@ -19,22 +20,21 @@ class AuthPopupViewDialogShow {
         ),
       ),
       builder: (context) {
-        return const AuthPopupView();
+        return AuthPopupView(tap: tap);
       },
     );
   }
 }
 
 class AuthPopupView extends StatelessWidget {
-  const AuthPopupView({super.key});
+  final void Function()? tap;
+  const AuthPopupView({super.key, this.tap});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
       bloc: getIt.get<AuthCubit>(),
       builder: (context, state) {
-        print(state);
-        print("Building AuthPopupView");
         final isLoading = (state is AuthProcessing && state.isLoading);
         return SizedBox(
           height: 100,
@@ -45,12 +45,15 @@ class AuthPopupView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: isLoading ? null : getIt.get<AuthCubit>().login,
+                  onPressed: isLoading
+                      ? null
+                      : () => getIt.get<AuthCubit>().login(ontap: tap),
                   style: ElevatedButton.styleFrom(
                     textStyle: context.textTheme.bodyMedium,
                     backgroundColor: AppColors.kWhite,
                     elevation: 3,
-                    shape: RoundedRectangleBorder(borderRadius: 12.borderRadius),
+                    shape:
+                        RoundedRectangleBorder(borderRadius: 12.borderRadius),
                     foregroundColor: AppColors.black,
                   ),
                   child: isLoading

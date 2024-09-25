@@ -6,7 +6,6 @@ import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
-import 'package:bike_client_dealer/src/data/model/category_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
@@ -17,6 +16,7 @@ import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: kDebugMode
+          ? FloatingActionButton(onPressed: () {
+              homeBloc.fetchHomeAnalyticsData();
+            })
+          : null,
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           bloc: homeBloc,
@@ -60,15 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 errorMsg: state.error,
               );
             }
-            // if (state is HomeLoading || state is HomeLoaded) {}
             return Skeletonizer(
               enabled: state is HomeLoading,
-              // enabled: true,
               enableSwitchAnimation: true,
               effect: const ShimmerEffect(baseColor: AppColors.kPurple60),
-              child: _buildBody(context, state is HomeLoaded ? state.data : null),
+              child:
+                  _buildBody(context, state is HomeLoaded ? state.data : null),
             );
-            // return SizedBox();
           },
         ),
       ),
@@ -80,15 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
       controller: scrollController,
       children: [
         16.spaceH,
+        //? Profile,Notification,Search Icons
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               InkWell(
                 borderRadius: 50.borderRadius2,
-                onTap: () {
-                  context.pushNamed(Routes.profile);
-                },
+                onTap: homeBloc.onProfileTap,
                 child: Ink(
                   width: 38,
                   height: 38,
@@ -101,7 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: 50.borderRadius,
                     child: CachedNetworkImage(
                       fit: BoxFit.fill,
-                      imageUrl: getIt.get<AppLocalService>().currentUser?.profileUrl ?? '-',
+                      imageUrl: getIt
+                              .get<AppLocalService>()
+                              .currentUser
+                              ?.profileUrl ??
+                          '-',
                       width: 38,
                       height: 38,
                       errorWidget: (context, url, error) {
@@ -135,86 +141,142 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         16.spaceH,
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: context.height * .3,
-            maxWidth: double.infinity,
-          ),
-          child: CarouselView(
-            backgroundColor: AppColors.kPurple60,
-            itemExtent: context.width * .9,
-            shrinkExtent: 200,
-            shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(36)),
-            itemSnapping: true,
-            elevation: 2,
-            children: List.generate(
-              data?.carsouel?.length ?? 0,
-              (i) => CachedNetworkImage(
-                imageUrl: data?.carsouel?[i].image ?? '-',
-                fit: BoxFit.cover,
+        //? Carsoule Slider
+        Skeleton.replace(
+          width: double.infinity,
+          height: context.height * .3,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: context.height * .3,
+              maxWidth: double.infinity,
+            ),
+            child: CarouselView(
+              backgroundColor: AppColors.kPurple60,
+              itemExtent: context.width * .9,
+              shrinkExtent: 200,
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(36)),
+              itemSnapping: true,
+              elevation: 2,
+              children: List.generate(
+                data?.carsouel?.length ?? 0,
+                (i) => CachedNetworkImage(
+                  imageUrl: data?.carsouel?[i].image ?? '-',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
         ),
-
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 16),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Text(
-        //         "Category",
-        //         style: context.textTheme.labelLarge,
-        //       ),
-        //       Row(
-        //         children: [
-        //           Text(
-        //             "View All",
-        //             style: context.textTheme.displaySmall?.copyWith(
-        //               color: AppColors.kFoundatiionPurple800,
-        //             ),
-        //           ),
-        //           4.spaceW,
-        //           const Icon(
-        //             Icons.arrow_forward_ios_rounded,
-        //             size: 14,
-        //             color: AppColors.kFoundatiionPurple800,
-        //           )
-        //         ],
-        //       )
-        //     ],
-        //   ),
-        // ),
-        // 8.spaceH,
-        // SizedBox(
-        //   height: 100,
-        //   child: ListView.separated(
-        //     itemCount: category.length,
-        //     itemBuilder: (context, index) {
-        //       return Padding(
-        //         padding: const EdgeInsets.all(2.0),
-        //         child: CategoryView(
-        //           category: category[index],
-        //         ),
-        //       );
-        //     },
-        //     scrollDirection: Axis.horizontal,
-        //     separatorBuilder: (BuildContext context, int index) {
-        //       return 16.spaceW;
-        //     },
-        //   ),
-        // ),
-
-        Column(
-          children: List.generate(
-            data?.products?.length ?? 0,
-            (i) => ProductCategoryGridView(
-              homeProducts: data!.products![i],
-              scrollController: scrollController,
+        //? Products
+        Skeleton.replace(
+          replacement: ProductCategoryGridView(
+            homeProducts: HomeProducts.fromJson({}),
+            scrollController: scrollController,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              data?.products?.length ?? 0,
+              (i) => ProductCategoryGridView(
+                homeProducts: data!.products![i],
+                scrollController: scrollController,
+              ),
             ),
           ),
-        )
+        ),
+        //? Company
+        16.spaceH,
+        CategoryTileView(data: data, scrollController: scrollController),
+        34.spaceH,
       ],
+    );
+  }
+}
+
+class CategoryTileView extends StatelessWidget {
+  final HomeAnalyticsDataModel? data;
+  final ScrollController scrollController;
+
+  const CategoryTileView({
+    super.key,
+    required this.data,
+    required this.scrollController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Company",
+                style: context.textTheme.labelLarge,
+              ),
+              Row(
+                children: [
+                  Text(
+                    "View All",
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: AppColors.kFoundatiionPurple800,
+                    ),
+                  ),
+                  4.spaceW,
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: AppColors.kFoundatiionPurple800,
+                  )
+                ],
+              )
+            ],
+          ),
+          8.spaceH,
+          SizedBox(
+            height: 100,
+            child: Skeleton.replace(
+              replace: true,
+              replacement: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(
+                    7,
+                    (i) => const Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: CategoryView(
+                        image: '-',
+                        name: '-',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              child: ListView.separated(
+                itemCount: data?.company?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return Skeleton.leaf(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: CategoryView(
+                        image: data?.company?[index].image ?? '-',
+                        name: data?.company?[index].name ?? '-',
+                      ),
+                    ),
+                  );
+                },
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) {
+                  return 16.spaceW;
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -222,7 +284,11 @@ class _HomeScreenState extends State<HomeScreen> {
 class ProductCategoryGridView extends StatelessWidget {
   final HomeProducts homeProducts;
   final ScrollController scrollController;
-  const ProductCategoryGridView({super.key, required this.homeProducts, required this.scrollController});
+  const ProductCategoryGridView({
+    super.key,
+    required this.homeProducts,
+    required this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +301,7 @@ class ProductCategoryGridView extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  homeProducts.label ?? '-',
+                  homeProducts.label ?? '   -     ',
                   style: context.textTheme.labelLarge,
                 ),
               ),
@@ -267,29 +333,55 @@ class ProductCategoryGridView extends StatelessWidget {
             ],
           ),
           8.spaceH,
-          GridView.builder(
-            shrinkWrap: true,
-            controller: scrollController,
-            itemBuilder: (context, index) {
-              return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                future: getIt.get<AppFireBaseLoc>().product.doc(homeProducts.products?[index]).get(),
-                builder: (context, snapshot) {
-                  return Skeletonizer(
-                    enabled: snapshot.connectionState == ConnectionState.waiting,
-                    child: ProductView(
-                      product: ProductModel.fromJson(snapshot.data?.data() ?? {}),
-                      row: false,
-                    ),
-                  );
-                },
-              );
-            },
-            itemCount: homeProducts.products?.length ?? 0,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
-              childAspectRatio: 1,
+          Skeleton.replace(
+            replace: true,
+            replacement: GridView.builder(
+              shrinkWrap: true,
+              controller: scrollController,
+              itemBuilder: (context, index) {
+                return ProductView(
+                  product: ProductModel.fromJson({}),
+                  row: false,
+                );
+              },
+              itemCount: 2,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 1,
+              ),
+            ),
+            child: GridView.builder(
+              shrinkWrap: true,
+              controller: scrollController,
+              itemBuilder: (context, index) {
+                return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  future: getIt
+                      .get<AppFireBaseLoc>()
+                      .product
+                      .doc(homeProducts.products?[index])
+                      .get(),
+                  builder: (context, snapshot) {
+                    return Skeletonizer(
+                      enabled:
+                          snapshot.connectionState == ConnectionState.waiting,
+                      child: ProductView(
+                        product:
+                            ProductModel.fromJson(snapshot.data?.data() ?? {}),
+                        row: false,
+                      ),
+                    );
+                  },
+                );
+              },
+              itemCount: homeProducts.products?.length ?? 0,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                childAspectRatio: 1,
+              ),
             ),
           ),
           16.spaceH

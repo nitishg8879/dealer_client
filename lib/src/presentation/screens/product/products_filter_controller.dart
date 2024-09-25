@@ -1,4 +1,4 @@
-import 'package:bike_client_dealer/src/data/model/category_model.dart';
+import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:flutter/material.dart' show RangeValues, TextEditingController;
 
 class ProductsFilterController {
