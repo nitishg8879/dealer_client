@@ -1,6 +1,7 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
+import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 
@@ -23,6 +24,24 @@ class ProductDataSource {
     }
   }
 
+  Future<DataState<List<CategoryModel>?>> fetchCategory() async {
+    try {
+      final resp = await getIt
+          .get<AppFireBaseLoc>()
+          .categories
+          .get()
+          .catchError((e) => throw e);
+      if (resp.docs.isNotEmpty) {
+        return DataSuccess(resp.docs
+            .map((e) => CategoryModel.fromJson(e.data())..id = e.id)
+            .toList());
+      } else {
+        throw Exception("Category not found");
+      }
+    } catch (e) {
+      return DataFailed(null, 500, e.toString());
+    }
+  }
   Future<DataState<List<CompanyModel>?>> fetchCompany() async {
     try {
       final resp = await getIt

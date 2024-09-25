@@ -70,8 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: state is HomeLoading,
               enableSwitchAnimation: true,
               effect: const ShimmerEffect(baseColor: AppColors.kPurple60),
-              child:
-                  _buildBody(context, state is HomeLoaded ? state.data : null),
+              child: _buildBody(context, state is HomeLoaded ? state.data : null),
             );
           },
         ),
@@ -93,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
               BlocBuilder<AuthCubit, AuthState>(
                 bloc: getIt.get<AuthCubit>(),
                 builder: (context, state) {
-                  print("buidling profile ${getIt.get<AppLocalService>().isLoggedIn}");
                   return InkWell(
                     borderRadius: 50.borderRadius2,
                     onTap: homeBloc.onProfileTap,
@@ -109,13 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: 50.borderRadius,
                         child: CachedNetworkImage(
                           fit: BoxFit.fill,
-                          imageUrl: getIt.get<AppLocalService>().isLoggedIn
-                              ? (getIt
-                                      .get<AppLocalService>()
-                                      .currentUser
-                                      ?.profileUrl ??
-                                  '-')
-                              : "-",
+                          imageUrl: getIt.get<AppLocalService>().isLoggedIn ? (getIt.get<AppLocalService>().currentUser?.profileUrl ?? '-') : "-",
                           width: 38,
                           height: 38,
                           errorWidget: (context, url, error) {
@@ -164,8 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: AppColors.kPurple60,
               itemExtent: context.width * .9,
               shrinkExtent: 200,
-              shape: ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.circular(36)),
+              shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(36)),
               itemSnapping: true,
               elevation: 2,
               children: List.generate(
@@ -195,20 +186,23 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        //? Company
+        //? Category
         16.spaceH,
         CategoryTileView(data: data, scrollController: scrollController),
+        //? Company
+        16.spaceH,
+        CompanyTileView(data: data, scrollController: scrollController),
         34.spaceH,
       ],
     );
   }
 }
 
-class CategoryTileView extends StatelessWidget {
+class CompanyTileView extends StatelessWidget {
   final HomeAnalyticsDataModel? data;
   final ScrollController scrollController;
 
-  const CategoryTileView({
+  const CompanyTileView({
     super.key,
     required this.data,
     required this.scrollController,
@@ -274,6 +268,93 @@ class CategoryTileView extends StatelessWidget {
                       child: CategoryView(
                         image: data?.company?[index].image ?? '-',
                         name: data?.company?[index].name ?? '-',
+                      ),
+                    ),
+                  );
+                },
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) {
+                  return 16.spaceW;
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoryTileView extends StatelessWidget {
+  final HomeAnalyticsDataModel? data;
+  final ScrollController scrollController;
+
+  const CategoryTileView({
+    super.key,
+    required this.data,
+    required this.scrollController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Category",
+                style: context.textTheme.labelLarge,
+              ),
+              Row(
+                children: [
+                  Text(
+                    "View All",
+                    style: context.textTheme.displaySmall?.copyWith(
+                      color: AppColors.kFoundatiionPurple800,
+                    ),
+                  ),
+                  4.spaceW,
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: AppColors.kFoundatiionPurple800,
+                  )
+                ],
+              )
+            ],
+          ),
+          8.spaceH,
+          SizedBox(
+            height: 100,
+            child: Skeleton.replace(
+              replace: true,
+              replacement: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(
+                    7,
+                    (i) => const Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: CategoryView(
+                        image: '-',
+                        name: '-',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              child: ListView.separated(
+                itemCount: data?.category?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return Skeleton.leaf(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: CategoryView(
+                        image: data?.category?[index].image ?? '-',
+                        name: data?.category?[index].name ?? '-',
                       ),
                     ),
                   );
@@ -367,18 +448,12 @@ class ProductCategoryGridView extends StatelessWidget {
               controller: scrollController,
               itemBuilder: (context, index) {
                 return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                  future: getIt
-                      .get<AppFireBaseLoc>()
-                      .product
-                      .doc(homeProducts.products?[index])
-                      .get(),
+                  future: getIt.get<AppFireBaseLoc>().product.doc(homeProducts.products?[index]).get(),
                   builder: (context, snapshot) {
                     return Skeletonizer(
-                      enabled:
-                          snapshot.connectionState == ConnectionState.waiting,
+                      enabled: snapshot.connectionState == ConnectionState.waiting,
                       child: ProductView(
-                        product:
-                            ProductModel.fromJson(snapshot.data?.data() ?? {}),
+                        product: ProductModel.fromJson(snapshot.data?.data() ?? {}),
                         row: false,
                       ),
                     );

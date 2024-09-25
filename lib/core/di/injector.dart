@@ -8,6 +8,7 @@ import 'package:bike_client_dealer/src/domain/repositories/auth_repo.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/auth/login_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/auth/logout_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/product/category_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/company_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
@@ -36,5 +37,6 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<ProductRepo>(() => ProductRepoImpl(getIt.get()));
   getIt.registerLazySingleton(() => HomeAnalyticsFetchUsecases(getIt.get()));
   getIt.registerLazySingleton(() => CompanyFetchUsecase(getIt.get()));
-  getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt.get(), getIt.get()));
+  getIt.registerLazySingleton(() => CategoryFetchUsecase(getIt.get()));
+  getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt.get(), getIt.get(),getIt.get()));
 }
