@@ -1,6 +1,9 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_tile_section.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +17,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String dummyImage = "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
+  String dummyImage =
+      "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
 
   final boxShadow = [
     BoxShadow(
@@ -135,7 +139,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           24.spaceH,
           OutlinedButton(
-            onPressed: () {},
+            onPressed: () async {
+              await getIt.get<AuthCubit>().logout();
+              HelperFun.goBack();
+            },
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: AppColors.kRed, width: 1),
               fixedSize: const Size(double.infinity, 42),

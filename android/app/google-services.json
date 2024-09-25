@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "71168357334-sb83ta3ekajdvjrt1mh3a16eklgm5ijj.apps.googleusercontent.com",
+          "client_id": "71168357334-oi912ui4n921him0u6hn0pdsjrgmge7g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bizboost.bike.client",
-            "certificate_hash": "f00fd3676f656298c005c8c07bf4adda0ed6fc95"
+            "certificate_hash": "d19b8718f64a2e88a1d658e5d8f803c0fb3b9191"
           }
         },
         {

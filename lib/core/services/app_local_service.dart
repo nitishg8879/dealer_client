@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bike_client_dealer/src/data/model/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
@@ -17,21 +18,31 @@ class AppLocalService {
     if (encodedjsnData != null) {
       final decodedjson = await jsonDecode(encodedjsnData);
       if (decodedjson['creationDate'] != null) {
-        decodedjson['creationDate'] = Timestamp.fromDate(DateFormat("dd/MM/yyyy HH:mm:ss a").parse(decodedjson['creationDate']));
+        decodedjson['creationDate'] = Timestamp.fromDate(
+            DateFormat("dd/MM/yyyy HH:mm:ss a")
+                .parse(decodedjson['creationDate']));
       }
       currentUser = UserModel.fromJson(decodedjson);
-      print(currentUser?.toJson());
+      if (kDebugMode) {
+        print(currentUser?.toJson());
+      }
       currentUser?.user = FirebaseAuth.instance.currentUser;
-      isLoggedIn = true;
+    } else {
+      currentUser = null;
     }
+
+    isLoggedIn = currentUser != null;
   }
 
   Future<void> login(UserModel newUser) async {
-    await _secureStorage.write(key: _currentUserKey, value: jsonEncode(newUser.toJson(fromSave: false)));
+    await _secureStorage.write(
+        key: _currentUserKey,
+        value: jsonEncode(newUser.toJson(fromSave: false)));
     await init();
   }
 
   Future<void> logout() async {
+    _secureStorage.delete(key: _currentUserKey);
     await _secureStorage.deleteAll();
     await init();
   }

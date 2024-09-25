@@ -25,7 +25,16 @@ class AuthCubit extends Cubit<AuthState> {
       if (ontap != null) {
         ontap();
       }
+    } else {
+      HelperFun.showErrorSnack(
+        resp.message ?? "Something went wrong!",
+      );
     }
+    emit(AuthProcessing(false));
+  }
+
+  Future<void> logout({void Function()? ontap}) async {
+    final resp = await _logoutUsecase.call();
     emit(AuthProcessing(false));
   }
 }

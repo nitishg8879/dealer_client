@@ -8,6 +8,7 @@ import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
@@ -81,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ListView _buildBody(BuildContext context, HomeAnalyticsDataModel? data) {
     return ListView(
       controller: scrollController,
+      physics: const BouncingScrollPhysics(),
       children: [
         16.spaceH,
         //? Profile,Notification,Search Icons
@@ -88,36 +90,44 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              InkWell(
-                borderRadius: 50.borderRadius2,
-                onTap: homeBloc.onProfileTap,
-                child: Ink(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: AppColors.kWhite,
-                    borderRadius: 50.borderRadius,
-                    boxShadow: AppTheme.boxShadows,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: 50.borderRadius,
-                    child: CachedNetworkImage(
-                      fit: BoxFit.fill,
-                      imageUrl: getIt
-                              .get<AppLocalService>()
-                              .currentUser
-                              ?.profileUrl ??
-                          '-',
+              BlocBuilder<AuthCubit, AuthState>(
+                bloc: getIt.get<AuthCubit>(),
+                builder: (context, state) {
+                  print("buidling profile ${getIt.get<AppLocalService>().isLoggedIn}");
+                  return InkWell(
+                    borderRadius: 50.borderRadius2,
+                    onTap: homeBloc.onProfileTap,
+                    child: Ink(
                       width: 38,
                       height: 38,
-                      errorWidget: (context, url, error) {
-                        return const Icon(
-                          Icons.person,
-                        );
-                      },
+                      decoration: BoxDecoration(
+                        color: AppColors.kWhite,
+                        borderRadius: 50.borderRadius,
+                        boxShadow: AppTheme.boxShadows,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: 50.borderRadius,
+                        child: CachedNetworkImage(
+                          fit: BoxFit.fill,
+                          imageUrl: getIt.get<AppLocalService>().isLoggedIn
+                              ? (getIt
+                                      .get<AppLocalService>()
+                                      .currentUser
+                                      ?.profileUrl ??
+                                  '-')
+                              : "-",
+                          width: 38,
+                          height: 38,
+                          errorWidget: (context, url, error) {
+                            return const Icon(
+                              Icons.person,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
               const Spacer(),
               OutlinedButton(
