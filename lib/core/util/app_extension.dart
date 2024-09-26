@@ -36,6 +36,7 @@ extension AppDateFormat on DateTime {
   String get ddMMYYYYHHMMSS => DateFormat('dd/MM/yyyy HH:mm:ss a').format(this);
 
   String get monthYear => DateFormat('MMMM  yyyy').format(this);
+  String get mmyy => DateFormat('MMM yy').format(this);
   String get dayWeekdayYear => DateFormat('d EEEE yyyy').format(this);
   String get appweekday => DateFormat('EEE').format(this);
   String get appDay => DateFormat('dd').format(this);

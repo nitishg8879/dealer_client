@@ -1,9 +1,11 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ProductFilterView extends StatefulWidget {
@@ -38,12 +40,64 @@ class _ProductFilterViewState extends State<ProductFilterView> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               _buildFilterView(scrollController, context),
-              _buildBrandList(scrollController, context),
               _buildCategoryList(scrollController, context),
+              _buildBrandList(scrollController, context),
+              _buildModelList(scrollController, context),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildModelList(
+      ScrollController scrollController, BuildContext context) {
+    return Column(
+      // controller: scrollController,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  pageController.jumpToPage(0);
+                  // pageController.animateToPage(0,
+                  //     duration: const Duration(milliseconds: 500),
+                  //     curve: Curves.easeIn);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20,
+                ),
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints.expand(width: 24, height: 24),
+              ),
+              8.spaceW,
+              const Expanded(
+                child: AppTextField(
+                  hintText: "Search Category",
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 100,
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return CheckboxListTile(
+                value: true,
+                title: Text("Category $index"),
+                onChanged: (value) {},
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -59,9 +113,10 @@ class _ProductFilterViewState extends State<ProductFilterView> {
             children: [
               IconButton(
                 onPressed: () {
-                  pageController.animateToPage(0,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeIn);
+                  pageController.jumpToPage(0);
+                  // pageController.jumpToPage(0,
+                  //     duration: const Duration(milliseconds: 500),
+                  //     curve: Curves.easeIn);
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios_new_rounded,
@@ -109,9 +164,7 @@ class _ProductFilterViewState extends State<ProductFilterView> {
             children: [
               IconButton(
                 onPressed: () {
-                  pageController.animateToPage(0,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeIn);
+                  pageController.jumpToPage(0);
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios_new_rounded,
@@ -130,15 +183,20 @@ class _ProductFilterViewState extends State<ProductFilterView> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: 100,
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            itemBuilder: (BuildContext context, int index) {
-              return CheckboxListTile(
-                value: true,
-                title: Text("Category $index"),
-                onChanged: (value) {},
+          child: BlocBuilder<HomeCubit, HomeState>(
+            bloc: getIt.get<HomeCubit>(),
+            builder: (context, state) {
+              return ListView.builder(
+                controller: scrollController,
+                itemCount: 100,
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                itemBuilder: (BuildContext context, int index) {
+                  return CheckboxListTile(
+                    value: true,
+                    title: Text("Category $index"),
+                    onChanged: (value) {},
+                  );
+                },
               );
             },
           ),
@@ -171,18 +229,10 @@ class _ProductFilterViewState extends State<ProductFilterView> {
         ProductFilterTile(
           items: [
             ProductFilterTileModel(
-              "Brands",
-              () {
-                pageController.animateToPage(1,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeIn);
-              },
-            ),
-            ProductFilterTileModel("Category", () {
-              pageController.animateToPage(2,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeIn);
-            }),
+                "Category", () => pageController.jumpToPage(1)),
+            ProductFilterTileModel(
+                "Brands", () => pageController.jumpToPage(2)),
+            ProductFilterTileModel("Model", () => pageController.jumpToPage(2)),
           ],
           scrollController: scrollController,
         ),
@@ -483,13 +533,4 @@ class ProductFilterTileModel {
   String label;
   void Function() onTap;
   ProductFilterTileModel(this.label, this.onTap);
-}
-
-class AppCheckBoxListTile extends StatelessWidget {
-  const AppCheckBoxListTile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
 }

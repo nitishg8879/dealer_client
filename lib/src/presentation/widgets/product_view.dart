@@ -33,7 +33,7 @@ class ProductView extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: Padding(
-          padding: EdgeInsets.all(row ? 10 : 4.0),
+          padding: EdgeInsets.all(row ? 10 : 0.0),
           child: row ? rowWise(context) : columnWise(context),
         ),
       ),
@@ -44,6 +44,7 @@ class ProductView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        8.spaceH,
         ClipRRect(
           borderRadius: 10.borderRadius,
           child: CachedNetworkImage(
@@ -81,13 +82,61 @@ class ProductView extends StatelessWidget {
           ],
         ),
         8.spaceH,
-        Text(
-          "${product.bikeBuyDate?.toDate().dhhmma} | ${product.kmDriven} Km | ${product.owners}",
-          style: context.textTheme.displayMedium?.copyWith(
-            fontSize: 12,
-            color: AppColors.kCardGrey400,
-          ),
-          maxLines: 1,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //? Model
+            Row(
+              children: [
+                CustomSvgIcon(
+                  assetName: AppAssets.calender,
+                  color: AppColors.kFoundationPurple700.withOpacity(.8),
+                  size: 14,
+                ),
+                3.spaceW,
+                Text(
+                  product.bikeBuyDate?.toDate().mmyy ?? '-',
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: AppColors.kBlack900.withOpacity(.8),
+                  ),
+                ),
+              ],
+            ),
+            //? Owners
+            Row(
+              children: [
+                CustomSvgIcon(
+                  assetName: AppAssets.users,
+                  color: AppColors.kFoundationPurple700.withOpacity(.8),
+                  size: 14,
+                ),
+                3.spaceW,
+                Text(
+                  "${product.owners ?? '-'}",
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: AppColors.kBlack900.withOpacity(.8),
+                  ),
+                ),
+              ],
+            ),
+            // //? KM Driven
+            Row(
+              children: [
+                CustomSvgIcon(
+                  assetName: AppAssets.distance,
+                  color: AppColors.kFoundationPurple700.withOpacity(.8),
+                  size: 14,
+                ),
+                3.spaceW,
+                Text(
+                  product.kmDriven.readableNumber,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: AppColors.kBlack900.withOpacity(.8),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         6.spaceH,
         Text(

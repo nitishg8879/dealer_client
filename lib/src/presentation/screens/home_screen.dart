@@ -398,7 +398,7 @@ class ProductCategoryGridView extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  // context.goNamed(Routes.allProduct);
+                  context.goNamed(Routes.allProduct);
                 },
                 borderRadius: 4.borderRadius2,
                 child: Padding(

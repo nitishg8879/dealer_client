@@ -9,7 +9,6 @@ import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class AllProductScreen extends StatefulWidget {
@@ -29,35 +28,18 @@ class _AllProductScreenState extends State<AllProductScreen> {
     yearMinMaxSelected: const RangeValues(0, 20),
     gridViewtype: true,
   );
-  final products = <ProductModel>[
-    ProductModel(
-      images: [
-        'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize'
-      ],
-      kmDriven: 2000,
-      name: "KTM 200 Duke",
-      // ownerType: "1st Owner",
-      // price: 75000,
-      // year: 2023,
-      // branch: "Andheri,Mumbai",
-    ),
-  ];
   void showFilterPopUp() {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: 16.smoothRadius),
-      ),
+          borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
       showDragHandle: true,
       enableDrag: true,
       isScrollControlled: true,
-      builder: (context) {
-        return ProductFilterView(controller: productFilterController);
-      },
-    ).whenComplete(() {
-      setState(() {});
-    });
+      builder: (context) =>
+          ProductFilterView(controller: productFilterController),
+    ).whenComplete(() => setState(() {}));
   }
 
   @override
@@ -103,42 +85,42 @@ class _AllProductScreenState extends State<AllProductScreen> {
           16.spaceW,
         ],
       ),
-      body: Visibility(
-        visible: productFilterController.gridViewtype,
-        replacement: GridView.builder(
-          shrinkWrap: true,
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
-          itemBuilder: (context, index) {
-            return ProductView(product: products[index], row: false);
-          },
-          itemCount: products.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 8.0,
-            childAspectRatio: 1,
-          ),
-        ),
-        child: ListView.separated(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: ProductView(
-                  product: products[index],
-                  row: true,
-                ),
-              );
-            }
-            return ProductView(product: products[index]);
-          },
-          separatorBuilder: (context, index) {
-            return 10.spaceH;
-          },
-          itemCount: products.length,
-        ),
-      ),
+      // body: Visibility(
+      //   visible: productFilterController.gridViewtype,
+      //   replacement: GridView.builder(
+      //     shrinkWrap: true,
+      //     padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
+      //     itemBuilder: (context, index) {
+      //       return ProductView(product: products[index], row: false);
+      //     },
+      //     itemCount: products.length,
+      //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      //       crossAxisCount: 2,
+      //       mainAxisSpacing: 8.0,
+      //       crossAxisSpacing: 8.0,
+      //       childAspectRatio: 1,
+      //     ),
+      //   ),
+      //   child: ListView.separated(
+      //     padding: const EdgeInsets.only(left: 16, right: 16),
+      //     itemBuilder: (context, index) {
+      //       if (index == 0) {
+      //         return Padding(
+      //           padding: const EdgeInsets.only(top: 12),
+      //           child: ProductView(
+      //             product: products[index],
+      //             row: true,
+      //           ),
+      //         );
+      //       }
+      //       return ProductView(product: products[index]);
+      //     },
+      //     separatorBuilder: (context, index) {
+      //       return 10.spaceH;
+      //     },
+      //     itemCount: products.length,
+      //   ),
+      // ),
     );
   }
 }

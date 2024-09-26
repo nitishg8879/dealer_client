@@ -1,9 +1,12 @@
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
+import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 
 class ProductRepoImpl implements ProductRepo {
   final ProductDataSource _productDataSource;
@@ -36,5 +39,22 @@ class ProductRepoImpl implements ProductRepo {
     } else {
       return DataFailed(null, state.statusCode, state.message);
     }
+  }
+
+  @override
+  Future<DataState<List<ProductModel>?>> fetchProducts(
+      ProductsFilterController req) async {
+    final state = await _productDataSource.fetchProducts(req);
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
+  }
+
+  @override
+  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() {
+    // TODO: implement fetchCategoryCompanyModel
+    throw UnimplementedError();
   }
 }
