@@ -33,7 +33,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> fetchHomeAnalyticsData() async {
     emit(HomeLoading());
     if (kDebugMode) {
-      await Future.delayed(const Duration(seconds: 3));
+      // await Future.delayed(const Duration(seconds: 3));
     }
     final resp = await Future.wait([
       _productFetchUsecases.call(),

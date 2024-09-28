@@ -398,7 +398,10 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                 minlabel: "Min",
                 maxlabel: "Max",
                 selectedRange: widget.controller.priceMinMaxSelected,
-                onChangeRange: (val) => widget.controller.priceMinMaxSelected = val,
+                onChangeRange: (val) {
+                  widget.controller.priceMinMaxSelected = val;
+                  print("Hey dsd");
+                },
               ),
               12.spaceH,
               AppRangeSelector(
@@ -406,7 +409,10 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                 minlabel: "Min",
                 maxlabel: "Max",
                 selectedRange: widget.controller.kmMinMaxSelected,
-                onChangeRange: (val) => widget.controller.kmMinMaxSelected = val,
+                onChangeRange: (val) {
+                  widget.controller.kmMinMaxSelected = val;
+                  print("Hey dsd");
+                },
               ),
               12.spaceH,
               AppRangeSelector(
@@ -414,6 +420,8 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                 minlabel: "Min",
                 maxlabel: "Max",
                 isDatePicker: true,
+                startDate: widget.controller.minYear,
+                endDate: widget.controller.maxYear,
                 minDateChage: (date) {
                   widget.controller.minYear = date;
                 },
@@ -432,11 +440,16 @@ class _ProductFilterViewState extends State<ProductFilterView> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: context.pop,
+                  onPressed: () {
+                    widget.controller.clear();
+                    setState(() {});
+                    getIt.get<ProductCubit>().fetchProducts(widget.controller);
+                    context.pop();
+                  },
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                         backgroundColor: const WidgetStatePropertyAll(AppColors.doveGray),
                       ),
-                  child: const Text("Cancel"),
+                  child: const Text("Reset"),
                 ),
               ),
               16.spaceW,
@@ -446,7 +459,7 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                       getIt.get<ProductCubit>().fetchProducts(widget.controller);
                       context.pop();
                     },
-                    child: Text("Apply")),
+                    child: const Text("Apply")),
               ),
             ],
           ),
@@ -461,16 +474,17 @@ class _ProductFilterViewState extends State<ProductFilterView> {
   }
 }
 
-class AppRangeSelector extends StatefulWidget {
+class AppRangeSelector extends StatelessWidget {
   final String label;
   final String minlabel;
   final String maxlabel;
-  final RangeValues? selectedRange;
+  RangeValues? selectedRange;
+  DateTime? startDate, endDate;
   final bool isDatePicker;
   final void Function(RangeValues val)? onChangeRange;
   final void Function(DateTime? date)? minDateChage;
   final void Function(DateTime? date)? maxDateChage;
-  const AppRangeSelector({
+  AppRangeSelector({
     super.key,
     required this.label,
     required this.minlabel,
@@ -480,28 +494,26 @@ class AppRangeSelector extends StatefulWidget {
     this.minDateChage,
     this.maxDateChage,
     this.onChangeRange,
+    this.startDate,
+    this.endDate,
   });
 
   @override
-  State<AppRangeSelector> createState() => _AppRangeSelectorState();
-}
-
-class _AppRangeSelectorState extends State<AppRangeSelector> {
-  late RangeValues selectedRange;
-  final startTc = TextEditingController();
-  final endTc = TextEditingController();
-  DateTime? startDate;
-  DateTime? endDate;
-  @override
-  void initState() {
-    selectedRange = widget.selectedRange ?? const RangeValues(0, 0);
-    startTc.text = selectedRange.start.readableNumber;
-    endTc.text = selectedRange.end.readableNumber;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    selectedRange ??= const RangeValues(0, 0);
+    final startTc = TextEditingController();
+    final endTc = TextEditingController();
+    if (!isDatePicker) {
+      startTc.text = selectedRange?.start.readableNumber ?? '0';
+      endTc.text = selectedRange?.end.readableNumber ?? '0';
+    } else {
+      if (startDate != null) {
+        startTc.text = startDate?.mmmYYY ?? '';
+      }
+      if (endDate != null) {
+        endTc.text = endDate?.mmmYYY ?? '';
+      }
+    }
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: 12.smoothBorderRadius,
@@ -516,47 +528,28 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16),
             child: Text(
-              widget.label,
+              label,
               style: context.textTheme.headlineSmall?.copyWith(
                 fontSize: 16,
               ),
             ),
           ),
           16.spaceH,
-          // RangeSlider(
-          //   activeColor: AppColors.kFoundationPurple600,
-          //   inactiveColor: AppColors.kFoundationPurple200,
-          //   values: selectedRange,
-          //   labels: RangeLabels("${selectedRange.start}", "${selectedRange.end}"),
-          //   min: widget.rangeValues.start,
-          //   max: widget.rangeValues.end,
-          //   onChanged: (value) {
-          //     selectedRange = value;
-          //     if (widget.onChangeRange != null) {
-          //       widget.onChangeRange!(value);
-          //     }
-          //     setState(() {});
-          //     WidgetsBinding.instance.addPostFrameCallback((frame) {
-          //       startTc.text = selectedRange.start.toStringAsFixed(0);
-          //       endTc.text = selectedRange.end.toStringAsFixed(0);
-          //     });
-          //   },
-          // ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
             child: Row(
               children: [
                 Expanded(
                   child: AppTextField(
-                    label: widget.minlabel,
-                    readOnly: widget.isDatePicker,
-                    suffix: widget.isDatePicker
+                    label: minlabel,
+                    readOnly: isDatePicker,
+                    suffix: isDatePicker
                         ? const Icon(
                             Icons.calendar_month,
                             size: 18,
                           )
                         : null,
-                    onTap: widget.isDatePicker
+                    onTap: isDatePicker
                         ? () {
                             showDatePicker(
                               context: context,
@@ -567,8 +560,8 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
                             ).then((val) {
                               startDate = val;
                               startTc.text = val == null ? "" : val.mmmYYY;
-                              if (widget.minDateChage != null) {
-                                widget.minDateChage!(val);
+                              if (minDateChage != null) {
+                                minDateChage!(val);
                               }
                             });
                           }
@@ -576,46 +569,28 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
                     keyboardType: TextInputType.number,
                     controller: startTc,
                     inputFormatters: [NumberInputFormatter()],
-                    onChanged: (val) {
-                      final tempStart = (num.tryParse(val.replaceAll(",", "")) ?? 0).toDouble();
-                      // final tempEnd = (num.tryParse(endTc.text.replaceAll(",", "")) ?? 0).toDouble();
-                      selectedRange = RangeValues(tempStart, selectedRange.end);
-                      if (widget.onChangeRange != null) {
-                        widget.onChangeRange!(selectedRange);
-                      }
-                      // if (tempStart > widget.rangeValues.end) {
-                      //   print("HEYYY A");
-                      //   selectedRange = RangeValues(0, widget.rangeValues.end);
-                      //   startTc.text = selectedRange.start.toStringAsFixed(0);
-                      // } else if (tempStart < widget.rangeValues.start) {
-                      //   print("HEYYY B");
-                      //   selectedRange = RangeValues(0, widget.rangeValues.end);
-                      //   startTc.text = selectedRange.start.toStringAsFixed(0);
-                      // } else if (tempStart >= selectedRange.end) {
-                      //   print("HEYYY C");
-                      //   selectedRange = RangeValues(tempStart < widget.rangeValues.end ? tempStart : 0, widget.rangeValues.end);
-                      //   startTc.text = selectedRange.start.toStringAsFixed(0);
-                      //   endTc.text = widget.rangeValues.end.toStringAsFixed(0);
-                      // } else {
-                      //   print("HEYYY D");
-                      //   selectedRange = RangeValues(tempStart, (num.tryParse(endTc.text) ?? 0).toDouble());
-                      // }
-
-                      // setState(() {});
-                    },
+                    onChanged: isDatePicker
+                        ? null
+                        : (val) {
+                            final tempStart = (num.tryParse(val.replaceAll(",", "")) ?? 0).toDouble();
+                            selectedRange = RangeValues(tempStart, selectedRange!.end);
+                            if (onChangeRange != null) {
+                              onChangeRange!(selectedRange!);
+                            }
+                          },
                   ),
                 ),
                 16.spaceW,
                 Expanded(
                   child: AppTextField(
-                    label: widget.maxlabel,
-                    suffix: widget.isDatePicker
+                    label: maxlabel,
+                    suffix: isDatePicker
                         ? const Icon(
                             Icons.calendar_month,
                             size: 18,
                           )
                         : null,
-                    onTap: widget.isDatePicker
+                    onTap: isDatePicker
                         ? () {
                             showDatePicker(
                               context: context,
@@ -626,40 +601,25 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
                             ).then((val) {
                               endDate = val;
                               endTc.text = val == null ? '' : val.mmmYYY;
-                              if (widget.maxDateChage != null) {
-                                widget.maxDateChage!(val);
+                              if (maxDateChage != null) {
+                                maxDateChage!(val);
                               }
                             });
                           }
                         : null,
-                    readOnly: widget.isDatePicker,
+                    readOnly: isDatePicker,
                     controller: endTc,
                     keyboardType: TextInputType.number,
                     inputFormatters: [NumberInputFormatter()],
-                    onChanged: (val) {
-                      final tempEnd = (num.tryParse(val.replaceAll(",", "")) ?? 0).toDouble();
-                      selectedRange = RangeValues(selectedRange.start, tempEnd);
-                      if (widget.onChangeRange != null) {
-                        widget.onChangeRange!(selectedRange);
-                      }
-                      // if (tempEnd > widget.rangeValues.end) {
-                      //   print("HEYYY A");
-                      //   selectedRange = RangeValues(selectedRange.start, widget.rangeValues.end);
-                      //   endTc.text = selectedRange.end.toStringAsFixed(0);
-                      // } else if (tempEnd <= selectedRange.start) {
-                      //   print("HEYYY C");
-                      //   selectedRange = RangeValues(0, selectedRange.start);
-                      //   endTc.text = selectedRange.end.toStringAsFixed(0);
-                      // } else if (tempEnd < widget.rangeValues.start) {
-                      //   print("HEYYY B");
-                      //   selectedRange = RangeValues(selectedRange.start, widget.rangeValues.end);
-                      //   endTc.text = selectedRange.end.toStringAsFixed(0);
-                      // } else {
-                      //   print("HEYYY D");
-                      //   selectedRange = RangeValues(widget.selectedRange.start, tempEnd);
-                      // }
-                      // setState(() {});
-                    },
+                    onChanged: isDatePicker
+                        ? null
+                        : (val) {
+                            final tempEnd = (num.tryParse(val.replaceAll(",", "")) ?? 0).toDouble();
+                            selectedRange = RangeValues(selectedRange!.start, tempEnd);
+                            if (onChangeRange != null) {
+                              onChangeRange!(selectedRange!);
+                            }
+                          },
                   ),
                 ),
               ],
@@ -669,11 +629,6 @@ class _AppRangeSelectorState extends State<AppRangeSelector> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
 

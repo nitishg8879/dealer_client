@@ -62,7 +62,6 @@ class _AppTextFieldState extends State<AppTextField> {
           style: context.textTheme.displayMedium,
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
-            suffix: widget.suffix,
             hintText: widget.hintText,
             contentPadding: const EdgeInsets.all(14),
             border: OutlineInputBorder(
@@ -71,17 +70,18 @@ class _AppTextFieldState extends State<AppTextField> {
                 color: AppColors.kGrey100,
               ),
             ),
-            suffixIcon: widget.isPassword
-                ? IconButton(
-                    onPressed: () {
-                      isObsecure = !isObsecure;
-                      setState(() {});
-                    },
-                    icon: Icon(
-                      !isObsecure ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
-                    ),
-                  )
-                : null,
+            suffixIcon: widget.suffix ??
+                (widget.isPassword
+                    ? IconButton(
+                        onPressed: () {
+                          isObsecure = !isObsecure;
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          !isObsecure ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                        ),
+                      )
+                    : null),
             enabledBorder: OutlineInputBorder(
               borderRadius: 10.borderRadius2,
               borderSide: const BorderSide(

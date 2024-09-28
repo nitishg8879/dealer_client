@@ -17,7 +17,7 @@ class ProductCubit extends Cubit<ProductState> {
   Future<void> fetchProducts(ProductsFilterController req) async {
     emit(ProductLoading());
     if (kDebugMode) {
-      // await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 2));
     }
     final resp = await _productFetchUseCase.call(req: req);
     if (resp is DataSuccess) {

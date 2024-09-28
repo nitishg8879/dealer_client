@@ -19,6 +19,16 @@ class ProductsFilterController {
   List<CompanyModel> selectedCompany = [];
   List<CategoryCompanyMdoel> selectedCatCompBrands = [];
 
+  void clear() {
+    selectedCategory = [];
+    selectedCompany = [];
+    selectedCatCompBrands = [];
+    priceMinMaxSelected = const RangeValues(0, 0);
+    kmMinMaxSelected = const RangeValues(0, 0);
+    minYear = null;
+    maxYear = null;
+  }
+
   RangeValues priceMinMaxSelected;
   RangeValues kmMinMaxSelected;
   DateTime? minYear, maxYear;

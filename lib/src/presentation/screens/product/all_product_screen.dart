@@ -14,6 +14,7 @@ import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 class AllProductScreen extends StatefulWidget {
   const AllProductScreen({super.key});
@@ -51,7 +52,14 @@ class _AllProductScreenState extends State<AllProductScreen> {
         bloc: productCubit,
         builder: (context, state) {
           if (state is ProductLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: Lottie.asset(
+                AppAssets.searching,
+                repeat: true,
+                animate: true,
+                height: 100,
+              ),
+            );
           }
           if (state is ProductHasError) {
             return Center(
@@ -62,6 +70,16 @@ class _AllProductScreenState extends State<AllProductScreen> {
             );
           }
           if (state is ProductLoaded) {
+            if (state.products.isEmpty) {
+              return Center(
+                child: Lottie.asset(
+                  AppAssets.noData,
+                  repeat: false,
+                  height: 250,
+                  animate: true,
+                ),
+              );
+            }
             return Visibility(
               visible: !productFilterController.gridViewtype,
               replacement: GridView.builder(

@@ -47,6 +47,7 @@ flutter:
 
   assets:
     - assets/fonts/
+    - assets/lotties/
     - assets/icons/
     - assets/company/
     - assets/icons/chats/
