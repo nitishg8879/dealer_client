@@ -3,18 +3,17 @@ import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
+import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/product/category_compnay_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/category_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/company_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meta/meta.dart';
 
 part 'home_state.dart';
 
@@ -22,10 +21,12 @@ class HomeCubit extends Cubit<HomeState> {
   HomeAnalyticsFetchUsecases _productFetchUsecases;
   CompanyFetchUsecase _companyFetchUsecase;
   CategoryFetchUsecase _categoryFetchUsecase;
+  CategoryCompnayFetchUsecase _categoryCompnayFetchUsecase;
   HomeCubit(
     this._productFetchUsecases,
     this._companyFetchUsecase,
     this._categoryFetchUsecase,
+    this._categoryCompnayFetchUsecase,
   ) : super(HomeLoading());
   HomeAnalyticsDataModel? homeData;
 
@@ -38,6 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
       _productFetchUsecases.call(),
       _companyFetchUsecase.call(),
       _categoryFetchUsecase.call(),
+      _categoryCompnayFetchUsecase.call(),
     ]);
 
     if (resp.any((a) => a is DataFailed)) {
@@ -47,6 +49,7 @@ class HomeCubit extends Cubit<HomeState> {
       homeData = (resp[0].data as HomeAnalyticsDataModel?);
       homeData?.company = resp[1].data as List<CompanyModel>?;
       homeData?.category = resp[2].data as List<CategoryModel>?;
+      homeData?.categoryCompnaymodel = resp[3].data as List<CategoryCompanyMdoel>?;
       emit(HomeLoaded(homeData!));
     }
   }

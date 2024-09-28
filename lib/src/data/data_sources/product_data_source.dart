@@ -12,14 +12,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProductDataSource {
   Future<DataState<HomeAnalyticsDataModel?>> fetchHomeAnalyticsData() async {
     try {
-      final resp = await getIt
-          .get<AppFireBaseLoc>()
-          .homeData
-          .get()
-          .catchError((e) => throw e);
+      final resp = await getIt.get<AppFireBaseLoc>().homeData.get().catchError((e) => throw e);
       if (resp.docs.length == 1) {
-        return DataSuccess(
-            HomeAnalyticsDataModel.fromJson(resp.docs.first.data()));
+        return DataSuccess(HomeAnalyticsDataModel.fromJson(resp.docs.first.data()));
       } else {
         throw Exception("Data not found");
       }
@@ -30,15 +25,9 @@ class ProductDataSource {
 
   Future<DataState<List<CategoryModel>?>> fetchCategory() async {
     try {
-      final resp = await getIt
-          .get<AppFireBaseLoc>()
-          .categories
-          .get()
-          .catchError((e) => throw e);
+      final resp = await getIt.get<AppFireBaseLoc>().categories.get().catchError((e) => throw e);
       if (resp.docs.isNotEmpty) {
-        return DataSuccess(resp.docs
-            .map((e) => CategoryModel.fromJson(e.data())..id = e.id)
-            .toList());
+        return DataSuccess(resp.docs.map((e) => CategoryModel.fromJson(e.data())..id = e.id).toList());
       } else {
         throw Exception("Category not found");
       }
@@ -49,15 +38,9 @@ class ProductDataSource {
 
   Future<DataState<List<CompanyModel>?>> fetchCompany() async {
     try {
-      final resp = await getIt
-          .get<AppFireBaseLoc>()
-          .company
-          .get()
-          .catchError((e) => throw e);
+      final resp = await getIt.get<AppFireBaseLoc>().company.get().catchError((e) => throw e);
       if (resp.docs.isNotEmpty) {
-        return DataSuccess(resp.docs
-            .map((e) => CompanyModel.fromJson(e.data())..id = e.id)
-            .toList());
+        return DataSuccess(resp.docs.map((e) => CompanyModel.fromJson(e.data())..id = e.id).toList());
       } else {
         throw Exception("Company not found");
       }
@@ -66,18 +49,11 @@ class ProductDataSource {
     }
   }
 
-  Future<DataState<List<CategoryCompanyMdoel>?>>
-      fetchCategoryCompanyModel() async {
+  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() async {
     try {
-      final resp = await getIt
-          .get<AppFireBaseLoc>()
-          .model
-          .get()
-          .catchError((e) => throw e);
+      final resp = await getIt.get<AppFireBaseLoc>().model.get().catchError((e) => throw e);
       if (resp.docs.isNotEmpty) {
-        return DataSuccess(resp.docs
-            .map((e) => CategoryCompanyMdoel.fromJson(e.data())..id = e.id)
-            .toList());
+        return DataSuccess(resp.docs.map((e) => CategoryCompanyMdoel.fromJson(e.data())..id = e.id).toList());
       } else {
         throw Exception("Category Company not found.");
       }
@@ -86,61 +62,88 @@ class ProductDataSource {
     }
   }
 
-  Future<DataState<List<ProductModel>?>> fetchProducts(
-      ProductsFilterController req) async {
-    try {
-      req.yearMinMaxSelected;
-      var query = getIt.get<AppFireBaseLoc>().product;
-      query
-          .where(
-            "price",
-            isGreaterThanOrEqualTo: req.priceMinMaxSelected.start,
-          )
-          .where(
-            'price',
-            isLessThanOrEqualTo: req.priceMinMaxSelected.end,
-          )
-          .where(
-            "kmDriven",
-            isGreaterThanOrEqualTo: req.kmMinMaxSelected.start,
-          )
-          .where(
-            'kmDriven',
-            isLessThanOrEqualTo: req.kmMinMaxSelected.end,
-          )
-          .where(
-            'category',
-            whereIn: req.selectedCategory.map((e) => e.id),
-          )
-          .where(
-            'company',
-            whereIn: req.selectedCompany.map((e) => e.id),
-          )
-          .where(
-            'model',
-            whereIn: req.selectedBrands.map((e) => e.id),
-          )
-          .orderBy(
-            'creationDate',
-            descending: true,
-          )
-          .limit(10);
+  List<ProductModel> _convertJsonToList(QuerySnapshot<Map<String, dynamic>> resp) {
+    return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
+  }
 
-      final resp = await getIt
-          .get<AppFireBaseLoc>()
-          .product
-          .get()
-          .catchError((e) => throw e);
-      if (resp.docs.isNotEmpty) {
-        return DataSuccess([]);
-        // return DataSuccess(resp.docs
-        //     .map((e) => CompanyModel.fromJson(e.data())..id = e.id)
-        //     .toList());
+  Future<DataState<List<ProductModel>?>> fetchProducts(ProductsFilterController req) async {
+    try {
+      List<ProductModel> products = [];
+      if (req.hasFilter) {
+        bool hasPriceFilter = req.priceMinMaxSelected.start != 0 || req.priceMinMaxSelected.end != 0;
+        bool haskmFilter = req.kmMinMaxSelected.start != 0 || req.kmMinMaxSelected.end != 0;
+        bool hasyearFilter = req.minYear != null || req.maxYear != null;
+
+        bool hasCatgeoryFilter = req.selectedCategory.isNotEmpty;
+        bool hasCompanyFilter = req.selectedCompany.isNotEmpty;
+        bool hasCatCmpnyFilter = req.selectedCatCompBrands.isNotEmpty;
+
+        //? Working
+        if (hasCatgeoryFilter || hasPriceFilter) {
+          var resp = await getIt
+              .get<AppFireBaseLoc>()
+              .product
+              .orderBy('price')
+              .where(
+                'price',
+                isGreaterThanOrEqualTo: req.priceMinMaxSelected.start != 0 ? req.priceMinMaxSelected.start : null,
+                isLessThanOrEqualTo: req.priceMinMaxSelected.end != 0 ? req.priceMinMaxSelected.end : null,
+              )
+              .where(
+                'category',
+                whereIn: req.selectedCategory.isNotEmpty ? req.selectedCategory.map((e) => e.id).toList() : null,
+              )
+              .orderBy('creationDate', descending: true)
+              .get();
+          products.addAll(_convertJsonToList(resp));
+        }
+        //? Working
+        if (hasCompanyFilter || haskmFilter) {
+          var resp = await getIt
+              .get<AppFireBaseLoc>()
+              .product
+              .orderBy('kmDriven')
+              .where(
+                'kmDriven',
+                isGreaterThanOrEqualTo: req.kmMinMaxSelected.start != 0 ? req.kmMinMaxSelected.start : null,
+                isLessThanOrEqualTo: req.kmMinMaxSelected.end != 0 ? req.kmMinMaxSelected.end : null,
+              )
+              .where(
+                'company',
+                whereIn: req.selectedCompany.isNotEmpty ? req.selectedCompany.map((e) => e.id).toList() : null,
+              )
+              .orderBy('creationDate', descending: true)
+              .get();
+          products.addAll(_convertJsonToList(resp));
+        }
+        if (hasCatCmpnyFilter || hasyearFilter) {
+          var resp = await getIt
+              .get<AppFireBaseLoc>()
+              .product
+              .orderBy('bikeBuyDate')
+              .where(
+                'bikeBuyDate',
+                isGreaterThan: req.minYear == null ? null : Timestamp.fromDate(req.minYear!),
+                isLessThan: req.maxYear == null ? null : Timestamp.fromDate(req.maxYear!),
+              )
+              .where(
+                'model',
+                whereIn: req.selectedCatCompBrands.isNotEmpty ? req.selectedCatCompBrands.map((e) => e.id).toList() : null,
+              )
+              .orderBy('creationDate', descending: true)
+              .get();
+          products.addAll(_convertJsonToList(resp));
+        }
       } else {
-        throw Exception("Company not found");
+        final resp =
+            await getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).limit(10).get().catchError((error) => throw error);
+        products = List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
       }
+      products = products.toSet().toList();
+      return DataSuccess(products);
     } catch (e) {
-      return DataFailed(null, 500, e.toString());
+      print(e.toString());
+      return DataFailed(null, 204, e.toString());
     }
   }
 }

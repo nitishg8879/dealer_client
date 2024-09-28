@@ -10,6 +10,8 @@ final class HomeLoaded extends HomeState {
   HomeLoaded(this.data);
 }
 
+
+
 final class HomeHasError extends HomeState {
   final String error;
   HomeHasError(this.error);

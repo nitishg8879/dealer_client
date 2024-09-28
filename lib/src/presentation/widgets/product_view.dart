@@ -48,10 +48,7 @@ class ProductView extends StatelessWidget {
         ClipRRect(
           borderRadius: 10.borderRadius,
           child: CachedNetworkImage(
-            imageUrl:
-                product.images != null && (product.images?.isNotEmpty ?? false)
-                    ? product.images!.first
-                    : '',
+            imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
             width: double.infinity,
             height: 93,
             fit: BoxFit.cover,
@@ -88,10 +85,12 @@ class ProductView extends StatelessWidget {
             //? Model
             Row(
               children: [
-                CustomSvgIcon(
-                  assetName: AppAssets.calender,
-                  color: AppColors.kFoundationPurple700.withOpacity(.8),
-                  size: 14,
+                Skeleton.ignore(
+                  child: CustomSvgIcon(
+                    assetName: AppAssets.calender,
+                    color: AppColors.kFoundationPurple700.withOpacity(.8),
+                    size: 14,
+                  ),
                 ),
                 3.spaceW,
                 Text(
@@ -105,10 +104,12 @@ class ProductView extends StatelessWidget {
             //? Owners
             Row(
               children: [
-                CustomSvgIcon(
-                  assetName: AppAssets.users,
-                  color: AppColors.kFoundationPurple700.withOpacity(.8),
-                  size: 14,
+                Skeleton.ignore(
+                  child: CustomSvgIcon(
+                    assetName: AppAssets.users,
+                    color: AppColors.kFoundationPurple700.withOpacity(.8),
+                    size: 14,
+                  ),
                 ),
                 3.spaceW,
                 Text(
@@ -122,10 +123,12 @@ class ProductView extends StatelessWidget {
             // //? KM Driven
             Row(
               children: [
-                CustomSvgIcon(
-                  assetName: AppAssets.distance,
-                  color: AppColors.kFoundationPurple700.withOpacity(.8),
-                  size: 14,
+                Skeleton.ignore(
+                  child: CustomSvgIcon(
+                    assetName: AppAssets.distance,
+                    color: AppColors.kFoundationPurple700.withOpacity(.8),
+                    size: 14,
+                  ),
                 ),
                 3.spaceW,
                 Text(
@@ -161,10 +164,7 @@ class ProductView extends StatelessWidget {
               errorWidget: (context, url, error) {
                 return const Center(child: Icon(Icons.error));
               },
-              imageUrl: product.images != null &&
-                      (product.images?.isNotEmpty ?? false)
-                  ? product.images!.first
-                  : '',
+              imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
             ),
           ),
         ),

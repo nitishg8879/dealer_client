@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 
@@ -6,6 +7,7 @@ class HomeAnalyticsDataModel {
   List<HomeProducts>? products;
   List<CategoryModel>? category;
   List<CompanyModel>? company;
+  List<CategoryCompanyMdoel>? categoryCompnaymodel;
 
   HomeAnalyticsDataModel({this.carsouel, this.products});
 

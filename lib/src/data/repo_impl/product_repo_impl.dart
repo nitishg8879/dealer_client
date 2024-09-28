@@ -42,8 +42,7 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<ProductModel>?>> fetchProducts(
-      ProductsFilterController req) async {
+  Future<DataState<List<ProductModel>?>> fetchProducts(ProductsFilterController req) async {
     final state = await _productDataSource.fetchProducts(req);
     if (state is DataSuccess) {
       return state;
@@ -53,8 +52,12 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() {
-    // TODO: implement fetchCategoryCompanyModel
-    throw UnimplementedError();
+  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() async {
+    final state = await _productDataSource.fetchCategoryCompanyModel();
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
   }
 }

@@ -1,14 +1,18 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
-import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/product/product_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/product_filter_view.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AllProductScreen extends StatefulWidget {
@@ -19,108 +23,145 @@ class AllProductScreen extends StatefulWidget {
 }
 
 class _AllProductScreenState extends State<AllProductScreen> {
+  final productCubit = getIt.get<ProductCubit>();
   var productFilterController = ProductsFilterController(
-    priceMinMax: const RangeValues(0, 100),
-    priceMinMaxSelected: const RangeValues(0, 20),
-    yearMinMax: const RangeValues(0, 100),
-    kmMinMaxSelected: const RangeValues(0, 20),
-    kmMinMax: const RangeValues(0, 100),
-    yearMinMaxSelected: const RangeValues(0, 20),
+    priceMinMaxSelected: const RangeValues(0, 0),
+    kmMinMaxSelected: const RangeValues(0, 0),
     gridViewtype: true,
   );
-  void showFilterPopUp() {
-    showModalBottomSheet(
-      context: context,
-      useSafeArea: true,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
-      showDragHandle: true,
-      enableDrag: true,
-      isScrollControlled: true,
-      builder: (context) =>
-          ProductFilterView(controller: productFilterController),
-    ).whenComplete(() => setState(() {}));
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((frame) {
+      productCubit.fetchProducts(productFilterController);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppAppbar(
-        onback: context.pop,
-        actions: [
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: () {},
-              child: const CustomSvgIcon(
-                assetName: AppAssets.search,
-                color: AppColors.kCardGrey400,
-                size: 20,
+      appBar: _buildAppbar(context),
+      body: BlocBuilder<ProductCubit, ProductState>(
+        bloc: productCubit,
+        builder: (context, state) {
+          if (state is ProductLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is ProductHasError) {
+            return Center(
+              child: ErrorView(
+                onreTry: () => productCubit.fetchProducts(productFilterController),
+                errorMsg: state.errorMsg,
               ),
-            ),
-          ),
-          16.spaceW,
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: showFilterPopUp,
-              child: const CustomSvgIcon(
-                assetName: AppAssets.filter,
-                color: AppColors.kCardGrey400,
-                size: 20,
+            );
+          }
+          if (state is ProductLoaded) {
+            return Visibility(
+              visible: !productFilterController.gridViewtype,
+              replacement: GridView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
+                itemBuilder: (context, index) {
+                  return ProductView(product: state.products[index], row: false);
+                },
+                itemCount: state.products.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  childAspectRatio: 1,
+                ),
               ),
-            ),
-          ),
-          16.spaceW,
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: () {
-                context.goNamed(Routes.favourite);
-              },
-              child: const CustomSvgIcon(
-                assetName: AppAssets.favFill,
-                color: AppColors.kRed,
-                size: 20,
+              child: ListView.separated(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: ProductView(
+                        product: state.products[index],
+                        row: true,
+                      ),
+                    );
+                  }
+                  return ProductView(product: state.products[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return 10.spaceH;
+                },
+                itemCount: state.products.length,
               ),
-            ),
-          ),
-          16.spaceW,
-        ],
+            );
+          }
+          return const Center(
+            child: Text("Wrong Sate."),
+          );
+        },
       ),
-      // body: Visibility(
-      //   visible: productFilterController.gridViewtype,
-      //   replacement: GridView.builder(
-      //     shrinkWrap: true,
-      //     padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
-      //     itemBuilder: (context, index) {
-      //       return ProductView(product: products[index], row: false);
-      //     },
-      //     itemCount: products.length,
-      //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      //       crossAxisCount: 2,
-      //       mainAxisSpacing: 8.0,
-      //       crossAxisSpacing: 8.0,
-      //       childAspectRatio: 1,
-      //     ),
-      //   ),
-      //   child: ListView.separated(
-      //     padding: const EdgeInsets.only(left: 16, right: 16),
-      //     itemBuilder: (context, index) {
-      //       if (index == 0) {
-      //         return Padding(
-      //           padding: const EdgeInsets.only(top: 12),
-      //           child: ProductView(
-      //             product: products[index],
-      //             row: true,
-      //           ),
-      //         );
-      //       }
-      //       return ProductView(product: products[index]);
-      //     },
-      //     separatorBuilder: (context, index) {
-      //       return 10.spaceH;
-      //     },
-      //     itemCount: products.length,
-      //   ),
-      // ),
     );
+  }
+
+  AppAppbar _buildAppbar(BuildContext context) {
+    return AppAppbar(
+      onback: context.pop,
+      actions: [
+        UnconstrainedBox(
+          child: OutlinedButton(
+            onPressed: () {},
+            child: const CustomSvgIcon(
+              assetName: AppAssets.search,
+              color: AppColors.kCardGrey400,
+              size: 20,
+            ),
+          ),
+        ),
+        16.spaceW,
+        UnconstrainedBox(
+          child: OutlinedButton(
+            onPressed: showFilterPopUp,
+            child: const CustomSvgIcon(
+              assetName: AppAssets.filter,
+              color: AppColors.kCardGrey400,
+              size: 20,
+            ),
+          ),
+        ),
+        16.spaceW,
+        UnconstrainedBox(
+          child: OutlinedButton(
+            onPressed: () {
+              context.goNamed(Routes.favourite);
+            },
+            child: const CustomSvgIcon(
+              assetName: AppAssets.favFill,
+              color: AppColors.kRed,
+              size: 20,
+            ),
+          ),
+        ),
+        16.spaceW,
+      ],
+    );
+  }
+
+  void showFilterPopUp() {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
+      showDragHandle: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (context) => ProductFilterView(
+        controller: productFilterController,
+        homeCubit: getIt.get<HomeCubit>(),
+      ),
+    ).whenComplete(() => setState(() {}));
   }
 }

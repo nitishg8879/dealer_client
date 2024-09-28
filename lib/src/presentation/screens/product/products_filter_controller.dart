@@ -1,29 +1,33 @@
+import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
+import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:flutter/material.dart' show RangeValues;
 
 class ProductsFilterController {
+  bool get hasFilter {
+    return (selectedCategory.isNotEmpty || selectedCompany.isNotEmpty || selectedCatCompBrands.isNotEmpty) ||
+        (priceMinMaxSelected.start != 0 || priceMinMaxSelected.end != 0) ||
+        (minYear != null || maxYear != null) ||
+        (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0);
+  }
+
   List<CategoryModel> category = [];
-  List<CategoryModel> company = [];
-  List<CategoryModel> brands = [];
+  List<CompanyModel> company = [];
+  List<CategoryCompanyMdoel> categoryCompanyBrands = [];
 
   List<CategoryModel> selectedCategory = [];
-  List<CategoryModel> selectedCompany = [];
-  List<CategoryModel> selectedBrands = [];
+  List<CompanyModel> selectedCompany = [];
+  List<CategoryCompanyMdoel> selectedCatCompBrands = [];
 
-  RangeValues priceMinMax;
   RangeValues priceMinMaxSelected;
-  RangeValues yearMinMax;
-  RangeValues yearMinMaxSelected;
-  RangeValues kmMinMax;
   RangeValues kmMinMaxSelected;
+  DateTime? minYear, maxYear;
   bool gridViewtype;
   ProductsFilterController({
-    required this.priceMinMax,
     required this.priceMinMaxSelected,
-    required this.yearMinMax,
-    required this.yearMinMaxSelected,
-    required this.kmMinMax,
     required this.gridViewtype,
     required this.kmMinMaxSelected,
+    this.minYear,
+    this.maxYear,
   });
 }

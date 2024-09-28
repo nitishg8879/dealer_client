@@ -1,24 +1,34 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppTextField extends StatefulWidget {
   final String? label;
   final String? hintText;
   final bool isPassword;
+  final bool readOnly;
+  final Widget? suffix;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final String? initialValue;
+  final void Function()? onTap;
   final void Function(String val)? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
+
   const AppTextField({
     super.key,
     this.label,
     this.hintText,
     this.controller,
     this.initialValue,
+    this.suffix,
+    this.onTap,
     this.keyboardType,
     this.onChanged,
+    this.inputFormatters,
     this.isPassword = false,
+    this.readOnly = false,
   });
 
   @override
@@ -42,14 +52,17 @@ class _AppTextFieldState extends State<AppTextField> {
         ],
         2.spaceH,
         TextFormField(
+          onTap: widget.onTap,
+          readOnly: widget.readOnly,
           initialValue: widget.initialValue,
           onChanged: widget.onChanged,
           controller: widget.controller,
           obscureText: isObsecure,
           keyboardType: widget.keyboardType,
           style: context.textTheme.displayMedium,
-          
+          inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
+            suffix: widget.suffix,
             hintText: widget.hintText,
             contentPadding: const EdgeInsets.all(14),
             border: OutlineInputBorder(
@@ -65,9 +78,7 @@ class _AppTextFieldState extends State<AppTextField> {
                       setState(() {});
                     },
                     icon: Icon(
-                      !isObsecure
-                          ? Icons.remove_red_eye
-                          : Icons.remove_red_eye_outlined,
+                      !isObsecure ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
                     ),
                   )
                 : null,
@@ -83,6 +94,7 @@ class _AppTextFieldState extends State<AppTextField> {
       ],
     );
   }
+
   @override
   void dispose() {
     widget.controller?.dispose();
