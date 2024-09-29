@@ -14,11 +14,12 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     await Future.delayed(Duration(seconds: 2));
     if (product != null) {
       emit(ProductDetailsLoaded(product));
+      emit(ProductDetailsImagePosition(1, (product.images?.length ?? 1)));
     } else {
       final resp = await _fetchProductByIdUsecase.call(id: id);
       if (resp is DataSuccess) {
         emit(ProductDetailsImagePosition(1, (resp.data?.images?.length ?? 1)));
-        // emit(ProductDetailsLoaded(resp.data!));
+        emit(ProductDetailsLoaded(resp.data!));
       }
       if (resp is DataFailed) {
         emit(ProductDetailsHasError(resp.message ?? "Something went wrong"));

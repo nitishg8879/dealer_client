@@ -3,6 +3,7 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
+import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
@@ -58,7 +59,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       appBar: _buildAppbar(context),
       body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
         bloc: productDetailsCubit,
-        // buildWhen: (previous, current) => (current is ProductDetailsLoading || current is ProductDetailsLoaded || current is ProductDetailsHasError),
+        buildWhen: (previous, current) => (current is ProductDetailsLoading || current is ProductDetailsLoaded || current is ProductDetailsHasError),
         builder: (context, state) {
           print("building Root");
           return Skeletonizer(
@@ -181,24 +182,40 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              ListView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                controller: scrollController,
+              CarouselView(
+                itemExtent: context.width,
+                shape: const RoundedRectangleBorder(),
+                padding: EdgeInsets.zero,
+                itemSnapping: true,
                 children: product.images
                         ?.map(
-                          (e) => Padding(
-                            padding: const EdgeInsets.only(right: 16),
-                            child: CachedNetworkImage(
-                              width: context.width,
-                              fit: BoxFit.cover,
-                              imageUrl: e,
-                            ),
+                          (e) => CachedNetworkImage(
+                            width: context.width,
+                            fit: BoxFit.cover,
+                            imageUrl: e,
                           ),
                         )
                         .toList() ??
                     [],
               ),
+              // ListView(
+              //   physics: const BouncingScrollPhysics(),
+              //   scrollDirection: Axis.horizontal,
+              //   controller: scrollController,
+              //   children: product.images
+              //           ?.map(
+              //             (e) => Padding(
+              //               padding: const EdgeInsets.only(right: 16),
+              //               child: CachedNetworkImage(
+              //                 width: context.width,
+              //                 fit: BoxFit.cover,
+              //                 imageUrl: e,
+              //               ),
+              //             ),
+              //           )
+              //           .toList() ??
+              //       [],
+              // ),
               Positioned(
                 top: 8,
                 right: 8,
