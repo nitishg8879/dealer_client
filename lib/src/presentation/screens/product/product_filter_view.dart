@@ -1,26 +1,26 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
-import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/app_text_input_formatter.dart';
 import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
-import 'package:bike_client_dealer/src/presentation/cubit/product/product_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ProductFilterView extends StatefulWidget {
   final HomeCubit homeCubit;
   final ProductsFilterController controller;
+  final void Function() onReset, onAppply;
   const ProductFilterView({
     super.key,
     required this.controller,
     required this.homeCubit,
+    required this.onReset,
+    required this.onAppply,
   });
 
   @override
@@ -440,12 +440,7 @@ class _ProductFilterViewState extends State<ProductFilterView> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    widget.controller.clear();
-                    setState(() {});
-                    getIt.get<ProductCubit>().fetchProducts(widget.controller);
-                    context.pop();
-                  },
+                  onPressed: widget.onReset,
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                         backgroundColor: const WidgetStatePropertyAll(AppColors.doveGray),
                       ),
@@ -454,12 +449,7 @@ class _ProductFilterViewState extends State<ProductFilterView> {
               ),
               16.spaceW,
               Expanded(
-                child: ElevatedButton(
-                    onPressed: () {
-                      getIt.get<ProductCubit>().fetchProducts(widget.controller);
-                      context.pop();
-                    },
-                    child: const Text("Apply")),
+                child: ElevatedButton(onPressed: widget.onAppply, child: const Text("Apply")),
               ),
             ],
           ),

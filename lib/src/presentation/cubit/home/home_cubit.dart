@@ -7,9 +7,9 @@ import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/category_compnay_fetch_usecase.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/category_fetch_usecase.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/company_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/category_compnay_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/category_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/company_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bloc/bloc.dart';
@@ -32,9 +32,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> fetchHomeAnalyticsData() async {
     emit(HomeLoading());
-    if (kDebugMode) {
-      // await Future.delayed(const Duration(seconds: 3));
-    }
     final resp = await Future.wait([
       _productFetchUsecases.call(),
       _companyFetchUsecase.call(),

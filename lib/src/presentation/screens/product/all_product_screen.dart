@@ -11,6 +11,7 @@ import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,32 +25,102 @@ class AllProductScreen extends StatefulWidget {
 }
 
 class _AllProductScreenState extends State<AllProductScreen> {
-  final productCubit = getIt.get<ProductCubit>();
+  final productCubit = ProductCubit(getIt.get(), getIt.get());
   var productFilterController = ProductsFilterController(
     priceMinMaxSelected: const RangeValues(0, 0),
     kmMinMaxSelected: const RangeValues(0, 0),
     gridViewtype: true,
   );
+  final scrollController = ScrollController();
+  DocumentSnapshot? lastDocument;
+  final scrollPhysics = const BouncingScrollPhysics();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((frame) {
-      productCubit.fetchProducts(productFilterController);
-    });
+    fetchData();
+    addListnerInScrolling();
   }
 
   @override
   void dispose() {
+    productCubit.close();
+    removeScrollingListner();
+    scrollController.dispose();
     super.dispose();
+  }
+
+  void fetchData() {
+    WidgetsBinding.instance.addPostFrameCallback((frame) {
+      productCubit.fetchProducts(productFilterController, (ld) {
+        if (!productFilterController.hasFilter) {
+          lastDocument = ld;
+        } else {
+          productCubit.totalData = null;
+          lastDocument = null;
+        }
+      });
+    });
+  }
+
+  void addListnerInScrolling() {
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent && productCubit.state is! ProductLoading) {
+        productCubit.fetchMoreProducts(
+          lastdoc: (ld) => lastDocument = ld,
+          lastDocument: lastDocument,
+          req: productFilterController,
+        );
+      }
+    });
+  }
+
+  void removeScrollingListner() {
+    scrollController.removeListener(() {});
+  }
+
+  void showFilterPopUp() {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
+      showDragHandle: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (context) => ProductFilterView(
+        controller: productFilterController,
+        homeCubit: getIt.get<HomeCubit>(),
+        onReset: () {
+          productFilterController.clear();
+          fetchData();
+          context.pop();
+        },
+        onAppply: () {
+          fetchData();
+          context.pop();
+        },
+      ),
+    ).whenComplete(() {
+      setState(() {});
+      if (productFilterController.hasFilter) {
+        removeScrollingListner();
+      } else {
+        addListnerInScrolling();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppbar(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _buildFloatingActionBtn(),
       body: BlocBuilder<ProductCubit, ProductState>(
         bloc: productCubit,
+        buildWhen: (previous, current) {
+          return (current is ProductHasError || current is ProductLoaded || current is ProductLoading);
+        },
         builder: (context, state) {
           if (state is ProductLoading) {
             return Center(
@@ -64,13 +135,13 @@ class _AllProductScreenState extends State<AllProductScreen> {
           if (state is ProductHasError) {
             return Center(
               child: ErrorView(
-                onreTry: () => productCubit.fetchProducts(productFilterController),
+                onreTry: fetchData,
                 errorMsg: state.errorMsg,
               ),
             );
           }
           if (state is ProductLoaded) {
-            if (state.products.isEmpty) {
+            if (productCubit.products.isEmpty) {
               return Center(
                 child: Lottie.asset(
                   AppAssets.noData,
@@ -83,12 +154,14 @@ class _AllProductScreenState extends State<AllProductScreen> {
             return Visibility(
               visible: !productFilterController.gridViewtype,
               replacement: GridView.builder(
+                physics: scrollPhysics,
+                controller: scrollController,
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
                 itemBuilder: (context, index) {
-                  return ProductView(product: state.products[index], row: false);
+                  return ProductView(product: productCubit.products[index], row: false);
                 },
-                itemCount: state.products.length,
+                itemCount: productCubit.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 8.0,
@@ -97,23 +170,25 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 ),
               ),
               child: ListView.separated(
+                physics: scrollPhysics,
+                controller: scrollController,
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: ProductView(
-                        product: state.products[index],
+                        product: productCubit.products[index],
                         row: true,
                       ),
                     );
                   }
-                  return ProductView(product: state.products[index]);
+                  return ProductView(product: productCubit.products[index]);
                 },
                 separatorBuilder: (context, index) {
                   return 10.spaceH;
                 },
-                itemCount: state.products.length,
+                itemCount: productCubit.products.length,
               ),
             );
           }
@@ -122,6 +197,40 @@ class _AllProductScreenState extends State<AllProductScreen> {
           );
         },
       ),
+    );
+  }
+
+  BlocBuilder<ProductCubit, ProductState> _buildFloatingActionBtn() {
+    return BlocBuilder<ProductCubit, ProductState>(
+      bloc: productCubit,
+      buildWhen: (previous, current) => current is ProductLazyLoading,
+      builder: (context, state) {
+        if (state is ProductLazyLoading) {
+          if (state.isLoading) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints.expand(
+                  width: 24,
+                  height: 24,
+                ),
+                child: const FloatingActionButton(
+                  onPressed: null,
+                  backgroundColor: AppColors.kPurple60,
+                  child: CircularProgressIndicator(
+                    color: AppColors.kFoundatiionPurple800,
+                    strokeWidth: 1.2,
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 
@@ -166,20 +275,5 @@ class _AllProductScreenState extends State<AllProductScreen> {
         16.spaceW,
       ],
     );
-  }
-
-  void showFilterPopUp() {
-    showModalBottomSheet(
-      context: context,
-      useSafeArea: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
-      showDragHandle: true,
-      enableDrag: true,
-      isScrollControlled: true,
-      builder: (context) => ProductFilterView(
-        controller: productFilterController,
-        homeCubit: getIt.get<HomeCubit>(),
-      ),
-    ).whenComplete(() => setState(() {}));
   }
 }

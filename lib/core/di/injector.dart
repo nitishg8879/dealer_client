@@ -8,11 +8,13 @@ import 'package:bike_client_dealer/src/domain/repositories/auth_repo.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/auth/login_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/auth/logout_usecase.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/category_compnay_fetch_usecase.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/category_fetch_usecase.dart';
-import 'package:bike_client_dealer/src/domain/use_cases/product/company_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/category_compnay_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/category_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/categories/company_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/product_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/product/product_total_count_usecase.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product/product_cubit.dart';
@@ -45,5 +47,6 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt.get(), getIt.get(), getIt.get(), getIt.get()));
 
   getIt.registerLazySingleton(() => ProductFetchUsecase(getIt.get()));
-  getIt.registerLazySingleton<ProductCubit>(() => ProductCubit(getIt.get()));
+  getIt.registerLazySingleton(() => FetchProductByIdUsecase(getIt.get()));
+  getIt.registerLazySingleton(() => ProductTotalCountUsecase(getIt.get()));
 }

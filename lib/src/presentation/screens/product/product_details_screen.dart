@@ -1,19 +1,26 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final ProductModel? product;
+  final String? id;
   const ProductDetailsScreen({
     super.key,
     required this.product,
+    this.id,
   });
 
   @override
@@ -22,268 +29,318 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final scrollController = ScrollController();
+  final productDetailsCubit = ProductDetailsCubit(getIt.get());
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  @override
+  void dispose() {
+    productDetailsCubit.close();
+    super.dispose();
+  }
+
+  void fetchData() {
+    WidgetsBinding.instance.addPostFrameCallback((frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.product == null) {
+    if (widget.product == null && widget.id == null) {
       return const Scaffold(
-        body: Text("No Product Details found"),
+        body: Center(child: Text("No Product Details found.")),
       );
     }
     return Scaffold(
-      appBar: AppAppbar(
-        onback: context.pop,
-        elevation: 2,
-        actions: [
-          UnconstrainedBox(
-            child: OutlinedButton(
-              onPressed: () {},
-              child: const CustomSvgIcon(
-                assetName: AppAssets.share,
-                color: AppColors.kCardGrey400,
-                size: 20,
-              ),
+      appBar: _buildAppbar(context),
+      body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+        bloc: productDetailsCubit,
+        // buildWhen: (previous, current) => (current is ProductDetailsLoading || current is ProductDetailsLoaded || current is ProductDetailsHasError),
+        builder: (context, state) {
+          print("building Root");
+          return Skeletonizer(
+            enabled: state is ProductDetailsLoading,
+            child: Scaffold(
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: _floatActionBtn(context),
+              body: _buildbody((state is ProductDetailsLoading) ? dummyProduct : (state as ProductDetailsLoaded).productModel),
             ),
-          ),
-          16.spaceW,
-        ],
+          );
+        },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Material(
-        color: AppColors.kWhite,
-        // elevation: 20,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => context.push(Routes.chats),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.kBlack900,
-                    shape: const SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                        SmoothRadius(
-                          cornerRadius: 12,
-                          cornerSmoothing: 1,
-                        ),
-                      ),
-                      side: BorderSide(
-                        color: AppColors.kFoundationPurple100,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CustomSvgIcon(
-                        assetName: AppAssets.chat,
-                        color: AppColors.kWhite,
-                        size: 20,
-                      ),
-                      8.spaceW,
-                      const Text("Negotaiate"),
-                    ],
-                  ),
-                ),
-              ),
-              16.spaceW,
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: const SmoothRectangleBorder(
-                      borderRadius: SmoothBorderRadius.all(
-                        SmoothRadius(
-                          cornerRadius: 12,
-                          cornerSmoothing: 1,
-                        ),
-                      ),
-                      side: BorderSide(
-                        color: AppColors.kFoundationPurple100,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CustomSvgIcon(
-                        assetName: AppAssets.wallet,
-                        color: AppColors.kWhite,
-                        size: 20,
-                      ),
-                      8.spaceW,
-                      Text("Book at ${100.toINR}"),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          controller: scrollController,
-          // padding: const EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+
+  Material _floatActionBtn(BuildContext context) {
+    return Material(
+      color: AppColors.kWhite,
+      // elevation: 20,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
           children: [
-            Container(
-              // padding: const EdgeInsets.all(4),
-              color: AppColors.kWhite,
-              height: 300,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ListView(
-                    scrollDirection: Axis.horizontal,
-                    controller: scrollController,
-                    children: widget.product?.images
-                            ?.map(
-                              (e) => Padding(
-                                padding: const EdgeInsets.only(right: 16),
-                                child: Image.network(
-                                  e,
-                                  width: context.width,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            )
-                            .toList() ??
-                        [],
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: DecoratedBox(
-                      decoration: const ShapeDecoration(
-                        color: AppColors.kBlack900,
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius.all(
-                            SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
-                          ),
-                          side: BorderSide(
-                            color: AppColors.kFoundationPurple100,
-                          ),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: Text(
-                          "1 / 2",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => context.push(Routes.chats),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.kBlack900,
+                  shape: const SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
                       ),
                     ),
-                  )
-                ],
+                    side: BorderSide(
+                      color: AppColors.kFoundationPurple100,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomSvgIcon(
+                      assetName: AppAssets.chat,
+                      color: AppColors.kWhite,
+                      size: 20,
+                    ),
+                    8.spaceW,
+                    const Text("Negotaiate"),
+                  ],
+                ),
               ),
             ),
-            body(),
+            16.spaceW,
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  shape: const SmoothRectangleBorder(
+                    borderRadius: SmoothBorderRadius.all(
+                      SmoothRadius(
+                        cornerRadius: 12,
+                        cornerSmoothing: 1,
+                      ),
+                    ),
+                    side: BorderSide(
+                      color: AppColors.kFoundationPurple100,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomSvgIcon(
+                      assetName: AppAssets.wallet,
+                      color: AppColors.kWhite,
+                      size: 20,
+                    ),
+                    8.spaceW,
+                    Text("Book at ${100.toINR}"),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget body() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          16.spaceH,
-          Row(
+  AppAppbar _buildAppbar(BuildContext context) {
+    return AppAppbar(
+      onback: context.pop,
+      elevation: 2,
+      actions: [
+        UnconstrainedBox(
+          child: OutlinedButton(
+            onPressed: () {},
+            child: const CustomSvgIcon(
+              assetName: AppAssets.share,
+              color: AppColors.kCardGrey400,
+              size: 20,
+            ),
+          ),
+        ),
+        16.spaceW,
+      ],
+    );
+  }
+
+  Widget _buildbody(ProductModel product) {
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      controller: scrollController,
+      children: [
+        Container(
+          color: AppColors.kWhite,
+          height: 300,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              Expanded(
-                child: Text(
-                  "X Pulse  200",
-                  style: context.textTheme.headlineSmall,
-                ),
+              ListView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                controller: scrollController,
+                children: product.images
+                        ?.map(
+                          (e) => Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: CachedNetworkImage(
+                              width: context.width,
+                              fit: BoxFit.cover,
+                              imageUrl: e,
+                            ),
+                          ),
+                        )
+                        .toList() ??
+                    [],
               ),
-              const CustomSvgIcon(
-                assetName: AppAssets.favFill,
-                color: AppColors.kRed,
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Skeleton.ignore(
+                  child: DecoratedBox(
+                    decoration: const ShapeDecoration(
+                      color: AppColors.kBlack900,
+                      shape: SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
+                        ),
+                        side: BorderSide(
+                          color: AppColors.kFoundationPurple100,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+                        bloc: productDetailsCubit,
+                        // buildWhen: (previous, current) => current is ProductDetailsImagePosition,
+                        builder: (context, state) {
+                          print("building image pos");
+                          if (state is ProductDetailsImagePosition) {
+                            return Text(
+                              "${state.current} / ${state.total}",
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.white,
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               )
             ],
           ),
-          4.spaceH,
-          Text(
-            75000.toINR,
-            style: context.textTheme.headlineSmall,
-          ),
-          4.spaceH,
-          Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam arcu mauris, scelerisque eu mauris id, pretium pulvinar sapien.",
-            style: context.textTheme.titleMedium,
-          ),
-          32.spaceH,
-          Material(
-            shape: SmoothRectangleBorder(
-              borderRadius: 12.smoothBorderRadius,
-              borderAlign: BorderAlign.inside,
-            ),
-            color: AppColors.kWhite,
-            shadowColor: AppColors.kFoundationPurple100,
-            elevation: 8,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              16.spaceH,
+              Row(
                 children: [
-                  Text(
-                    "Details",
-                    style: context.textTheme.labelMedium,
+                  Expanded(
+                    child: Text(
+                      product.name ?? "-",
+                      style: context.textTheme.headlineSmall,
+                    ),
                   ),
-                  16.spaceH,
-                  titleSubtitle("KM Driven", "1,000", assetName: AppAssets.distance),
-                  titleSubtitle("Model", "2014", assetName: AppAssets.calender),
-                  titleSubtitle("Insaurance Validity", "2 Sep 2024", assetName: AppAssets.calender),
-                  titleSubtitle("Valid Till", "2 Sep 2036", assetName: AppAssets.calenderTill),
-                  titleSubtitle("Number Plate", "MH-04 2626", assetName: AppAssets.distance),
-                  titleSubtitle("Tyre Condition", "Good", assetName: AppAssets.distance),
-                  titleSubtitle("Fine", "Yes (${3345.toINR})", assetName: AppAssets.fine),
-                  titleSubtitle("Owners", "3", wantDivider: false, assetName: AppAssets.users),
+                  const Skeleton.ignore(
+                    child: CustomSvgIcon(
+                      assetName: AppAssets.favFill,
+                      color: AppColors.kRed,
+                    ),
+                  )
                 ],
               ),
-            ),
-          ),
-          32.spaceH,
-          Material(
-            shape: SmoothRectangleBorder(
-              borderRadius: 12.smoothBorderRadius,
-              borderAlign: BorderAlign.inside,
-            ),
-            color: AppColors.kWhite,
-            shadowColor: AppColors.kFoundationPurple100,
-            elevation: 8,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Default Details",
-                    style: context.textTheme.labelMedium,
-                  ),
-                  16.spaceH,
-                  titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
-                  titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
-                  titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
-                  titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
-                  titleSubtitle("Company", "Honda", assetName: AppAssets.company),
-                  titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
-                ],
+              4.spaceH,
+              Text(
+                75000.toINR,
+                style: context.textTheme.headlineSmall,
               ),
-            ),
+              4.spaceH,
+              Text(
+                product.description ?? '-',
+                style: context.textTheme.titleMedium,
+              ),
+              32.spaceH,
+              Material(
+                shape: SmoothRectangleBorder(
+                  borderRadius: 12.smoothBorderRadius,
+                  borderAlign: BorderAlign.inside,
+                ),
+                color: AppColors.kWhite,
+                shadowColor: AppColors.kFoundationPurple100,
+                elevation: 8,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Details",
+                        style: context.textTheme.labelMedium,
+                      ),
+                      16.spaceH,
+                      titleSubtitle("KM Driven", product.kmDriven.readableNumber, assetName: AppAssets.distance),
+                      titleSubtitle("Buy Date", product.bikeBuyDate?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                      titleSubtitle("Insaurance Validity", product.insauranceValidity?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                      titleSubtitle("Valid Till", product.bikeValidTill?.toDate().mmmYYY ?? "-", assetName: AppAssets.calenderTill),
+                      titleSubtitle("Number Plate", product.numberPlate ?? "-", assetName: AppAssets.distance),
+                      titleSubtitle("Tyre Condition", product.tyreCondition ?? '-', assetName: AppAssets.distance),
+                      titleSubtitle("Fine", product.fine.readableNumber, assetName: AppAssets.fine),
+                      titleSubtitle("Owners", product.owners.readableNumber, wantDivider: false, assetName: AppAssets.users),
+                    ],
+                  ),
+                ),
+              ),
+              32.spaceH,
+              Material(
+                shape: SmoothRectangleBorder(
+                  borderRadius: 12.smoothBorderRadius,
+                  borderAlign: BorderAlign.inside,
+                ),
+                color: AppColors.kWhite,
+                shadowColor: AppColors.kFoundationPurple100,
+                elevation: 8,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Default Details",
+                        style: context.textTheme.labelMedium,
+                      ),
+                      16.spaceH,
+                      titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
+                      titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
+                      titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
+                      titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
+                      titleSubtitle("Company", "Honda", assetName: AppAssets.company),
+                      titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
+                    ],
+                  ),
+                ),
+              ),
+              100.spaceH,
+            ],
           ),
-          100.spaceH,
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -300,10 +357,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           children: [
             if (assetName != null) ...[
               // 4.spaceW,
-              CustomSvgIcon(
-                assetName: assetName,
-                color: AppColors.kFoundationPurple700.withOpacity(.8),
-                size: 18,
+              Skeleton.replace(
+                replacement: const Bone.square(size: 16),
+                child: CustomSvgIcon(
+                  assetName: assetName,
+                  color: AppColors.kFoundationPurple700.withOpacity(.8),
+                  size: 18,
+                ),
               ),
               16.spaceW,
             ],

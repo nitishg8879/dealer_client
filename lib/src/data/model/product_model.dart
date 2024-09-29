@@ -170,3 +170,18 @@ class ProductModel {
   @override
   int get hashCode => id.hashCode;
 }
+
+ProductModel dummyProduct = ProductModel(
+  name: "Xpulse 200",
+  price: 23232,
+  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam arcu mauris, scelerisque eu mauris id, pretium pulvinar sapien.",
+  kmDriven: 232323,
+  model: "232323",
+  bikeBuyDate: Timestamp.now(),
+  insauranceValidity: Timestamp.now(),
+  bikeValidTill: Timestamp.now(),
+  numberPlate: "MH 04 3434",
+  tyreCondition: "Good",
+  fine: 300,
+  owners: 2,
+);

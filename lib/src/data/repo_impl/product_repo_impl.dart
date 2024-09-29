@@ -7,6 +7,7 @@ import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductRepoImpl implements ProductRepo {
   final ProductDataSource _productDataSource;
@@ -42,8 +43,16 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<ProductModel>?>> fetchProducts(ProductsFilterController req) async {
-    final state = await _productDataSource.fetchProducts(req);
+  Future<DataState<List<ProductModel>?>> fetchProducts(
+    ProductsFilterController req, {
+    DocumentSnapshot? lastdocument,
+    void Function(DocumentSnapshot lastdocument)? lastdoc,
+  }) async {
+    final state = await _productDataSource.fetchProducts(
+      req,
+      lastDocument: lastdocument,
+      lastdoc: lastdoc,
+    );
     if (state is DataSuccess) {
       return state;
     } else {
@@ -54,6 +63,26 @@ class ProductRepoImpl implements ProductRepo {
   @override
   Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() async {
     final state = await _productDataSource.fetchCategoryCompanyModel();
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
+  }
+
+  @override
+  Future<DataState<int?>> fetchProductsCount() async {
+    final state = await _productDataSource.fetchProductsCount();
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
+  }
+
+  @override
+  Future<DataState<ProductModel?>> fetchProductbyId(String id) async {
+    final state = await _productDataSource.fetchProductbyId(id);
     if (state is DataSuccess) {
       return state;
     } else {

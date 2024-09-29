@@ -66,7 +66,29 @@ class ProductDataSource {
     return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
   }
 
-  Future<DataState<List<ProductModel>?>> fetchProducts(ProductsFilterController req) async {
+  Future<DataState<ProductModel?>> fetchProductbyId(String id) async {
+    try {
+      final resp = await getIt.get<AppFireBaseLoc>().product.doc(id).get().catchError((e) => throw e);
+      return DataSuccess(ProductModel.fromJson(resp.data() as Map<String, dynamic>));
+    } catch (e) {
+      return DataFailed(null, 500, e.toString());
+    }
+  }
+
+  Future<DataState<int?>> fetchProductsCount() async {
+    try {
+      final resp = await getIt.get<AppFireBaseLoc>().product.count().get().catchError((e) => throw e);
+      return DataSuccess(resp.count);
+    } catch (e) {
+      return DataFailed(null, 500, e.toString());
+    }
+  }
+
+  Future<DataState<List<ProductModel>?>> fetchProducts(
+    ProductsFilterController req, {
+    DocumentSnapshot? lastDocument,
+    void Function(DocumentSnapshot lastdocument)? lastdoc,
+  }) async {
     try {
       List<ProductModel> products = [];
       if (req.hasFilter) {
@@ -78,9 +100,9 @@ class ProductDataSource {
         bool hasCompanyFilter = req.selectedCompany.isNotEmpty;
         bool hasCatCmpnyFilter = req.selectedCatCompBrands.isNotEmpty;
 
-        //? Working
+        Query<Map<String, dynamic>>? query1, query2, query3;
         if (hasCatgeoryFilter || hasPriceFilter) {
-          var resp = await getIt
+          query1 = getIt
               .get<AppFireBaseLoc>()
               .product
               .orderBy('price')
@@ -93,13 +115,10 @@ class ProductDataSource {
                 'category',
                 whereIn: req.selectedCategory.isNotEmpty ? req.selectedCategory.map((e) => e.id).toList() : null,
               )
-              .orderBy('creationDate', descending: true)
-              .get();
-          products.addAll(_convertJsonToList(resp));
+              .orderBy('creationDate', descending: true);
         }
-        //? Working
         if (hasCompanyFilter || haskmFilter) {
-          var resp = await getIt
+          query2 = getIt
               .get<AppFireBaseLoc>()
               .product
               .orderBy('kmDriven')
@@ -112,12 +131,10 @@ class ProductDataSource {
                 'company',
                 whereIn: req.selectedCompany.isNotEmpty ? req.selectedCompany.map((e) => e.id).toList() : null,
               )
-              .orderBy('creationDate', descending: true)
-              .get();
-          products.addAll(_convertJsonToList(resp));
+              .orderBy('creationDate', descending: true);
         }
         if (hasCatCmpnyFilter || hasyearFilter) {
-          var resp = await getIt
+          query3 = getIt
               .get<AppFireBaseLoc>()
               .product
               .orderBy('bikeBuyDate')
@@ -130,14 +147,29 @@ class ProductDataSource {
                 'model',
                 whereIn: req.selectedCatCompBrands.isNotEmpty ? req.selectedCatCompBrands.map((e) => e.id).toList() : null,
               )
-              .orderBy('creationDate', descending: true)
-              .get();
-          products.addAll(_convertJsonToList(resp));
+              .orderBy('creationDate', descending: true);
+        }
+
+        final resp = await Future.wait([
+          if (query1 != null) query1.get(),
+          if (query2 != null) query2.get(),
+          if (query3 != null) query3.get(),
+        ]).catchError((error) => throw error);
+        for (var data in resp) {
+          products.addAll(_convertJsonToList(data));
         }
       } else {
-        final resp =
-            await getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).limit(10).get().catchError((error) => throw error);
+        Query<Map<String, dynamic>>? query1;
+        if (lastDocument != null) {
+          query1 = getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).startAfterDocument(lastDocument).limit(10);
+        } else {
+          query1 = getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).limit(10);
+        }
+        final resp = await query1.get().catchError((error) => throw error);
         products = List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
+        if (lastdoc != null) {
+          lastdoc(resp.docs.last);
+        }
       }
       products = products.toSet().toList();
       return DataSuccess(products);

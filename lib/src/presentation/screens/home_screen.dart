@@ -37,6 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    fetchData();
+  }
+
+  void fetchData() {
     WidgetsBinding.instance.addPostFrameCallback((frame) {
       homeBloc.fetchHomeAnalyticsData();
     });
@@ -45,17 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     scrollController.dispose();
+    homeBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: kDebugMode
-          ? FloatingActionButton(onPressed: () {
-              homeBloc.fetchHomeAnalyticsData();
-            })
-          : null,
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
           bloc: homeBloc,
