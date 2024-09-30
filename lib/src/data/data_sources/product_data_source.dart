@@ -1,4 +1,5 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
+import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
@@ -72,6 +73,40 @@ class ProductDataSource {
       return DataSuccess(ProductModel.fromJson(resp.data() as Map<String, dynamic>));
     } catch (e) {
       return DataFailed(null, 500, e.toString());
+    }
+  }
+
+  Future<DataState<bool>> addToFavourite(String productId) async {
+    if (!(getIt.get<AppLocalService>().isLoggedIn) || getIt.get<AppLocalService>().currentUser?.id == null) {
+      return const DataFailed(false, 500, "User is not logged in.");
+    } else {
+      try {
+        await getIt.get<AppFireBaseLoc>().users.doc(getIt.get<AppLocalService>().currentUser!.id).update({
+          'favProduct': FieldValue.arrayUnion([productId])
+        }).catchError((error) {
+          throw error;
+        });
+        return const DataSuccess(true);
+      } catch (e) {
+        return DataFailed(false, 500, e.toString());
+      }
+    }
+  }
+
+  Future<DataState<bool>> removeFromFavourite(String productId) async {
+    if (!getIt.get<AppLocalService>().isLoggedIn || getIt.get<AppLocalService>().currentUser?.id == null) {
+      return const DataFailed(false, 500, "User is not logged in.");
+    } else {
+      try {
+        await getIt.get<AppFireBaseLoc>().users.doc(getIt.get<AppLocalService>().currentUser!.id).update({
+          'favProduct': FieldValue.arrayRemove([productId])
+        }).catchError((error) {
+          throw error;
+        });
+        return const DataSuccess(true);
+      } catch (e) {
+        return DataFailed(false, 500, e.toString());
+      }
     }
   }
 

@@ -89,4 +89,24 @@ class ProductRepoImpl implements ProductRepo {
       return DataFailed(null, state.statusCode, state.message);
     }
   }
+  
+  @override
+  Future<DataState<bool>> addToFavourite(String id) async {
+    final state = await _productDataSource.addToFavourite(id);
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(false, state.statusCode, state.message);
+    }
+  }
+  
+  @override
+  Future<DataState<bool>> removeFromFavourite(String id) async {
+    final state = await _productDataSource.removeFromFavourite(id);
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(false, state.statusCode, state.message);
+    }
+  }
 }

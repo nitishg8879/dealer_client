@@ -3,21 +3,18 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/config/themes/app_theme.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
-import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
-import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -453,7 +450,7 @@ class ProductCategoryGridView extends StatelessWidget {
                     return Skeletonizer(
                       enabled: snapshot.connectionState == ConnectionState.waiting,
                       child: ProductView(
-                        product: ProductModel.fromJson(snapshot.data?.data() ?? {}),
+                        product: ProductModel.fromJson(snapshot.data?.data() ?? {})..id = snapshot.data?.id,
                         row: false,
                       ),
                     );

@@ -51,6 +51,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+
   void onProfileTap() {
     if (getIt.get<AppLocalService>().isLoggedIn) {
       HelperFun.goNextPage(Routes.profile);

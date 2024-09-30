@@ -11,6 +11,7 @@ import 'package:bike_client_dealer/src/domain/use_cases/auth/logout_usecase.dart
 import 'package:bike_client_dealer/src/domain/use_cases/categories/category_compnay_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/categories/category_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/categories/company_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/product/fav_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/product_fetch_usecase.dart';
@@ -39,6 +40,8 @@ Future<void> configureDependencies() async {
   //? Products
   getIt.registerLazySingleton(() => ProductDataSource());
   getIt.registerLazySingleton<ProductRepo>(() => ProductRepoImpl(getIt.get()));
+  getIt.registerLazySingleton<AddToFavouriteUseCase>(() => AddToFavouriteUseCase(getIt.get()));
+  getIt.registerLazySingleton<RemoveFromFavouriteUsecase>(() => RemoveFromFavouriteUsecase(getIt.get()));
 
   getIt.registerLazySingleton(() => HomeAnalyticsFetchUsecases(getIt.get()));
   getIt.registerLazySingleton(() => CompanyFetchUsecase(getIt.get()));

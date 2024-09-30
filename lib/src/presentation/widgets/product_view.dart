@@ -4,6 +4,7 @@ import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/product_fav.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,12 +16,17 @@ class ProductView extends StatelessWidget {
   final bool fromChatPin;
   final void Function()? onChatPinCLose;
   final bool fromChatReadyOnly;
+  // final Color addedFavColor, notAddedFavColor;
+  // final double iconSize;
   const ProductView({
     super.key,
     required this.product,
     this.row = true,
     this.fromChatPin = false,
     this.onChatPinCLose,
+    // this.iconSize = 18,
+    // this.addedFavColor = AppColors.kRed,
+    // this.notAddedFavColor = AppColors.kRed,
     this.fromChatReadyOnly = false,
   });
 
@@ -67,15 +73,21 @@ class ProductView extends StatelessWidget {
                 maxLines: 1,
               ),
             ),
-            Skeleton.ignore(
-              child: InkWell(
-                onTap: () {},
-                child: const CustomSvgIcon(
-                  assetName: AppAssets.fav,
-                  size: 14,
-                ),
-              ),
+            ProductFav(
+              id: product.id ?? '',
+              addedFavColor: AppColors.kBlack900,
+              notAddedFavColor: AppColors.kBlack900,
+              size: 14,
             )
+            // Skeleton.ignore(
+            //   child: InkWell(
+            //     onTap: () {},
+            //     child: const CustomSvgIcon(
+            //       assetName: AppAssets.fav,
+            //       size: 14,
+            //     ),
+            //   ),
+            // )
           ],
         ),
         8.spaceH,
@@ -190,8 +202,14 @@ class ProductView extends StatelessWidget {
               6.spaceH,
               Row(
                 children: [
-                  const CustomSvgIcon(
-                    assetName: AppAssets.location,
+                  // const CustomSvgIcon(
+                  //   assetName: AppAssets.location,
+                  //   size: 16,
+                  // ),
+                  ProductFav(
+                    id: product.id ?? '',
+                    addedFavColor: AppColors.kBlack900,
+                    notAddedFavColor: AppColors.kBlack900,
                     size: 16,
                   ),
                   5.spaceW,

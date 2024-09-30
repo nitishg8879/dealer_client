@@ -14,6 +14,8 @@ abstract class ProductRepo {
   Future<DataState<List<CategoryModel>?>> fetchCategory();
   Future<DataState<int?>> fetchProductsCount();
   Future<DataState<ProductModel?>> fetchProductbyId(String id);
+  Future<DataState<bool>> addToFavourite(String id);
+  Future<DataState<bool>> removeFromFavourite(String id);
   Future<DataState<List<ProductModel>?>> fetchProducts(
     ProductsFilterController req, {
     DocumentSnapshot? lastdocument,

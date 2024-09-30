@@ -3,11 +3,11 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
-import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/product_fav.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
@@ -176,87 +176,106 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       physics: const BouncingScrollPhysics(),
       controller: scrollController,
       children: [
-        Container(
-          color: AppColors.kWhite,
+        SizedBox(
           height: 300,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CarouselView(
-                itemExtent: context.width,
-                shape: const RoundedRectangleBorder(),
-                padding: EdgeInsets.zero,
-                itemSnapping: true,
-                children: product.images
-                        ?.map(
-                          (e) => CachedNetworkImage(
-                            width: context.width,
-                            fit: BoxFit.cover,
-                            imageUrl: e,
-                          ),
-                        )
-                        .toList() ??
-                    [],
-              ),
-              // ListView(
-              //   physics: const BouncingScrollPhysics(),
-              //   scrollDirection: Axis.horizontal,
-              //   controller: scrollController,
-              //   children: product.images
-              //           ?.map(
-              //             (e) => Padding(
-              //               padding: const EdgeInsets.only(right: 16),
-              //               child: CachedNetworkImage(
-              //                 width: context.width,
-              //                 fit: BoxFit.cover,
-              //                 imageUrl: e,
-              //               ),
-              //             ),
-              //           )
-              //           .toList() ??
-              //       [],
-              // ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Skeleton.ignore(
-                  child: DecoratedBox(
-                    decoration: const ShapeDecoration(
-                      color: AppColors.kBlack900,
-                      shape: SmoothRectangleBorder(
-                        borderRadius: SmoothBorderRadius.all(
-                          SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
-                        ),
-                        side: BorderSide(
-                          color: AppColors.kFoundationPurple100,
-                        ),
+          child: CarouselView(
+            itemExtent: context.width,
+            shape: const RoundedRectangleBorder(),
+            padding: EdgeInsets.zero,
+            itemSnapping: true,
+            children: product.images
+                    ?.map(
+                      (e) => CachedNetworkImage(
+                        width: context.width,
+                        fit: BoxFit.cover,
+                        imageUrl: e,
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
-                        bloc: productDetailsCubit,
-                        // buildWhen: (previous, current) => current is ProductDetailsImagePosition,
-                        builder: (context, state) {
-                          print("building image pos");
-                          if (state is ProductDetailsImagePosition) {
-                            return Text(
-                              "${state.current} / ${state.total}",
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                color: AppColors.white,
-                              ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
+                    )
+                    .toList() ??
+                [],
           ),
         ),
+        // Container(
+        //   color: AppColors.kWhite,
+        //   height: 300,
+        //   child: Stack(
+        //     fit: StackFit.expand,
+        //     children: [
+        //       CarouselView(
+        //         itemExtent: context.width,
+        //         shape: const RoundedRectangleBorder(),
+        //         padding: EdgeInsets.zero,
+        //         itemSnapping: true,
+        //         children: product.images
+        //                 ?.map(
+        //                   (e) => CachedNetworkImage(
+        //                     width: context.width,
+        //                     fit: BoxFit.cover,
+        //                     imageUrl: e,
+        //                   ),
+        //                 )
+        //                 .toList() ??
+        //             [],
+        //       ),
+        //       // ListView(
+        //       //   physics: const BouncingScrollPhysics(),
+        //       //   scrollDirection: Axis.horizontal,
+        //       //   controller: scrollController,
+        //       //   children: product.images
+        //       //           ?.map(
+        //       //             (e) => Padding(
+        //       //               padding: const EdgeInsets.only(right: 16),
+        //       //               child: CachedNetworkImage(
+        //       //                 width: context.width,
+        //       //                 fit: BoxFit.cover,
+        //       //                 imageUrl: e,
+        //       //               ),
+        //       //             ),
+        //       //           )
+        //       //           .toList() ??
+        //       //       [],
+        //       // ),
+        //       Positioned(
+        //         top: 8,
+        //         right: 8,
+        //         child: Skeleton.ignore(
+        //           child: DecoratedBox(
+        //             decoration: const ShapeDecoration(
+        //               color: AppColors.kBlack900,
+        //               shape: SmoothRectangleBorder(
+        //                 borderRadius: SmoothBorderRadius.all(
+        //                   SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
+        //                 ),
+        //                 side: BorderSide(
+        //                   color: AppColors.kFoundationPurple100,
+        //                 ),
+        //               ),
+        //             ),
+        //             child: Padding(
+        //               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        //               child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+        //                 bloc: productDetailsCubit,
+        //                 // buildWhen: (previous, current) => current is ProductDetailsImagePosition,
+        //                 builder: (context, state) {
+        //                   print("building image pos");
+        //                   if (state is ProductDetailsImagePosition) {
+        //                     return Text(
+        //                       "${state.current} / ${state.total}",
+        //                       style: context.textTheme.bodyLarge?.copyWith(
+        //                         color: AppColors.white,
+        //                       ),
+        //                     );
+        //                   }
+        //                   return const SizedBox();
+        //                 },
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -271,12 +290,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       style: context.textTheme.headlineSmall,
                     ),
                   ),
-                  const Skeleton.ignore(
-                    child: CustomSvgIcon(
-                      assetName: AppAssets.favFill,
-                      color: AppColors.kRed,
-                    ),
-                  )
+                  ProductFav(id: widget.product?.id ?? '-')
+                  // IconButton(
+                  //   padding: EdgeInsets.zero,
+                  //   constraints: const BoxConstraints.expand(width: 24, height: 24),
+                  //   onPressed: () {},
+                  //   icon: Skeleton.ignore(
+                  //     child: CustomSvgIcon(
+                  //       assetName: AppAssets.favFill,
+                  //       color: AppColors.kRed,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               4.spaceH,

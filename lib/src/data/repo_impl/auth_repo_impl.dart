@@ -22,11 +22,12 @@ class AuthRepoImpl implements AuthRepo {
         uuid: state.data?.uid,
         fullName: state.data?.displayName,
         creationDate: Timestamp.now(),
+        favProduct: [],
       );
       final resp = await getIt<AppFireBaseLoc>().users.where('email', isEqualTo: user.email).get();
       if (resp.docs.length == 1) {
         //? Old User
-        user = UserModel.fromJson(resp.docs.first.data());
+        user = UserModel.fromJson(resp.docs.first.data())..id = resp.docs.first.id;
       } else {
         //? New user
         final createdUser = await getIt<AppFireBaseLoc>().users.add(user.toJson());

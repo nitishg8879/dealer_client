@@ -1,11 +1,13 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
+import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_tile_section.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,9 +19,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String dummyImage =
-      "https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize";
-
   final boxShadow = [
     BoxShadow(
       color: Colors.grey.shade100,
@@ -50,11 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   ClipRRect(
                     borderRadius: 100.borderRadius,
-                    child: Image.network(
-                      dummyImage,
+                    child: CachedNetworkImage(
                       height: 34,
                       width: 34,
                       fit: BoxFit.cover,
+                      imageUrl: getIt.get<AppLocalService>().currentUser?.profileUrl ?? '-',
                     ),
                   ),
                   9.spaceW,
@@ -63,11 +62,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Miracle Philips",
+                          getIt.get<AppLocalService>().currentUser?.fullName ?? '-',
                           style: context.textTheme.displaySmall,
                         ),
                         Text(
-                          "MiracleMohammed@gmail.com",
+                          getIt.get<AppLocalService>().currentUser?.email ?? '-',
                           style: context.textTheme.titleSmall?.copyWith(
                             color: AppColors.grey500,
                           ),

@@ -10,8 +10,7 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   final LoginUsecase _loginUsecase;
   final LogoutUsecase _logoutUsecase;
-  AuthCubit(this._loginUsecase, this._logoutUsecase)
-      : super(AuthProcessing(false));
+  AuthCubit(this._loginUsecase, this._logoutUsecase) : super(AuthProcessing(false));
 
   Future<void> login({void Function()? ontap}) async {
     // if (state is AuthProcessing && (state as AuthProcessing).isLoading) return;
@@ -34,7 +33,11 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> logout({void Function()? ontap}) async {
-    final resp = await _logoutUsecase.call();
+    await _logoutUsecase.call();
+    emit(AuthProcessing(false));
+  }
+
+  void updateUI() {
     emit(AuthProcessing(false));
   }
 }

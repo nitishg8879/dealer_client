@@ -13,6 +13,7 @@ class UserModel {
   bool? active;
   Timestamp? creationDate;
   String? suspendReason;
+  List<String>? favProduct;
 
   UserModel({
     required this.email,
@@ -21,6 +22,7 @@ class UserModel {
     required this.uuid,
     required this.fullName,
     required this.creationDate,
+    required this.favProduct,
     this.active = true,
   });
 
@@ -34,6 +36,7 @@ class UserModel {
     active = json['active'];
     suspendReason = json['suspendReason'];
     id = json['id'];
+    favProduct = (json['favProduct'] as List<dynamic>?)?.cast<String>();
   }
 
   Map<String, dynamic> toJson({bool fromSave = true}) {
@@ -45,6 +48,7 @@ class UserModel {
     data['fullName'] = fullName;
     data['active'] = active;
     data['suspendReason'] = suspendReason;
+    data['favProduct'] = favProduct ?? <String>[];
     if (fromSave) {
       data['creationDate'] = creationDate;
     } else {
