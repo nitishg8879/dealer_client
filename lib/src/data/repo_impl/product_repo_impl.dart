@@ -43,13 +43,13 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<ProductModel>?>> fetchProducts(
-    ProductsFilterController req, {
+  Future<DataState<List<ProductModel>?>> fetchProducts({
+    ProductsFilterController? req,
     DocumentSnapshot? lastdocument,
     void Function(DocumentSnapshot lastdocument)? lastdoc,
   }) async {
     final state = await _productDataSource.fetchProducts(
-      req,
+      req: req,
       lastDocument: lastdocument,
       lastdoc: lastdoc,
     );
@@ -61,7 +61,8 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() async {
+  Future<DataState<List<CategoryCompanyMdoel>?>>
+      fetchCategoryCompanyModel() async {
     final state = await _productDataSource.fetchCategoryCompanyModel();
     if (state is DataSuccess) {
       return state;
@@ -89,7 +90,7 @@ class ProductRepoImpl implements ProductRepo {
       return DataFailed(null, state.statusCode, state.message);
     }
   }
-  
+
   @override
   Future<DataState<bool>> addToFavourite(String id) async {
     final state = await _productDataSource.addToFavourite(id);
@@ -99,7 +100,7 @@ class ProductRepoImpl implements ProductRepo {
       return DataFailed(false, state.statusCode, state.message);
     }
   }
-  
+
   @override
   Future<DataState<bool>> removeFromFavourite(String id) async {
     final state = await _productDataSource.removeFromFavourite(id);

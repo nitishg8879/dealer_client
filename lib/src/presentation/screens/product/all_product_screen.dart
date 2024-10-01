@@ -14,11 +14,20 @@ import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 class AllProductScreen extends StatefulWidget {
-  const AllProductScreen({super.key});
+  final String? selectedCategory;
+  final String? selectedCompany;
+  final List<String>? products;
+  const AllProductScreen({
+    super.key,
+    this.selectedCategory,
+    this.selectedCompany,
+    this.products,
+  });
 
   @override
   State<AllProductScreen> createState() => _AllProductScreenState();
@@ -38,7 +47,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    handlePreFilterDataAndFetch();
     addListnerInScrolling();
   }
 
@@ -48,6 +57,36 @@ class _AllProductScreenState extends State<AllProductScreen> {
     removeScrollingListner();
     scrollController.dispose();
     super.dispose();
+  }
+
+  void handlePreFilterDataAndFetch() {
+    WidgetsBinding.instance.addPostFrameCallback((frame) {
+      if (widget.selectedCategory != null) {
+        if (productFilterController.category
+            .any((e) => widget.selectedCategory == e.id)) {
+          productFilterController.selectedCategory.add(productFilterController
+              .category
+              .firstWhere((e) => e.id == widget.selectedCategory));
+        }
+      }
+
+      if (widget.selectedCompany != null) {
+        if (productFilterController.company
+            .any((e) => widget.selectedCompany == e.id)) {
+          productFilterController.selectedCompany.add(productFilterController
+              .company
+              .firstWhere((e) => e.id == widget.selectedCompany));
+        }
+      }
+      productCubit.fetchProducts(productFilterController, (ld) {
+        if (!productFilterController.hasFilter) {
+          lastDocument = ld;
+        } else {
+          productCubit.totalData = null;
+          lastDocument = null;
+        }
+      });
+    });
   }
 
   void fetchData() {
@@ -65,7 +104,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
 
   void addListnerInScrolling() {
     scrollController.addListener(() async {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent && productCubit.state is! ProductLoading) {
+      if (scrollController.position.pixels ==
+              scrollController.position.maxScrollExtent &&
+          productCubit.state is! ProductLoading) {
         productCubit.fetchMoreProducts(
           lastdoc: (ld) => lastDocument = ld,
           lastDocument: lastDocument,
@@ -83,7 +124,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
       showDragHandle: true,
       enableDrag: true,
       isScrollControlled: true,
@@ -119,7 +161,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
       body: BlocBuilder<ProductCubit, ProductState>(
         bloc: productCubit,
         buildWhen: (previous, current) {
-          return (current is ProductHasError || current is ProductLoaded || current is ProductLoading);
+          return (current is ProductHasError ||
+              current is ProductLoaded ||
+              current is ProductLoading);
         },
         builder: (context, state) {
           if (state is ProductLoading) {
@@ -159,7 +203,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
                 itemBuilder: (context, index) {
-                  return ProductView(product: productCubit.products[index], row: false);
+                  return ProductView(
+                      product: productCubit.products[index], row: false);
                 },
                 itemCount: productCubit.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

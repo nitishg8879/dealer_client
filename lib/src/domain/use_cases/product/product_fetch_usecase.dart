@@ -13,11 +13,11 @@ class ProductFetchUsecase {
     DocumentSnapshot? lastdocument,
     void Function(DocumentSnapshot lastdocument)? lastdoc,
   }) async {
-    if (req == null) {
-      throw Exception("Provide req Model.");
-    }
+    // if (req == null) {
+    //   throw Exception("Provide req Model.");
+    // }
     return _productRepo.fetchProducts(
-      req,
+      req: req,
       lastdocument: lastdocument,
       lastdoc: lastdoc,
     );

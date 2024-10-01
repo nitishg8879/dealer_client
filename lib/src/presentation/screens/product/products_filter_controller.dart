@@ -5,7 +5,9 @@ import 'package:flutter/material.dart' show RangeValues;
 
 class ProductsFilterController {
   bool get hasFilter {
-    return (selectedCategory.isNotEmpty || selectedCompany.isNotEmpty || selectedCatCompBrands.isNotEmpty) ||
+    return (selectedCategory.isNotEmpty ||
+            selectedCompany.isNotEmpty ||
+            selectedCatCompBrands.isNotEmpty) ||
         (priceMinMaxSelected.start != 0 || priceMinMaxSelected.end != 0) ||
         (minYear != null || maxYear != null) ||
         (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0);
@@ -14,6 +16,8 @@ class ProductsFilterController {
   List<CategoryModel> category = [];
   List<CompanyModel> company = [];
   List<CategoryCompanyMdoel> categoryCompanyBrands = [];
+
+  List<String> products = [];
 
   List<CategoryModel> selectedCategory = [];
   List<CompanyModel> selectedCompany = [];

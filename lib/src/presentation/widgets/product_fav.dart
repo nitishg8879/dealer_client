@@ -8,6 +8,7 @@ import 'package:bike_client_dealer/src/domain/use_cases/product/fav_usecase.dart
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -30,7 +31,13 @@ class ProductFav extends StatefulWidget {
 
 class _ProductFavState extends State<ProductFav> {
   bool get isFav {
-    return getIt.get<AppLocalService>().isLoggedIn && (getIt.get<AppLocalService>().currentUser?.favProduct?.contains(widget.id) ?? false);
+    return getIt.get<AppLocalService>().isLoggedIn &&
+        (getIt
+                .get<AppLocalService>()
+                .currentUser
+                ?.favProduct
+                ?.contains(widget.id) ??
+            false);
   }
 
   bool isLoading = false;
@@ -43,8 +50,11 @@ class _ProductFavState extends State<ProductFav> {
       setState(() {
         isLoading = true;
       });
-      await Future.delayed(Duration(seconds: 2));
-      final state = await getIt.get<AddToFavouriteUseCase>().call(id: widget.id);
+      if (kDebugMode) {
+        await Future.delayed(Duration(seconds: 2));
+      }
+      final state =
+          await getIt.get<AddToFavouriteUseCase>().call(id: widget.id);
       if (state is DataSuccess) {
         await updateUser(true);
       }
@@ -66,8 +76,11 @@ class _ProductFavState extends State<ProductFav> {
       setState(() {
         isLoading = true;
       });
-      await Future.delayed(Duration(seconds: 2));
-      final state = await getIt.get<RemoveFromFavouriteUsecase>().call(id: widget.id);
+      if (kDebugMode) {
+        await Future.delayed(Duration(seconds: 2));
+      }
+      final state =
+          await getIt.get<RemoveFromFavouriteUsecase>().call(id: widget.id);
       if (state is DataSuccess) {
         await updateUser(false);
       }
@@ -83,12 +96,26 @@ class _ProductFavState extends State<ProductFav> {
   Future<void> updateUser(bool isAdd) async {
     if (isAdd) {
       getIt.get<AppLocalService>().currentUser?.favProduct?.add(widget.id);
-      getIt.get<AppLocalService>().currentUser?.favProduct = List.from(getIt.get<AppLocalService>().currentUser?.favProduct?.toSet().toList() ?? []);
+      getIt.get<AppLocalService>().currentUser?.favProduct = List.from(getIt
+              .get<AppLocalService>()
+              .currentUser
+              ?.favProduct
+              ?.toSet()
+              .toList() ??
+          []);
     } else {
       getIt.get<AppLocalService>().currentUser?.favProduct?.remove(widget.id);
-      getIt.get<AppLocalService>().currentUser?.favProduct = List.from(getIt.get<AppLocalService>().currentUser?.favProduct?.toSet().toList() ?? []);
+      getIt.get<AppLocalService>().currentUser?.favProduct = List.from(getIt
+              .get<AppLocalService>()
+              .currentUser
+              ?.favProduct
+              ?.toSet()
+              .toList() ??
+          []);
     }
-    await getIt.get<AppLocalService>().login(getIt.get<AppLocalService>().currentUser!);
+    await getIt
+        .get<AppLocalService>()
+        .login(getIt.get<AppLocalService>().currentUser!);
     getIt.get<AuthCubit>().updateUI();
   }
 
@@ -109,7 +136,8 @@ class _ProductFavState extends State<ProductFav> {
         }
         return IconButton(
           padding: EdgeInsets.zero,
-          constraints: BoxConstraints.expand(width: widget.size, height: widget.size),
+          constraints:
+              BoxConstraints.expand(width: widget.size, height: widget.size),
           onPressed: isFav ? removeFavourite : addToFavourite,
           icon: Skeleton.ignore(
             child: CustomSvgIcon(

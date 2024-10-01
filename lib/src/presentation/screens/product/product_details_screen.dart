@@ -45,7 +45,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void fetchData() {
-    WidgetsBinding.instance.addPostFrameCallback((frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
   }
 
   @override
@@ -59,15 +60,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       appBar: _buildAppbar(context),
       body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
         bloc: productDetailsCubit,
-        buildWhen: (previous, current) => (current is ProductDetailsLoading || current is ProductDetailsLoaded || current is ProductDetailsHasError),
+        buildWhen: (previous, current) => (current is ProductDetailsLoading ||
+            current is ProductDetailsLoaded ||
+            current is ProductDetailsHasError),
         builder: (context, state) {
-          print("building Root");
           return Skeletonizer(
             enabled: state is ProductDetailsLoading,
             child: Scaffold(
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
               floatingActionButton: _floatActionBtn(context),
-              body: _buildbody((state is ProductDetailsLoading) ? dummyProduct : (state as ProductDetailsLoaded).productModel),
+              body: _buildbody((state is ProductDetailsLoading)
+                  ? dummyProduct
+                  : (state as ProductDetailsLoaded).productModel),
             ),
           );
         },
@@ -78,7 +83,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Material _floatActionBtn(BuildContext context) {
     return Material(
       color: AppColors.kWhite,
-      // elevation: 20,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -176,23 +180,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       physics: const BouncingScrollPhysics(),
       controller: scrollController,
       children: [
-        SizedBox(
-          height: 300,
-          child: CarouselView(
-            itemExtent: context.width,
-            shape: const RoundedRectangleBorder(),
-            padding: EdgeInsets.zero,
-            itemSnapping: true,
-            children: product.images
-                    ?.map(
-                      (e) => CachedNetworkImage(
-                        width: context.width,
-                        fit: BoxFit.cover,
-                        imageUrl: e,
-                      ),
-                    )
-                    .toList() ??
-                [],
+        Skeleton.replace(
+          replace: true,
+          width: double.infinity,
+          height: context.height * .45,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: context.height * .45,
+              maxWidth: double.infinity,
+            ),
+            child: CarouselView(
+              itemExtent: context.width,
+              shape: const RoundedRectangleBorder(),
+              padding: EdgeInsets.zero,
+              itemSnapping: true,
+              children: product.images
+                      ?.map(
+                        (e) => CachedNetworkImage(
+                          width: context.width,
+                          fit: BoxFit.cover,
+                          imageUrl: e,
+                        ),
+                      )
+                      .toList() ??
+                  [],
+            ),
           ),
         ),
         // Container(
@@ -324,7 +336,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 shadowColor: AppColors.kFoundationPurple100,
                 elevation: 8,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -335,14 +348,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         style: context.textTheme.labelMedium,
                       ),
                       16.spaceH,
-                      titleSubtitle("KM Driven", product.kmDriven.readableNumber, assetName: AppAssets.distance),
-                      titleSubtitle("Buy Date", product.bikeBuyDate?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
-                      titleSubtitle("Insaurance Validity", product.insauranceValidity?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
-                      titleSubtitle("Valid Till", product.bikeValidTill?.toDate().mmmYYY ?? "-", assetName: AppAssets.calenderTill),
-                      titleSubtitle("Number Plate", product.numberPlate ?? "-", assetName: AppAssets.distance),
-                      titleSubtitle("Tyre Condition", product.tyreCondition ?? '-', assetName: AppAssets.distance),
-                      titleSubtitle("Fine", product.fine.readableNumber, assetName: AppAssets.fine),
-                      titleSubtitle("Owners", product.owners.readableNumber, wantDivider: false, assetName: AppAssets.users),
+                      titleSubtitle(
+                          "KM Driven", product.kmDriven.readableNumber,
+                          assetName: AppAssets.distance),
+                      titleSubtitle("Buy Date",
+                          product.bikeBuyDate?.toDate().mmmYYY ?? "-",
+                          assetName: AppAssets.calender),
+                      titleSubtitle("Insaurance Validity",
+                          product.insauranceValidity?.toDate().mmmYYY ?? "-",
+                          assetName: AppAssets.calender),
+                      titleSubtitle("Valid Till",
+                          product.bikeValidTill?.toDate().mmmYYY ?? "-",
+                          assetName: AppAssets.calenderTill),
+                      titleSubtitle("Number Plate", product.numberPlate ?? "-",
+                          assetName: AppAssets.distance),
+                      titleSubtitle(
+                          "Tyre Condition", product.tyreCondition ?? '-',
+                          assetName: AppAssets.distance),
+                      titleSubtitle("Fine", product.fine.readableNumber,
+                          assetName: AppAssets.fine),
+                      titleSubtitle("Owners", product.owners.readableNumber,
+                          wantDivider: false, assetName: AppAssets.users),
                     ],
                   ),
                 ),
@@ -357,7 +383,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 shadowColor: AppColors.kFoundationPurple100,
                 elevation: 8,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -369,11 +396,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       16.spaceH,
                       titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
-                      titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
-                      titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
-                      titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
-                      titleSubtitle("Company", "Honda", assetName: AppAssets.company),
-                      titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
+                      titleSubtitle("Engine cc", "124",
+                          assetName: AppAssets.wheel),
+                      titleSubtitle("Launch date", "2 Sep 2024",
+                          assetName: AppAssets.calender),
+                      titleSubtitle("On Road Price", "1,75,000",
+                          assetName: AppAssets.wheel),
+                      titleSubtitle("Company", "Honda",
+                          assetName: AppAssets.company),
+                      titleSubtitle("Mileage", "30-40km",
+                          wantDivider: false, assetName: AppAssets.mileage),
                     ],
                   ),
                 ),

@@ -21,7 +21,9 @@ class AppRoutes {
         path: Routes.productDetails,
         name: Routes.productDetails,
         builder: (context, state) => ProductDetailsScreen(
-          product: state.extra as ProductModel,
+          product:
+              state.extra is ProductModel ? state.extra as ProductModel : null,
+          id: state.extra is String ? state.extra as String : null,
         ),
       ),
       GoRoute(
@@ -63,33 +65,4 @@ class AppRoutes {
       ),
     ],
   );
-}
-
-class TalyaNonAuthRoute extends GoRoute {
-  TalyaNonAuthRoute({
-    required String path,
-    required Widget Function(BuildContext, GoRouterState) builder,
-  }) : super(
-          path: path,
-          builder: builder,
-        );
-}
-
-class TalyaAuthRoute extends GoRoute {
-  final bool Function(BuildContext) isAuthenticated;
-
-  TalyaAuthRoute({
-    required String path,
-    required Widget Function(BuildContext, GoRouterState) builder,
-    required this.isAuthenticated,
-  }) : super(
-          path: path,
-          builder: builder,
-          redirect: (context, state) {
-            if (!isAuthenticated(context)) {
-              return '/signIn'; // Redirect to sign-in if not authenticated
-            }
-            return null; // Allow navigation if authenticated
-          },
-        );
 }

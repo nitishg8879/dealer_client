@@ -2,16 +2,19 @@ import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   FetchProductByIdUsecase _fetchProductByIdUsecase;
-  ProductDetailsCubit(this._fetchProductByIdUsecase) : super(ProductDetailsLoading());
+  ProductDetailsCubit(this._fetchProductByIdUsecase)
+      : super(ProductDetailsLoading());
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
-    await Future.delayed(Duration(seconds: 2));
+    if (kDebugMode) {
+      await Future.delayed(Duration(seconds: 2));
+    }
     if (product != null) {
       emit(ProductDetailsLoaded(product));
       emit(ProductDetailsImagePosition(1, (product.images?.length ?? 1)));
