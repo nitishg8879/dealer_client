@@ -10,7 +10,7 @@ class ProductsFilterController {
             selectedCatCompBrands.isNotEmpty) ||
         (priceMinMaxSelected.start != 0 || priceMinMaxSelected.end != 0) ||
         (minYear != null || maxYear != null) ||
-        (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0);
+        (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0 );
   }
 
   List<CategoryModel> category = [];
