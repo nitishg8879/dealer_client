@@ -293,7 +293,6 @@ class _AllProductScreenState extends State<AllProductScreen> {
         UnconstrainedBox(
           child: BlocBuilder<ProductCubit, ProductState>(
             bloc: productCubit,
-            buildWhen: (previous, current) => current is ProductHasFilter,
             builder: (context, state) {
               return Badge(
                 isLabelVisible: productFilterController.hasFilter,
