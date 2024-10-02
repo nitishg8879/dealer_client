@@ -70,9 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
             return Skeletonizer(
               enabled: state is HomeLoading,
               enableSwitchAnimation: true,
-              effect: const ShimmerEffect(baseColor: AppColors.kPurple60),
-              child:
-                  _buildBody(context, state is HomeLoaded ? state.data : null),
+              // effect: const ShimmerEffect(baseColor: AppColors.kPurple60),
+              child: _buildBody(context, state is HomeLoaded ? state.data : null),
             );
           },
         ),
@@ -109,13 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: 50.borderRadius,
                         child: CachedNetworkImage(
                           fit: BoxFit.fill,
-                          imageUrl: getIt.get<AppLocalService>().isLoggedIn
-                              ? (getIt
-                                      .get<AppLocalService>()
-                                      .currentUser
-                                      ?.profileUrl ??
-                                  '-')
-                              : "-",
+                          imageUrl: getIt.get<AppLocalService>().isLoggedIn ? (getIt.get<AppLocalService>().currentUser?.profileUrl ?? '-') : "-",
                           width: 38,
                           height: 38,
                           errorWidget: (context, url, error) {
@@ -165,8 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemExtent: context.width * .9,
               shrinkExtent: 200,
               onTap: (i) => onSliderTap(data!.carsouel![i].productId!),
-              shape: ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.circular(36)),
+              shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(36)),
               itemSnapping: true,
               elevation: 2,
               children: List.generate(
@@ -279,6 +271,9 @@ class CompanyTileView extends StatelessWidget {
                       child: CategoryView(
                         image: data?.company?[index].image ?? '-',
                         name: data?.company?[index].name ?? '-',
+                        onTap: () {
+                          context.goNamed(Routes.allProduct, extra: data!.company![index]);
+                        },
                       ),
                     ),
                   );
@@ -367,6 +362,9 @@ class CategoryTileView extends StatelessWidget {
                       child: CategoryView(
                         image: data?.category?[index].image ?? '-',
                         name: data?.category?[index].name ?? '-',
+                        onTap: () {
+                          context.goNamed(Routes.allProduct, extra: data!.category![index]);
+                        },
                       ),
                     ),
                   );
@@ -410,7 +408,7 @@ class ProductCategoryGridView extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  context.goNamed(Routes.allProduct);
+                  context.goNamed(Routes.allProduct, extra: homeProducts.products);
                 },
                 borderRadius: 4.borderRadius2,
                 child: Padding(
@@ -460,19 +458,12 @@ class ProductCategoryGridView extends StatelessWidget {
               controller: scrollController,
               itemBuilder: (context, index) {
                 return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                  future: getIt
-                      .get<AppFireBaseLoc>()
-                      .product
-                      .doc(homeProducts.products?[index])
-                      .get(),
+                  future: getIt.get<AppFireBaseLoc>().product.doc(homeProducts.products?[index]).get(),
                   builder: (context, snapshot) {
                     return Skeletonizer(
-                      enabled:
-                          snapshot.connectionState == ConnectionState.waiting,
+                      enabled: snapshot.connectionState == ConnectionState.waiting,
                       child: ProductView(
-                        product:
-                            ProductModel.fromJson(snapshot.data?.data() ?? {})
-                              ..id = snapshot.data?.id,
+                        product: ProductModel.fromJson(snapshot.data?.data() ?? {})..id = snapshot.data?.id,
                         row: false,
                       ),
                     );

@@ -5,12 +5,11 @@ import 'package:flutter/material.dart' show RangeValues;
 
 class ProductsFilterController {
   bool get hasFilter {
-    return (selectedCategory.isNotEmpty ||
-            selectedCompany.isNotEmpty ||
-            selectedCatCompBrands.isNotEmpty) ||
+    return (selectedCategory.isNotEmpty || selectedCompany.isNotEmpty || selectedCatCompBrands.isNotEmpty) ||
         (priceMinMaxSelected.start != 0 || priceMinMaxSelected.end != 0) ||
         (minYear != null || maxYear != null) ||
-        (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0 );
+        (kmMinMaxSelected.start != 0 || kmMinMaxSelected.end != 0) ||
+        products.isNotEmpty;
   }
 
   List<CategoryModel> category = [];
@@ -31,6 +30,7 @@ class ProductsFilterController {
     kmMinMaxSelected = const RangeValues(0, 0);
     minYear = null;
     maxYear = null;
+    products.clear();
   }
 
   RangeValues priceMinMaxSelected;
@@ -38,10 +38,10 @@ class ProductsFilterController {
   DateTime? minYear, maxYear;
   bool gridViewtype;
   ProductsFilterController({
-    required this.priceMinMaxSelected,
-    required this.gridViewtype,
-    required this.kmMinMaxSelected,
-    this.minYear,
-    this.maxYear,
-  });
+    required this.category,
+    required this.company,
+    required this.categoryCompanyBrands,
+    this.gridViewtype = true,
+  })  : priceMinMaxSelected = const RangeValues(0, 0),
+        kmMinMaxSelected = const RangeValues(0, 0);
 }

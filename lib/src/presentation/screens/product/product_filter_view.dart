@@ -29,10 +29,16 @@ class ProductFilterView extends StatefulWidget {
 
 class _ProductFilterViewState extends State<ProductFilterView> {
   final pageController = PageController();
+
   @override
   void initState() {
-    widget.controller;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -458,10 +464,7 @@ class _ProductFilterViewState extends State<ProductFilterView> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  
 }
 
 class AppRangeSelector extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 
 class AddToFavouriteUseCase {
@@ -22,5 +23,14 @@ class RemoveFromFavouriteUsecase {
       throw Exception("Provide Product Id.");
     }
     return _productRepo.removeFromFavourite(id);
+  }
+}
+
+class FetchFavouriteProductsUseCase {
+  ProductRepo _productRepo;
+  FetchFavouriteProductsUseCase(this._productRepo);
+
+  Future<DataState<List<ProductModel>?>> call({List<String>? ids}) async {
+    return _productRepo.fetchProductsByIds(ids ?? []);
   }
 }

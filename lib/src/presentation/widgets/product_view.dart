@@ -53,14 +53,21 @@ class ProductView extends StatelessWidget {
         8.spaceH,
         ClipRRect(
           borderRadius: 10.borderRadius,
-          child: CachedNetworkImage(
-            imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
-            width: double.infinity,
-            height: 93,
-            fit: BoxFit.cover,
-            errorWidget: (context, url, error) {
-              return const Center(child: Icon(Icons.error));
-            },
+          child: Visibility(
+            visible: product.images != null,
+            replacement: Container(
+              width: double.infinity,
+              height: 93,
+            ),
+            child: CachedNetworkImage(
+              imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
+              width: double.infinity,
+              height: 93,
+              fit: BoxFit.cover,
+              errorWidget: (context, url, error) {
+                return const Center(child: Icon(Icons.error));
+              },
+            ),
           ),
         ),
         8.spaceH,
