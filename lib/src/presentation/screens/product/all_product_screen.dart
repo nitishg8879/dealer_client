@@ -133,10 +133,12 @@ class _AllProductScreenState extends State<AllProductScreen> {
           productFilterController.clear();
           fetchData();
           context.pop();
+          productCubit.updateProductFilterUI();
         },
         onAppply: () {
           fetchData();
           context.pop();
+          productCubit.updateProductFilterUI();
         },
       ),
     ).whenComplete(() {
@@ -289,13 +291,22 @@ class _AllProductScreenState extends State<AllProductScreen> {
         ),
         16.spaceW,
         UnconstrainedBox(
-          child: OutlinedButton(
-            onPressed: showFilterPopUp,
-            child: const CustomSvgIcon(
-              assetName: AppAssets.filter,
-              color: AppColors.kCardGrey400,
-              size: 20,
-            ),
+          child: BlocBuilder<ProductCubit, ProductState>(
+            bloc: productCubit,
+            buildWhen: (previous, current) => current is ProductHasFilter,
+            builder: (context, state) {
+              return Badge(
+                isLabelVisible: productFilterController.hasFilter,
+                child: OutlinedButton(
+                  onPressed: showFilterPopUp,
+                  child: const CustomSvgIcon(
+                    assetName: AppAssets.filter,
+                    color: AppColors.kCardGrey400,
+                    size: 20,
+                  ),
+                ),
+              );
+            },
           ),
         ),
         16.spaceW,

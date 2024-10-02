@@ -10,6 +10,8 @@ final class ProductLazyLoading extends ProductState {
   ProductLazyLoading(this.isLoading);
 }
 
+class ProductHasFilter extends ProductState {}
+
 final class ProductHasError extends ProductState {
   final String errorMsg;
   ProductHasError(this.errorMsg);

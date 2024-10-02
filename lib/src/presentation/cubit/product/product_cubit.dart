@@ -70,4 +70,8 @@ class ProductCubit extends Cubit<ProductState> {
     final resp = await _productTotalCountUsecase.call();
     return resp.data ?? 0;
   }
+
+  void updateProductFilterUI() {
+    emit(ProductHasFilter());
+  }
 }
