@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
+import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product/product_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
@@ -52,6 +56,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
     super.initState();
     handlePreFilterDataAndFetch();
     addListnerInScrolling();
+    // getIt.get<AppFireBaseLoc>().product.where('searchQueryOnName', arrayContains: "name").get().then((val) {
+    //   print(val.docs.length);
+    // });
   }
 
   @override
@@ -281,7 +288,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
       actions: [
         UnconstrainedBox(
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              showSearch(context: context, delegate: AllProductsSearch());
+            },
             child: const CustomSvgIcon(
               assetName: AppAssets.search,
               color: AppColors.kCardGrey400,
@@ -329,6 +338,101 @@ class _AllProductScreenState extends State<AllProductScreen> {
         ),
         16.spaceW,
       ],
+    );
+  }
+}
+
+class AllProductsSearch extends SearchDelegate {
+  Future<List<ProductModel>> searchProducts(String query) async {
+    if (query.isEmpty) return [];
+    List<ProductModel> results = [];
+    try {
+      QuerySnapshot snapshot = await getIt.get<AppFireBaseLoc>().product.where('searchQueryOnName', arrayContains: query).get();
+      results = snapshot.docs.map((doc) => ProductModel.fromJson(doc.data() as Map<String, dynamic>)..id = doc.id).toList();
+    } catch (e) {
+      print("Error fetching search results: $e");
+    }
+
+    return results;
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+          showSuggestions(context);
+        },
+        icon: const Icon(Icons.close),
+      )
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, null);
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return FutureBuilder<List<ProductModel>>(
+      future: searchProducts(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No products found.'));
+        }
+
+        final results = snapshot.data!;
+
+        return ListView.builder(
+          itemCount: results.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(results[index].name ?? '-'),
+              onTap: () {
+                context.pushNamed(Routes.productDetails, extra: results[index]);
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return FutureBuilder<List<ProductModel>>(
+      future: searchProducts(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No suggestions.'));
+        }
+        final suggestions = snapshot.data!;
+        return ListView.builder(
+          itemCount: suggestions.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(suggestions[index].name ?? '-'),
+              onTap: () {
+                context.pushNamed(Routes.productDetails, extra: suggestions[index]);
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

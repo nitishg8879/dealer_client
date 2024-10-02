@@ -9,6 +9,7 @@ import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/category_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
@@ -133,7 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               16.spaceW,
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showSearch(context: context, delegate: AllProductsSearch());
+                },
                 child: const CustomSvgIcon(
                   assetName: AppAssets.search,
                   color: AppColors.kCardGrey400,

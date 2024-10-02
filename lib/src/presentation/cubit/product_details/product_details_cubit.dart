@@ -8,8 +8,7 @@ part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   FetchProductByIdUsecase _fetchProductByIdUsecase;
-  ProductDetailsCubit(this._fetchProductByIdUsecase)
-      : super(ProductDetailsLoading());
+  ProductDetailsCubit(this._fetchProductByIdUsecase) : super(ProductDetailsLoading());
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
     if (kDebugMode) {
@@ -17,11 +16,11 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
     if (product != null) {
       emit(ProductDetailsLoaded(product));
-      emit(ProductDetailsImagePosition(1, (product.images?.length ?? 1)));
+      // emit(ProductDetailsImagePosition(1, (product.images?.length ?? 1)));
     } else {
       final resp = await _fetchProductByIdUsecase.call(id: id);
       if (resp is DataSuccess) {
-        emit(ProductDetailsImagePosition(1, (resp.data?.images?.length ?? 1)));
+        // emit(ProductDetailsImagePosition(1, (resp.data?.images?.length ?? 1)));
         emit(ProductDetailsLoaded(resp.data!));
       }
       if (resp is DataFailed) {

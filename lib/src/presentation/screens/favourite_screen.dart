@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
@@ -37,6 +38,15 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     super.dispose();
   }
 
+  void showFavSearch() {
+    if (favBloc.state is FavouriteLoaded) {
+      showSearch(
+        context: context,
+        delegate: SearchFavouriteDelegate((favBloc.state as FavouriteLoaded).products),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +56,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         actions: [
           UnconstrainedBox(
             child: OutlinedButton(
-              onPressed: () {
-                // setState(() {
-                //   row = !row;
-                // });
-              },
+              onPressed: showFavSearch,
               child: const CustomSvgIcon(
                 assetName: AppAssets.search,
                 color: AppColors.kCardGrey400,
@@ -102,6 +108,74 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SearchFavouriteDelegate extends SearchDelegate {
+  List<ProductModel> items;
+  SearchFavouriteDelegate(this.items);
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = "";
+        },
+        icon: const Icon(Icons.close),
+      )
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, null);
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    var list = items.where((e) => e.name?.toLowerCase().contains(query.toLowerCase()) ?? false).toList();
+    if (list.isEmpty) {
+      return const Center(
+        child: Text("No Data"),
+      );
+    }
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          onTap: () {
+            context.pushNamed(Routes.productDetails, extra: list[index]);
+          },
+          title: Text(list[index].name ?? '-'),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    var list = items.where((e) => e.name?.toLowerCase().contains(query.toLowerCase()) ?? false).toList();
+    if (list.isEmpty) {
+      return const Center(
+        child: Text("No Data"),
+      );
+    }
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          onTap: () {
+            context.pushNamed(Routes.productDetails, extra: list[index]);
+          },
+          title: Text(list[index].name ?? '-'),
+        );
+      },
     );
   }
 }
