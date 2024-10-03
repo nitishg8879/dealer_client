@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: "General",
             items: [
               ProfileTileTileModel(
-                icon: Icons.notification_important_outlined,
+                icon: Icons.message,
                 titile: "Chats",
                 routePath: Routes.home,
               ),
@@ -130,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 routePath: Routes.home,
               ),
               ProfileTileTileModel(
-                icon: Icons.password,
+                icon: Icons.favorite,
                 titile: "Favourites",
                 routePath: Routes.favourite,
               ),

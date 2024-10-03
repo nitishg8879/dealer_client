@@ -1,4 +1,6 @@
 import 'package:bike_client_dealer/config/routes/app_pages.dart';
+import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
+import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/chat_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/favourite_screen.dart';
@@ -21,8 +23,7 @@ class AppRoutes {
         path: Routes.productDetails,
         name: Routes.productDetails,
         builder: (context, state) => ProductDetailsScreen(
-          product:
-              state.extra is ProductModel ? state.extra as ProductModel : null,
+          product: state.extra is ProductModel ? state.extra as ProductModel : null,
           id: state.extra is String ? state.extra as String : null,
         ),
       ),
@@ -51,7 +52,13 @@ class AppRoutes {
           GoRoute(
             path: Routes.allProduct,
             name: Routes.allProduct,
-            builder: (context, state) => const AllProductScreen(),
+            builder: (context, state) {
+              return AllProductScreen(
+                products: state.extra is List<String> ? state.extra as List<String> : null,
+                selectedCategory: state.extra is CategoryModel ? state.extra as CategoryModel : null,
+                selectedCompany: state.extra is CompanyModel ? state.extra as CompanyModel : null,
+              );
+            },
             routes: [
               GoRoute(
                 path: Routes.favourite,

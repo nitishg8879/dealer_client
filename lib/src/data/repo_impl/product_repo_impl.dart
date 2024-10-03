@@ -110,4 +110,14 @@ class ProductRepoImpl implements ProductRepo {
       return DataFailed(false, state.statusCode, state.message);
     }
   }
+  
+  @override
+  Future<DataState<List<ProductModel>?>> fetchProductsByIds(List<String> ids) async {
+    final state = await _productDataSource.fetchProductsByIds(ids);
+    if (state is DataSuccess) {
+      return state;
+    } else {
+      return DataFailed(null, state.statusCode, state.message);
+    }
+  }
 }

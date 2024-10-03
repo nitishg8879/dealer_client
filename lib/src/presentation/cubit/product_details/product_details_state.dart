@@ -15,7 +15,7 @@ final class ProductDetailsHasError extends ProductDetailsState {
   ProductDetailsHasError(this.error);
 }
 
-final class ProductDetailsImagePosition extends ProductDetailsState {
-  final int total, current;
-  ProductDetailsImagePosition(this.current, this.total);
-}
+// final class ProductDetailsImagePosition extends ProductDetailsState {
+//   final int total, current;
+//   ProductDetailsImagePosition(this.current, this.total);
+// }

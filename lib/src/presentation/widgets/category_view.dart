@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 class CategoryView extends StatelessWidget {
   final String image, name;
+  final void Function()? onTap;
   const CategoryView({
     super.key,
     required this.image,
     required this.name,
+    this.onTap,
   });
 
   @override
@@ -15,7 +17,11 @@ class CategoryView extends StatelessWidget {
     return Column(
       children: [
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (onTap != null) {
+              onTap!();
+            }
+          },
           child: SizedBox(
             width: 80,
             height: 73,

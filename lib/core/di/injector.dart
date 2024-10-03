@@ -54,5 +54,6 @@ Future<void> configureDependencies() async {
       getIt.get(), getIt.get(), getIt.get(), getIt.get(), getIt.get()));
 
   getIt.registerLazySingleton(() => FetchProductByIdUsecase(getIt.get()));
+  getIt.registerLazySingleton(() => FetchFavouriteProductsUseCase(getIt.get()));
   getIt.registerLazySingleton(() => ProductTotalCountUsecase(getIt.get()));
 }
