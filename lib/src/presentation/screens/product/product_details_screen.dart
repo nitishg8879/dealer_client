@@ -13,6 +13,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -31,9 +32,11 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final scrollController = ScrollController();
   final productDetailsCubit = ProductDetailsCubit(getIt.get());
+  late Razorpay razorpay;
 
   @override
   void initState() {
+    razorpay = Razorpay();
     super.initState();
     fetchData();
   }
@@ -47,6 +50,69 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void fetchData() {
     WidgetsBinding.instance.addPostFrameCallback(
         (frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
+  }
+
+  void showPaymentAcceptDialog() {
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
+    razorpay.open({
+      'key': 'rzp_test_cjoyPTL0PCSecr',
+      'amount': 1,
+      'name': 'F3 Motors',
+      'description': 'Fine T-Shirt',
+      'prefill': {
+        'contact': '8888888888',
+        'email': 'test@razorpay.com',
+      }
+    });
+  }
+
+  //Handle Payment Responses
+
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    /** PaymentFailureResponse contains three values:
+    * 1. Error Code
+    * 2. Error Description
+    * 3. Metadata
+    **/
+    showAlertDialog(context, "Payment Failed",
+        "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}");
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+    /** Payment Success Response contains three values:
+    * 1. Order ID
+    * 2. Payment ID
+    * 3. Signature
+    **/
+    showAlertDialog(
+        context, "Payment Successful", "Payment ID: ${response.paymentId}");
+  }
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
+    showAlertDialog(
+        context, "External Wallet Selected", "${response.walletName}");
+  }
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    // set up the buttons
+    // Widget continueButton = ElevatedButton(
+    //   child: const Text("Continue"),
+    //   onPressed: () {},
+    // );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
@@ -121,7 +187,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             16.spaceW,
             Expanded(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showPaymentAcceptDialog();
+                },
                 style: ElevatedButton.styleFrom(
                   shape: const SmoothRectangleBorder(
                     borderRadius: SmoothBorderRadius.all(

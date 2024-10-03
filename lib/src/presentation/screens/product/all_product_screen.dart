@@ -45,7 +45,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
   var productFilterController = ProductsFilterController(
     category: getIt.get<HomeCubit>().homeData?.category ?? [],
     company: getIt.get<HomeCubit>().homeData?.company ?? [],
-    categoryCompanyBrands: getIt.get<HomeCubit>().homeData?.categoryCompnaymodel ?? [],
+    categoryCompanyBrands:
+        getIt.get<HomeCubit>().homeData?.categoryCompnaymodel ?? [],
   );
   final scrollController = ScrollController();
   DocumentSnapshot? lastDocument;
@@ -72,14 +73,20 @@ class _AllProductScreenState extends State<AllProductScreen> {
   void handlePreFilterDataAndFetch() {
     WidgetsBinding.instance.addPostFrameCallback((frame) {
       if (widget.selectedCategory != null) {
-        if (productFilterController.category.any((e) => widget.selectedCategory?.id == e.id)) {
-          productFilterController.selectedCategory.add(productFilterController.category.firstWhere((e) => e.id == widget.selectedCategory?.id));
+        if (productFilterController.category
+            .any((e) => widget.selectedCategory?.id == e.id)) {
+          productFilterController.selectedCategory.add(productFilterController
+              .category
+              .firstWhere((e) => e.id == widget.selectedCategory?.id));
         }
       }
 
       if (widget.selectedCompany != null) {
-        if (productFilterController.company.any((e) => widget.selectedCompany?.id == e.id)) {
-          productFilterController.selectedCompany.add(productFilterController.company.firstWhere((e) => e.id == widget.selectedCompany?.id));
+        if (productFilterController.company
+            .any((e) => widget.selectedCompany?.id == e.id)) {
+          productFilterController.selectedCompany.add(productFilterController
+              .company
+              .firstWhere((e) => e.id == widget.selectedCompany?.id));
         }
       }
       if (widget.products != null && widget.products!.isNotEmpty) {
@@ -111,7 +118,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
 
   void addListnerInScrolling() {
     scrollController.addListener(() async {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent && productCubit.state is! ProductLoading) {
+      if (scrollController.position.pixels ==
+              scrollController.position.maxScrollExtent &&
+          productCubit.state is! ProductLoading) {
         productCubit.fetchMoreProducts(
           lastdoc: (ld) => lastDocument = ld,
           lastDocument: lastDocument,
@@ -129,7 +138,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: 16.smoothRadius)),
       showDragHandle: true,
       enableDrag: true,
       isScrollControlled: true,
@@ -167,7 +177,9 @@ class _AllProductScreenState extends State<AllProductScreen> {
       body: BlocBuilder<ProductCubit, ProductState>(
         bloc: productCubit,
         buildWhen: (previous, current) {
-          return (current is ProductHasError || current is ProductLoaded || current is ProductLoading);
+          return (current is ProductHasError ||
+              current is ProductLoaded ||
+              current is ProductLoading);
         },
         builder: (context, state) {
           if (state is ProductLoading) {
@@ -207,7 +219,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
                 itemBuilder: (context, index) {
-                  return ProductView(product: productCubit.products[index], row: false);
+                  return ProductView(
+                      product: productCubit.products[index], row: false);
                 },
                 itemCount: productCubit.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -347,8 +360,16 @@ class AllProductsSearch extends SearchDelegate {
     if (query.isEmpty) return [];
     List<ProductModel> results = [];
     try {
-      QuerySnapshot snapshot = await getIt.get<AppFireBaseLoc>().product.where('searchQueryOnName', arrayContains: query).get();
-      results = snapshot.docs.map((doc) => ProductModel.fromJson(doc.data() as Map<String, dynamic>)..id = doc.id).toList();
+      QuerySnapshot snapshot = await getIt
+          .get<AppFireBaseLoc>()
+          .product
+          .where('searchQueryOnName', arrayContains: query)
+          .get();
+      results = snapshot.docs
+          .map((doc) =>
+              ProductModel.fromJson(doc.data() as Map<String, dynamic>)
+                ..id = doc.id)
+          .toList();
     } catch (e) {
       print("Error fetching search results: $e");
     }
@@ -427,7 +448,8 @@ class AllProductsSearch extends SearchDelegate {
             return ListTile(
               title: Text(suggestions[index].name ?? '-'),
               onTap: () {
-                context.pushNamed(Routes.productDetails, extra: suggestions[index]);
+                context.pushNamed(Routes.productDetails,
+                    extra: suggestions[index]);
               },
             );
           },
