@@ -18,59 +18,24 @@ class _TransactionScreenState extends State<TransactionScreen> {
   List<TransactionsModel> txn = [
     TransactionsModel(
       amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-in',
+      label: 'Booked',
       transactionID: '2174385463526754',
-      transactionsType: TransactionsType.credit,
-      txnDateTime: DateTime.now(),
+      transactionsType: TransactionsType.success,
+      failedReason: 'fail for some reason',
     ),
     TransactionsModel(
       amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-out',
+      label: 'Failed',
       transactionID: '2174385463526754',
-      transactionsType: TransactionsType.debit,
-      txnDateTime: DateTime.now(),
+      transactionsType: TransactionsType.fail,
+      failedReason: 'fail for some reason',
     ),
     TransactionsModel(
       amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Pending',
+      label: 'Refunded',
       transactionID: '2174385463526754',
-      transactionsType: TransactionsType.pending,
-      txnDateTime: DateTime.now(),
-    ),
-    TransactionsModel(
-      amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-in',
-      transactionID: '2174385463526754',
-      transactionsType: TransactionsType.failed,
-      txnDateTime: DateTime.now(),
-    ),
-    TransactionsModel(
-      amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-in',
-      transactionID: '2174385463526754',
-      transactionsType: TransactionsType.failed,
-      txnDateTime: DateTime.now(),
-    ),
-    TransactionsModel(
-      amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-in',
-      transactionID: '2174385463526754',
-      transactionsType: TransactionsType.failed,
-      txnDateTime: DateTime.now(),
-    ),
-    TransactionsModel(
-      amount: 31232,
-      description: 'From ABC Bank ATM',
-      label: 'Cash-in',
-      transactionID: '2174385463526754',
-      transactionsType: TransactionsType.failed,
-      txnDateTime: DateTime.now(),
+      transactionsType: TransactionsType.refund,
+      failedReason: 'fail for some reason',
     ),
   ];
   @override
@@ -140,14 +105,14 @@ class TransactionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  txn.label ?? '-',
+                  txn.label,
                   style: context.textTheme.headlineSmall,
                 ),
-                3.spaceH,
-                Text(
-                  txn.description ?? '-',
-                  style: context.textTheme.titleMedium,
-                ),
+                // 3.spaceH,
+                // Text(
+                //   txn.description ?? '-',
+                //   style: context.textTheme.titleMedium,
+                // ),
                 5.spaceH,
                 Text(
                   'Transaction ID',
@@ -157,7 +122,7 @@ class TransactionCard extends StatelessWidget {
                 ),
                 3.spaceH,
                 Text(
-                  txn.transactionID ?? '-',
+                  txn.transactionID,
                   style: context.textTheme.titleSmall,
                 ),
               ],
@@ -173,15 +138,15 @@ class TransactionCard extends StatelessWidget {
               5.spaceH,
               DecoratedBox(
                 decoration: BoxDecoration(
-                  color: txn.transactionsType?.color.withOpacity(.3),
+                  color: txn.transactionsType.color.withOpacity(.3),
                   borderRadius: 4.borderRadius,
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(
-                    txn.transactionsType?.name ?? '-',
+                    txn.transactionsType.name ?? '-',
                     style: context.textTheme.headlineSmall?.copyWith(
-                      color: txn.transactionsType?.color,
+                      color: txn.transactionsType.color,
                       fontSize: 12,
                     ),
                   ),
@@ -189,20 +154,31 @@ class TransactionCard extends StatelessWidget {
               ),
               5.spaceH,
               Text(
-                txn.txnDateTime == null ? '-' : DateFormat('dd MMM yyyy\nhh:mm a').format(txn.txnDateTime!),
+                DateFormat('dd MMM yyyy\nhh:mm a').format(txn.txnDateTime),
                 textAlign: TextAlign.end,
               )
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget get icon => switch (txn.transactionsType!) {
-        TransactionsType.credit => const Icon(Icons.tsunami),
-        TransactionsType.debit => const Icon(Icons.tsunami),
-        TransactionsType.pending => const Icon(Icons.pending_actions_sharp),
-        TransactionsType.failed => const Icon(Icons.cancel_outlined),
+  Widget get icon => switch (txn.transactionsType) {
+        TransactionsType.success => Icon(
+            Icons.arrow_outward_rounded,
+            // color: txn.transactionsType.color,
+          ),
+        TransactionsType.fail => Icon(
+            Icons.cancel,
+            // color: txn.transactionsType.color,
+          ),
+        TransactionsType.refund => Transform.rotate(
+            angle: -1,
+            child: Icon(
+              Icons.arrow_back,
+              // color: txn.transactionsType.color,
+            ),
+          ),
       };
 }

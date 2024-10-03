@@ -3,6 +3,7 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
@@ -55,44 +56,38 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void showPaymentAcceptDialog() {
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
     razorpay.open({
       'key': 'rzp_test_cjoyPTL0PCSecr',
       'amount': 1,
       'name': 'F3 Motors',
       'description': 'Fine T-Shirt',
       'prefill': {
-        'contact': '8888888888',
+        "name": "Nitish Gupta",
+        'contact': '8879753332',
         'email': 'test@razorpay.com',
-      }
+      },
+      'retry': {'enabled': true, 'max_count': 0},
+      "theme": {"color": "#360083"},
     });
   }
 
   //Handle Payment Responses
-
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
-    /** PaymentFailureResponse contains three values:
-    * 1. Error Code
-    * 2. Error Description
-    * 3. Metadata
-    **/
-    showAlertDialog(context, "Payment Failed",
-        "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}");
+    razorpay.clear();
+    showAlertDialog(
+      context,
+      "Payment Failed",
+      "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
+    );
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    /** Payment Success Response contains three values:
-    * 1. Order ID
-    * 2. Payment ID
-    * 3. Signature
-    **/
+    razorpay.clear();
     showAlertDialog(
-        context, "Payment Successful", "Payment ID: ${response.paymentId}");
-  }
-
-  void handleExternalWalletSelected(ExternalWalletResponse response) {
-    showAlertDialog(
-        context, "External Wallet Selected", "${response.walletName}");
+      context,
+      "Payment Successful",
+      "Payment ID: ${response.paymentId} Data:${response.data} Order Id:${response.orderId}",
+    );
   }
 
   void showAlertDialog(BuildContext context, String title, String message) {

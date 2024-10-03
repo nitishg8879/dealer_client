@@ -2,34 +2,90 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class TransactionsModel {
-  TransactionsType? transactionsType;
-  String? transactionID;
-  DateTime? txnDateTime;
-  num? amount;
-  String? label;
-  String? description;
-  TransactionsModel({
-    this.transactionsType,
-    this.transactionID,
-    this.txnDateTime,
-    this.amount,
-    this.label,
-    this.description,
-  });
+    TransactionsModel({
+        required this.transactionsType,
+        required this.transactionId,
+        required this.amount,
+        required this.label,
+        required this.failedReason,
+        required this.txnDateTime,
+        required this.userId,
+        required this.productId,
+        this.id,
+    });
+
+    final String? transactionsType;
+    final String? transactionId;
+    final num? amount;
+    final String? label;
+    final String? failedReason;
+    final String? txnDateTime;
+    final String? userId;
+    final String? productId;
+    final String? id;
+
+    factory TransactionsModel.fromJson(Map<String, dynamic> json){ 
+        return TransactionsModel(
+            transactionsType: json["transactionsType"],
+            transactionId: json["transactionID"],
+            amount: json["amount"],
+            label: json["label"],
+            failedReason: json["failedReason"],
+            txnDateTime: json["txnDateTime"],
+            userId: json["userId"],
+            productId: json["productId"],
+        );
+    }
+
+    Map<String, dynamic> toJson() => {
+        "transactionsType": transactionsType,
+        "transactionID": transactionId,
+        "amount": amount,
+        "label": label,
+        "failedReason": failedReason,
+        "txnDateTime": txnDateTime,
+        "userId": userId,
+        "productId": productId,
+    };
+
 }
 
-enum TransactionsType {
-  credit,
-  debit,
-  pending,
-  failed;
 
+
+enum TransactionsType {
+  success,
+  fail,
+  refund;
+
+  // Color getter
   Color get color {
     return switch (this) {
-      credit => AppColors.kGreen600,
-      debit => AppColors.kYellow300,
-      pending => AppColors.kOrange500,
-      failed => AppColors.kRed,
+      success => AppColors.kGreen600,
+      fail => AppColors.kRed,
+      refund => AppColors.kOrange400,
+    };
+  }
+
+  // fromString method
+  static TransactionsType fromString(String type) {
+    switch (type.toLowerCase()) {
+      case 'success':
+        return TransactionsType.success;
+      case 'fail':
+        return TransactionsType.fail;
+      case 'refund':
+        return TransactionsType.refund;
+      default:
+        throw ArgumentError('Unknown TransactionsType: $type');
+    }
+  }
+
+  // Readable string getter
+  String get readable {
+    return switch (this) {
+      success => 'Success',
+      fail => 'Fail',
+      refund => 'Refund',
     };
   }
 }

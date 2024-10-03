@@ -12,6 +12,7 @@ class AppFireBaseLoc {
   final String modelsTableName = "models";
   final String productBuyTableName = "productBuy";
   final String productTableName = "products";
+  final String transactionTableName = "transactions";
   final String chatTableName = "chats";
   final String conversationTableName = "conversation";
   final String usersAdminTableName = "usersAdmin";
@@ -21,6 +22,7 @@ class AppFireBaseLoc {
   CollectionReference<Map<String, dynamic>> get company => _firestore.collection(companiesTableName);
   CollectionReference<Map<String, dynamic>> get model => _firestore.collection(modelsTableName);
   CollectionReference<Map<String, dynamic>> get product => _firestore.collection(productTableName);
+  CollectionReference<Map<String, dynamic>> get transactions => _firestore.collection(transactionTableName);
   CollectionReference<Map<String, dynamic>> get chats => _firestore.collection(chatTableName);
   CollectionReference<Map<String, dynamic>> get conversation => _firestore.collection(conversationTableName);
   CollectionReference<Map<String, dynamic>> get productBuy => _firestore.collection(productBuyTableName);
