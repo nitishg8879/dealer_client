@@ -19,6 +19,7 @@ import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by
 import 'package:bike_client_dealer/src/domain/use_cases/product/home_analytics_fetch_usecases.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/product_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/product_total_count_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/transaction_usecase.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
 import 'package:get_it/get_it.dart';
@@ -37,24 +38,20 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(getIt.get()));
   getIt.registerLazySingleton(() => LoginUsecase(getIt.get()));
   getIt.registerLazySingleton(() => LogoutUsecase(getIt.get()));
-  getIt.registerLazySingleton<AuthCubit>(
-      () => AuthCubit(getIt.get(), getIt.get()));
+  getIt.registerLazySingleton<AuthCubit>(() => AuthCubit(getIt.get(), getIt.get()));
 
   //? Products
   getIt.registerLazySingleton(() => ProductDataSource());
   getIt.registerLazySingleton<ProductRepo>(() => ProductRepoImpl(getIt.get()));
-  getIt.registerLazySingleton<AddToFavouriteUseCase>(
-      () => AddToFavouriteUseCase(getIt.get()));
-  getIt.registerLazySingleton<RemoveFromFavouriteUsecase>(
-      () => RemoveFromFavouriteUsecase(getIt.get()));
+  getIt.registerLazySingleton<AddToFavouriteUseCase>(() => AddToFavouriteUseCase(getIt.get()));
+  getIt.registerLazySingleton<RemoveFromFavouriteUsecase>(() => RemoveFromFavouriteUsecase(getIt.get()));
 
   getIt.registerLazySingleton(() => ProductFetchUsecase(getIt.get()));
   getIt.registerLazySingleton(() => HomeAnalyticsFetchUsecases(getIt.get()));
   getIt.registerLazySingleton(() => CompanyFetchUsecase(getIt.get()));
   getIt.registerLazySingleton(() => CategoryFetchUsecase(getIt.get()));
   getIt.registerLazySingleton(() => CategoryCompnayFetchUsecase(getIt.get()));
-  getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(
-      getIt.get(), getIt.get(), getIt.get(), getIt.get(), getIt.get()));
+  getIt.registerLazySingleton<HomeCubit>(() => HomeCubit(getIt.get(), getIt.get(), getIt.get(), getIt.get(), getIt.get()));
 
   getIt.registerLazySingleton(() => FetchProductByIdUsecase(getIt.get()));
   getIt.registerLazySingleton(() => FetchFavouriteProductsUseCase(getIt.get()));
@@ -63,4 +60,6 @@ Future<void> configureDependencies() async {
   //? Transaction
   getIt.registerLazySingleton(() => TransactionDataSource());
   getIt.registerLazySingleton<TransactionRepo>(() => TransactionRepoImpl(getIt.get()));
+  getIt.registerLazySingleton(() => TransactionFetchUseCase(getIt.get()));
+  getIt.registerLazySingleton(() => TransactionCreateUseCase(getIt.get()));
 }
