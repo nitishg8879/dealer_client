@@ -32,7 +32,7 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final scrollController = ScrollController();
-  final productDetailsCubit = ProductDetailsCubit(getIt.get());
+  final productDetailsCubit = ProductDetailsCubit(getIt.get(), getIt.get());
   late Razorpay razorpay;
 
   @override
@@ -45,12 +45,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void dispose() {
     productDetailsCubit.close();
+    razorpay.clear();
     super.dispose();
   }
 
   void fetchData() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
+    WidgetsBinding.instance.addPostFrameCallback((frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
   }
 
   void showPaymentAcceptDialog() {
@@ -66,12 +66,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         'contact': '8879753332',
         'email': 'test@razorpay.com',
       },
-      'retry': {'enabled': true, 'max_count': 0},
+      'retry': {
+        'enabled': false,
+        // 'max_count': 0,
+      },
       "theme": {"color": "#360083"},
     });
   }
 
-  //Handle Payment Responses
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
     razorpay.clear();
     showAlertDialog(
@@ -79,33 +81,39 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       "Payment Failed",
       "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
     );
+    productDetailsCubit.createTransaction(error: response);
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
     razorpay.clear();
+    //?
+    response.orderId;
+    response.paymentId;
+    response.signature;
+    response.data;
+    //?
     showAlertDialog(
       context,
       "Payment Successful",
-      "Payment ID: ${response.paymentId} Data:${response.data} Order Id:${response.orderId}",
+      "Payment ID: ${response.paymentId} \n\nData:${response.data} Order Id:${response.orderId}",
     );
+    productDetailsCubit.createTransaction(success: response);
   }
 
   void showAlertDialog(BuildContext context, String title, String message) {
-    // set up the buttons
-    // Widget continueButton = ElevatedButton(
-    //   child: const Text("Continue"),
-    //   onPressed: () {},
-    // );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-    );
-    // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              child: const Text("Ok"),
+              onPressed: () => context.pop(),
+            ),
+          ],
+        );
       },
     );
   }
@@ -121,19 +129,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       appBar: _buildAppbar(context),
       body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
         bloc: productDetailsCubit,
-        buildWhen: (previous, current) => (current is ProductDetailsLoading ||
-            current is ProductDetailsLoaded ||
-            current is ProductDetailsHasError),
+        buildWhen: (previous, current) => (current is ProductDetailsLoading || current is ProductDetailsLoaded || current is ProductDetailsHasError),
         builder: (context, state) {
           return Skeletonizer(
             enabled: state is ProductDetailsLoading,
             child: Scaffold(
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
               floatingActionButton: _floatActionBtn(context),
-              body: _buildbody((state is ProductDetailsLoading)
-                  ? dummyProduct
-                  : (state as ProductDetailsLoaded).productModel),
+              body: _buildbody((state is ProductDetailsLoading) ? dummyProduct : (state as ProductDetailsLoaded).productModel),
             ),
           );
         },
@@ -181,35 +184,52 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             16.spaceW,
             Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  showPaymentAcceptDialog();
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const SmoothRectangleBorder(
-                    borderRadius: SmoothBorderRadius.all(
-                      SmoothRadius(
-                        cornerRadius: 12,
-                        cornerSmoothing: 1,
+              child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+                bloc: productDetailsCubit,
+                builder: (context, state) {
+                  final isLoading = state is ProductDetailsTransactionLoading && state.isLoading;
+                  return ElevatedButton(
+                    onPressed: () {
+                      if (!isLoading) {
+                        showPaymentAcceptDialog();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const SmoothRectangleBorder(
+                        borderRadius: SmoothBorderRadius.all(
+                          SmoothRadius(
+                            cornerRadius: 12,
+                            cornerSmoothing: 1,
+                          ),
+                        ),
+                        side: BorderSide(
+                          color: AppColors.kFoundationPurple100,
+                        ),
                       ),
                     ),
-                    side: BorderSide(
-                      color: AppColors.kFoundationPurple100,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const CustomSvgIcon(
-                      assetName: AppAssets.wallet,
-                      color: AppColors.kWhite,
-                      size: 20,
-                    ),
-                    8.spaceW,
-                    Text("Book at ${100.toINR}"),
-                  ],
-                ),
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                              color: AppColors.kWhite,
+                            ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const CustomSvgIcon(
+                                assetName: AppAssets.wallet,
+                                color: AppColors.kWhite,
+                                size: 20,
+                              ),
+                              8.spaceW,
+                              Text("Book at ${100.toINR}"),
+                            ],
+                          ),
+                  );
+                },
               ),
             ),
           ],
@@ -399,8 +419,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 shadowColor: AppColors.kFoundationPurple100,
                 elevation: 8,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -411,27 +430,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         style: context.textTheme.labelMedium,
                       ),
                       16.spaceH,
-                      titleSubtitle(
-                          "KM Driven", product.kmDriven.readableNumber,
-                          assetName: AppAssets.distance),
-                      titleSubtitle("Buy Date",
-                          product.bikeBuyDate?.toDate().mmmYYY ?? "-",
-                          assetName: AppAssets.calender),
-                      titleSubtitle("Insaurance Validity",
-                          product.insauranceValidity?.toDate().mmmYYY ?? "-",
-                          assetName: AppAssets.calender),
-                      titleSubtitle("Valid Till",
-                          product.bikeValidTill?.toDate().mmmYYY ?? "-",
-                          assetName: AppAssets.calenderTill),
-                      titleSubtitle("Number Plate", product.numberPlate ?? "-",
-                          assetName: AppAssets.distance),
-                      titleSubtitle(
-                          "Tyre Condition", product.tyreCondition ?? '-',
-                          assetName: AppAssets.distance),
-                      titleSubtitle("Fine", product.fine.readableNumber,
-                          assetName: AppAssets.fine),
-                      titleSubtitle("Owners", product.owners.readableNumber,
-                          wantDivider: false, assetName: AppAssets.users),
+                      titleSubtitle("KM Driven", product.kmDriven.readableNumber, assetName: AppAssets.distance),
+                      titleSubtitle("Buy Date", product.bikeBuyDate?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                      titleSubtitle("Insaurance Validity", product.insauranceValidity?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                      titleSubtitle("Valid Till", product.bikeValidTill?.toDate().mmmYYY ?? "-", assetName: AppAssets.calenderTill),
+                      titleSubtitle("Number Plate", product.numberPlate ?? "-", assetName: AppAssets.distance),
+                      titleSubtitle("Tyre Condition", product.tyreCondition ?? '-', assetName: AppAssets.distance),
+                      titleSubtitle("Fine", product.fine.readableNumber, assetName: AppAssets.fine),
+                      titleSubtitle("Owners", product.owners.readableNumber, wantDivider: false, assetName: AppAssets.users),
                     ],
                   ),
                 ),
@@ -446,8 +452,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 shadowColor: AppColors.kFoundationPurple100,
                 elevation: 8,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -459,16 +464,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       16.spaceH,
                       titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
-                      titleSubtitle("Engine cc", "124",
-                          assetName: AppAssets.wheel),
-                      titleSubtitle("Launch date", "2 Sep 2024",
-                          assetName: AppAssets.calender),
-                      titleSubtitle("On Road Price", "1,75,000",
-                          assetName: AppAssets.wheel),
-                      titleSubtitle("Company", "Honda",
-                          assetName: AppAssets.company),
-                      titleSubtitle("Mileage", "30-40km",
-                          wantDivider: false, assetName: AppAssets.mileage),
+                      titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
+                      titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
+                      titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
+                      titleSubtitle("Company", "Honda", assetName: AppAssets.company),
+                      titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
                     ],
                   ),
                 ),

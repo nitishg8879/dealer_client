@@ -6,16 +6,11 @@ import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 
 class TransactionDataSource {
   Future<DataState<bool>> createTransaction(TransactionsModel txn) async {
-    if (!getIt.get<AppLocalService>().isLoggedIn ||
-        getIt.get<AppLocalService>().currentUser?.id == null) {
+    if (!getIt.get<AppLocalService>().isLoggedIn || getIt.get<AppLocalService>().currentUser?.id == null) {
       return const DataFailed(false, 400, "User is not logged in.");
     }
     try {
-      await getIt
-          .get<AppFireBaseLoc>()
-          .transactions
-          .add(txn.toJson())
-          .catchError((error) => throw error);
+      await getIt.get<AppFireBaseLoc>().transactions.add(txn.toJson()).catchError((error) => throw error);
       return const DataFailed(true, 200, "Transaction Added");
     } catch (e) {
       return DataFailed(false, 400, e.toString());
@@ -23,23 +18,26 @@ class TransactionDataSource {
   }
 
   Future<DataState<List<TransactionsModel>>> fetchTransactions() async {
-    if (!getIt.get<AppLocalService>().isLoggedIn ||
-        getIt.get<AppLocalService>().currentUser?.id == null) {
-      return const DataFailed(
-          <TransactionsModel>[], 400, "User is not logged in.");
+    if (!getIt.get<AppLocalService>().isLoggedIn || getIt.get<AppLocalService>().currentUser?.id == null) {
+      return const DataFailed(<TransactionsModel>[], 400, "User is not logged in.");
     }
     try {
       final resp = await getIt
           .get<AppFireBaseLoc>()
           .transactions
-          .where('userId',
-              isEqualTo: getIt.get<AppLocalService>().currentUser!.id)
+          .where(
+            'userId',
+            isEqualTo: getIt.get<AppLocalService>().currentUser!.id,
+          )
+          .orderBy(
+            'txnDateTime',
+            descending: true,
+          )
           .get()
           .catchError((error) {
         throw error;
       });
-      return DataSuccess(
-          resp.docs.map((e) => TransactionsModel.fromJson(e.data())).toList());
+      return DataSuccess(resp.docs.map((e) => TransactionsModel.fromJson(e.data())).toList());
     } catch (e) {
       return DataFailed(<TransactionsModel>[], 400, e.toString());
     }

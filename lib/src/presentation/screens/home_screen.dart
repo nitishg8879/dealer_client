@@ -71,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
             return Skeletonizer(
               enabled: state is HomeLoading,
               enableSwitchAnimation: true,
-              // effect: const ShimmerEffect(baseColor: AppColors.kPurple60),
               child: _buildBody(context, state is HomeLoaded ? state.data : null),
             );
           },

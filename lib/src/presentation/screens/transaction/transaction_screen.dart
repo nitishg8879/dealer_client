@@ -34,7 +34,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
     super.dispose();
   }
 
-  void fetchData() {}
+  void fetchData() {
+    WidgetsBinding.instance.addPostFrameCallback((frame) => bloc.fetchData());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,30 +60,36 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   return TransactionCard(
                       txn: TransactionsModel(
                     transactionsType: TransactionsType.success,
-                    transactionId: "transactionId",
                     amount: 1323,
                     label: "2232dsfdf",
                     failedReason: "failedReason",
                     txnDateTime: Timestamp.now(),
                     userId: "userId",
                     productId: "productId",
+                    paymentId: '',
                   ));
                 },
               ),
             );
           }
           if (state is TransactionLoaded) {
-            return Skeletonizer(
-              enabled: state is TransactionLoading,
-              child: ListView.builder(
-                itemCount: state.list.length,
-                itemBuilder: (context, index) {
-                  return TransactionCard(txn: state.list[index]);
-                },
-              ),
+            if (state.list.isEmpty) {
+              return const Center(
+                child: Text("No Transaction found"),
+              );
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: state.list.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(top: index == 0 ? 16 : 0, bottom: 16),
+                  child: TransactionCard(txn: state.list[index]),
+                );
+              },
             );
           }
-          return Center(
+          return const Center(
             child: Text("W.S contact to admin."),
           );
         },
@@ -133,11 +141,11 @@ class TransactionCard extends StatelessWidget {
                   txn.label ?? '-',
                   style: context.textTheme.headlineSmall,
                 ),
-                // 3.spaceH,
-                // Text(
-                //   txn.description ?? '-',
-                //   style: context.textTheme.titleMedium,
-                // ),
+                3.spaceH,
+                Text(
+                  txn.failedReason ?? '-',
+                  style: context.textTheme.titleMedium,
+                ),
                 5.spaceH,
                 Text(
                   'Transaction ID',
@@ -147,7 +155,7 @@ class TransactionCard extends StatelessWidget {
                 ),
                 3.spaceH,
                 Text(
-                  txn.transactionId ?? '-',
+                  txn.paymentId ?? '-',
                   style: context.textTheme.titleSmall,
                 ),
               ],
@@ -157,7 +165,7 @@ class TransactionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "\$ ${txn.amount}",
+                txn.amount.to2DecimalINR,
                 style: context.textTheme.headlineSmall,
               ),
               5.spaceH,

@@ -67,6 +67,58 @@ class ProductDataSource {
     return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
   }
 
+  Future<DataState<bool>> canBuyProduct({required String productId}) async {
+    try {
+      if (!getIt.get<AppLocalService>().isLoggedIn) {
+        throw Exception("User not logged in");
+      } else {
+        final productResp = await fetchProductbyId(productId);
+        if (productResp is DataSuccess) {
+          if (productResp.data?.active == null || !(productResp.data!.active!)) {
+            throw Exception("Product is not active");
+          }
+          if (productResp.data?.sold == null || (productResp.data!.sold!)) {
+            throw Exception("Product has been sold");
+          }
+          if (productResp.data?.bikeBooked ?? false) {
+            throw Exception("Product has been Booked");
+          }
+          if (productResp.data?.bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false) {
+            throw Exception("Someone has booked that product");
+          }
+          return DataFailed(false, 500, "${productResp.data?.name} Booked succefully.");
+        } else {
+          throw Exception(productResp.message);
+        }
+      }
+    } catch (e) {
+      return DataFailed(false, 500, e.toString());
+    }
+  }
+
+  Future<DataState<bool>> bookProduct({required String productId}) async {
+    try {
+      if (!getIt.get<AppLocalService>().isLoggedIn) {
+        throw Exception("User not logged in");
+      } else {
+        final productResp = await fetchProductbyId(productId);
+        if (productResp is DataSuccess) {
+          if ((productResp.data?.active ?? false) == false) {
+            throw Exception("Product is not active");
+          }
+          if ((productResp.data?.sold ?? true) == true) {
+            throw Exception("Product is not active");
+          }
+          return DataFailed(false, 500, "${productResp.data?.name} Booked succefully.");
+        } else {
+          throw Exception(productResp.message);
+        }
+      }
+    } catch (e) {
+      return DataFailed(false, 500, e.toString());
+    }
+  }
+
   Future<DataState<ProductModel?>> fetchProductbyId(String id) async {
     try {
       final resp = await getIt.get<AppFireBaseLoc>().product.doc(id).get().catchError((e) => throw e);

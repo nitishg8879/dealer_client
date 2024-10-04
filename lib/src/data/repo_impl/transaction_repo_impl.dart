@@ -18,11 +18,6 @@ class TransactionRepoImpl implements TransactionRepo {
 
   @override
   Future<DataState<bool>> createTransaction(TransactionsModel txn) async {
-    final state = await _transactionDataSource.createTransaction(txn);
-    if (state is DataSuccess) {
-      return state;
-    } else {
-      return state as DataFailed<bool>;
-    }
+    return _transactionDataSource.createTransaction(txn);
   }
 }

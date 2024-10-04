@@ -5,18 +5,22 @@ import 'package:flutter/material.dart';
 class TransactionsModel {
   TransactionsModel({
     required this.transactionsType,
-    required this.transactionId,
     required this.amount,
     required this.label,
     required this.failedReason,
     required this.txnDateTime,
     required this.userId,
     required this.productId,
+    required this.paymentId,
+    this.orderId,
+    this.signature,
     this.id,
   });
 
   final TransactionsType? transactionsType;
-  final String? transactionId;
+  final String? paymentId;
+  final String? orderId;
+  final String? signature;
   final num? amount;
   final String? label;
   final String? failedReason;
@@ -27,8 +31,10 @@ class TransactionsModel {
 
   factory TransactionsModel.fromJson(Map<String, dynamic> json) {
     return TransactionsModel(
+      paymentId: json["paymentId"],
+      orderId: json['orderId'],
+      signature: json['signature'],
       transactionsType: TransactionsType.fromString(json["transactionsType"]),
-      transactionId: json["transactionID"],
       amount: json["amount"],
       label: json["label"],
       failedReason: json["failedReason"],
@@ -40,8 +46,10 @@ class TransactionsModel {
 
   Map<String, dynamic> toJson() => {
         "transactionsType": transactionsType?.name,
-        "transactionID": transactionId,
         "amount": amount,
+        "paymentId": paymentId,
+        "orderId": orderId,
+        "signature": signature,
         "label": label,
         "failedReason": failedReason,
         "txnDateTime": txnDateTime,
