@@ -64,6 +64,9 @@ class ProductDataSource {
   }
 
   List<ProductModel> _convertJsonToList(QuerySnapshot<Map<String, dynamic>> resp) {
+    if (resp.docs.isEmpty) {
+      return [];
+    }
     return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
   }
 
@@ -290,7 +293,9 @@ class ProductDataSource {
           lastdoc(resp.docs.last);
         }
       }
-      products = products.toSet().toList();
+      if (products.isNotEmpty) {
+        products = products.toSet().toList();
+      }
       return DataSuccess(products);
     } catch (e) {
       print(e.toString());

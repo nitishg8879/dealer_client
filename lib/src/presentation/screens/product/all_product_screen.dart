@@ -57,9 +57,6 @@ class _AllProductScreenState extends State<AllProductScreen> {
     super.initState();
     handlePreFilterDataAndFetch();
     addListnerInScrolling();
-    // getIt.get<AppFireBaseLoc>().product.where('searchQueryOnName', arrayContains: "name").get().then((val) {
-    //   print(val.docs.length);
-    // });
   }
 
   @override

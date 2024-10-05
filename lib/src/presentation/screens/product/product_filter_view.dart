@@ -396,7 +396,6 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                 ],
               ),
               12.spaceH,
-              12.spaceH,
               Row(
                 children: [
                   6.spaceW,
