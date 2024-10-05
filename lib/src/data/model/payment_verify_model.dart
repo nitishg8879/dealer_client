@@ -18,7 +18,7 @@ class PaymentVerifyModel {
   dynamic vpa;
   String? email;
   String? contact;
-  List<Null>? notes;
+  PaymentVerifyModelNotes? notes;
   dynamic fee;
   dynamic tax;
   dynamic errorCode;
@@ -80,12 +80,7 @@ class PaymentVerifyModel {
     vpa = json['vpa'];
     email = json['email'];
     contact = json['contact'];
-    // if (json['notes'] != null) {
-    //   notes = <Null>[];
-    //   json['notes'].forEach((v) {
-    //     notes!.add(new Null.fromJson(v));
-    //   });
-    // }
+    notes = json['notes'] != null ? new PaymentVerifyModelNotes.fromJson(json['notes']) : null;
     fee = json['fee'];
     tax = json['tax'];
     errorCode = json['error_code'];
@@ -120,9 +115,9 @@ class PaymentVerifyModel {
     data['vpa'] = this.vpa;
     data['email'] = this.email;
     data['contact'] = this.contact;
-    // if (this.notes != null) {
-    //   data['notes'] = this.notes!.map((v) => v.toJson()).toList();
-    // }
+    if (this.notes != null) {
+      data['notes'] = this.notes!.toJson();
+    }
     data['fee'] = this.fee;
     data['tax'] = this.tax;
     data['error_code'] = this.errorCode;
@@ -138,8 +133,30 @@ class PaymentVerifyModel {
   }
 }
 
+class PaymentVerifyModelNotes {
+  String? productId;
+  String? fullName;
+  String? userID;
+
+  PaymentVerifyModelNotes({this.productId, this.fullName, this.userID});
+
+  PaymentVerifyModelNotes.fromJson(Map<String, dynamic> json) {
+    productId = json['productId'];
+    fullName = json['fullName'];
+    userID = json['userID'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['productId'] = this.productId;
+    data['fullName'] = this.fullName;
+    data['userID'] = this.userID;
+    return data;
+  }
+}
+
 class AcquirerData {
-  dynamic bankTransactionId;
+  String? bankTransactionId;
 
   AcquirerData({this.bankTransactionId});
 

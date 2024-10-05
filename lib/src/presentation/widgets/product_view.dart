@@ -161,9 +161,55 @@ class ProductView extends StatelessWidget {
           ],
         ),
         6.spaceH,
-        Text(
-          product.price.toINR,
-          style: context.textTheme.displaySmall,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                product.price.toINR,
+                style: context.textTheme.displaySmall,
+              ),
+            ),
+            if (product.sold ?? false) ...[
+              Skeleton.ignore(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.kRed,
+                    borderRadius: 6.smoothBorderRadius,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    child: Text(
+                      "Sold",
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: AppColors.kWhite,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ] else if (product.bikeBooked ?? false) ...[
+              Skeleton.ignore(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.kGreen600,
+                    borderRadius: 6.smoothBorderRadius,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    child: Text(
+                      "Booked",
+                      style: context.textTheme.displaySmall?.copyWith(
+                        color: AppColors.kWhite,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // 4.spaceW,
+            ],
+          ],
         ),
       ],
     );

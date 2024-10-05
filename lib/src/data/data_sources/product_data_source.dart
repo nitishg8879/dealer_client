@@ -212,6 +212,7 @@ class ProductDataSource {
                 'category',
                 whereIn: req.selectedCategory.isNotEmpty ? req.selectedCategory.map((e) => e.id).toList() : null,
               )
+              .where('active', isEqualTo: true)
               .orderBy('creationDate', descending: true);
         }
         if (hasCompanyFilter || haskmFilter) {
@@ -228,6 +229,7 @@ class ProductDataSource {
                 'company',
                 whereIn: req.selectedCompany.isNotEmpty ? req.selectedCompany.map((e) => e.id).toList() : null,
               )
+              .where('active', isEqualTo: true)
               .orderBy('creationDate', descending: true);
         }
         if (hasCatCmpnyFilter || hasyearFilter) {
@@ -244,6 +246,7 @@ class ProductDataSource {
                 'model',
                 whereIn: req.selectedCatCompBrands.isNotEmpty ? req.selectedCatCompBrands.map((e) => e.id).toList() : null,
               )
+              .where('active', isEqualTo: true)
               .orderBy('creationDate', descending: true);
         }
 
