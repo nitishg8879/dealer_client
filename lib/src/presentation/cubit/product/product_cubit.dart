@@ -26,7 +26,7 @@ class ProductCubit extends Cubit<ProductState> {
     void Function(DocumentSnapshot<Object?>) lastdoc,
   ) async {
     emit(ProductLoading());
-    totalData ??= await _productCount();
+    totalData ??= await _productCount(req: req);
     final resp = await _productFetchUseCase.call(
       req: req,
       lastdoc: lastdoc,
@@ -66,8 +66,10 @@ class ProductCubit extends Cubit<ProductState> {
     }
   }
 
-  Future<int> _productCount() async {
-    final resp = await _productTotalCountUsecase.call();
+  Future<int> _productCount({
+    ProductsFilterController? req,
+  }) async {
+    final resp = await _productTotalCountUsecase.call(req: req);
     return resp.data ?? 0;
   }
 

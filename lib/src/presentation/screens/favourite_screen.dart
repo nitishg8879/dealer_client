@@ -91,6 +91,11 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               } else if (state is FavouriteError) {
                 return ErrorView(onreTry: favBloc.fetchFavouriteProducts, errorMsg: state.error);
               } else if (state is FavouriteLoaded) {
+                if (state.products.isEmpty) {
+                  return const Center(
+                    child: Text("No Favourite item found."),
+                  );
+                }
                 return GridView.builder(
                   itemBuilder: (context, index) => ProductView(product: state.products[index], row: false),
                   itemCount: state.products.length,

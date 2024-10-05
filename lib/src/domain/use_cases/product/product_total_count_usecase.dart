@@ -1,11 +1,14 @@
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
+import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 
 class ProductTotalCountUsecase {
   ProductRepo _productRepo;
   ProductTotalCountUsecase(this._productRepo);
 
-  Future<DataState<int?>> call() async {
-    return _productRepo.fetchProductsCount();
+  Future<DataState<int?>> call({
+    ProductsFilterController? req,
+  }) async {
+    return _productRepo.fetchProductsCount(req: req);
   }
 }

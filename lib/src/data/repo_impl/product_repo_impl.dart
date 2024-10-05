@@ -71,8 +71,10 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<int?>> fetchProductsCount() async {
-    final state = await _productDataSource.fetchProductsCount();
+  Future<DataState<int?>> fetchProductsCount({
+    ProductsFilterController? req,
+  }) async {
+    final state = await _productDataSource.fetchProductsCount(req: req);
     if (state is DataSuccess) {
       return state;
     } else {

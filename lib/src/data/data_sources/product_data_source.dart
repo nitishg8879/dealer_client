@@ -163,17 +163,11 @@ class ProductDataSource {
     }
   }
 
-  Future<DataState<int?>> fetchProductsCount() async {
-    try {
-      final resp = await getIt.get<AppFireBaseLoc>().product.count().get().catchError((e) => throw e);
-      return DataSuccess(resp.count);
-    } catch (e) {
-      return DataFailed(null, 500, e.toString());
-    }
-  }
-
   Future<DataState<List<ProductModel>?>> fetchProductsByIds(List<String> productsId) async {
     try {
+      if (productsId.isEmpty) {
+        return const DataSuccess([]);
+      }
       final resp = await getIt.get<AppFireBaseLoc>().product.where(FieldPath.documentId, whereIn: productsId).get();
       return DataSuccess(_convertJsonToList(resp));
     } catch (e) {
@@ -273,6 +267,8 @@ class ProductDataSource {
               )
               .startAfterDocument(lastDocument)
               .where('active', isEqualTo: true)
+              .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
+              .where('sold', isEqualTo: req?.showSold ?? false)
               .limit(10);
         } else {
           query1 = getIt
@@ -281,6 +277,9 @@ class ProductDataSource {
               .orderBy(
                 'creationDate',
                 descending: true,
+              )
+              .where(
+                'field',
               )
               .where('active', isEqualTo: true)
               .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
@@ -300,6 +299,25 @@ class ProductDataSource {
     } catch (e) {
       print(e.toString());
       return DataFailed(null, 204, e.toString());
+    }
+  }
+
+  Future<DataState<int?>> fetchProductsCount({
+    ProductsFilterController? req,
+  }) async {
+    try {
+      final resp = await getIt
+          .get<AppFireBaseLoc>()
+          .product
+          .where('active', isEqualTo: true)
+          .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
+          .where('sold', isEqualTo: req?.showSold ?? false)
+          .count()
+          .get()
+          .catchError((e) => throw e);
+      return DataSuccess(resp.count);
+    } catch (e) {
+      return DataFailed(null, 500, e.toString());
     }
   }
 }
