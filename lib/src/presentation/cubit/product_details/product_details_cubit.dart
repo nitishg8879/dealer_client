@@ -5,11 +5,13 @@ import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
+import 'package:bike_client_dealer/src/data/data_sources/transaction_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/transaction_usecase.dart';
 import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/confirmation_dialog.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -47,7 +49,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
       var options = {
         'key': getIt.get<AppFireBaseLoc>().razorKey,
-        // 'key': "rzp_test_cjoyPTL0PCSecr",
         'amount': productModel?.bookingAmount,
         'name': 'F3 Motors',
         'description': productModel?.description,
@@ -56,13 +57,19 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
           'contact': getIt.get<AppLocalService>().currentUser?.phoneNumber,
           'email': getIt.get<AppLocalService>().currentUser?.email,
         },
+        'notes': {
+          'fullName': getIt.get<AppLocalService>().currentUser?.fullName,
+          "productId": productModel?.id,
+          "userID": getIt.get<AppLocalService>().currentUser?.id,
+        },
         'retry': {
           'enabled': false,
           'max_count': 0,
         },
-        "theme": {"color": "#360083"},
+        "theme": {
+          "color": "#360083",
+        },
       };
-      print(options);
       razorpay.open(options);
     } else {
       emit(ProductDetailsTransactionLoading(false));
@@ -77,8 +84,11 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       "Payment Failed",
       "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
     );
-    emit(ProductDetailsTransactionLoading(false));
-    // createTransaction(error: response);
+    if (response.error?['metadata']['payment_id'] != null) {
+      createTransaction(error: response);
+    } else {
+      emit(ProductDetailsTransactionLoading(false));
+    }
   }
 
   Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
@@ -86,7 +96,10 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     createTransaction(success: response);
     final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!);
     if (resp is DataSuccess) {
-      // final resp = await getIt.get<TransactionDataSource>().verifyPayment(productId: productModel!.id!);
+      final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
+      if (paymentStatus is DataSuccess) {
+        // paymentStatus.data.
+      }
       fetchProduct(productModel!.id!, null);
       showAlertDialog(
         "Order Successful",
@@ -103,26 +116,18 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   void showAlertDialog(String title, String message) {
     showDialog(
+      barrierDismissible: false,
       context: AppRoutes.rootNavigatorKey.currentContext!,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            ElevatedButton(
-              child: const Text("Ok"),
-              onPressed: () => AppRoutes.rootNavigatorKey.currentContext!.pop(),
-            ),
-          ],
+        return ConfirmationDialog(
+          titleText: title,
+          contentText: message,
         );
       },
     );
   }
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
-    if (kDebugMode) {
-      await Future.delayed(Duration(seconds: 2));
-    }
     if (product != null) {
       emit(ProductDetailsLoaded(product));
       productModel = product;

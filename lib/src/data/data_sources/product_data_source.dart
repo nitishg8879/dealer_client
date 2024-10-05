@@ -77,7 +77,7 @@ class ProductDataSource {
           if (productResp.data?.active == null || !(productResp.data!.active!)) {
             throw Exception("Product is not active");
           }
-          if (productResp.data?.sold == null || (productResp.data!.sold!)) {
+          if ((productResp.data?.sold ?? false)) {
             throw Exception("Product has been sold");
           }
           if (productResp.data?.bikeBooked ?? false) {
@@ -258,9 +258,26 @@ class ProductDataSource {
       } else {
         Query<Map<String, dynamic>>? query1;
         if (lastDocument != null) {
-          query1 = getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).startAfterDocument(lastDocument).limit(10);
+          query1 = getIt
+              .get<AppFireBaseLoc>()
+              .product
+              .orderBy(
+                'creationDate',
+                descending: true,
+              )
+              .startAfterDocument(lastDocument)
+              .where('active', isEqualTo: true)
+              .limit(10);
         } else {
-          query1 = getIt.get<AppFireBaseLoc>().product.orderBy('creationDate', descending: true).limit(10);
+          query1 = getIt
+              .get<AppFireBaseLoc>()
+              .product
+              .orderBy(
+                'creationDate',
+                descending: true,
+              )
+              .where('active', isEqualTo: true)
+              .limit(10);
         }
         final resp = await query1.get().catchError((error) => throw error);
         products = _convertJsonToList(resp);

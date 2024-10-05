@@ -76,9 +76,83 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _floatActionBtn(BuildContext context) {
-    if ((productDetailsCubit.productModel?.bikeBooked ?? true) || !(productDetailsCubit.productModel?.active ?? true)) {
-      return const SizedBox();
+    print(productDetailsCubit.productModel?.toJson());
+    if (productDetailsCubit.productModel?.active == null) {
+      return SizedBox();
     }
+    if (!(productDetailsCubit.productModel?.active ?? true)) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.kRed,
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.all(
+                SmoothRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              side: BorderSide(
+                color: AppColors.kFoundationPurple100,
+              ),
+            ),
+          ),
+          child: const Text("This item it not active"),
+        ),
+      );
+    } else if ((productDetailsCubit.productModel?.sold ?? false)) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.kRed,
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.all(
+                SmoothRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              side: BorderSide(
+                color: AppColors.kFoundationPurple100,
+              ),
+            ),
+          ),
+          child: const Text("Sold"),
+        ),
+      );
+    } else if ((productDetailsCubit.productModel?.bikeBooked ?? false)) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            productDetailsCubit.showAlertDialog(
+              "Alert",
+              "Someone has booked this product.\n\nIf for some reason user not buy this product.This product will be unlock after\n${productDetailsCubit.productModel?.bikeLockedTill?.toDate().ddMMYYYYhhMMSS}",
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.kGreen800,
+            shape: const SmoothRectangleBorder(
+              borderRadius: SmoothBorderRadius.all(
+                SmoothRadius(
+                  cornerRadius: 12,
+                  cornerSmoothing: 1,
+                ),
+              ),
+              side: BorderSide(
+                color: AppColors.kFoundationPurple100,
+              ),
+            ),
+          ),
+          child: const Text("Booked"),
+        ),
+      );
+    }
+
     return Material(
       color: AppColors.kWhite,
       child: Padding(
@@ -193,225 +267,229 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _buildbody(ProductModel product) {
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      controller: scrollController,
-      children: [
-        Skeleton.replace(
-          replace: true,
-          width: double.infinity,
-          height: context.height * .45,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: context.height * .45,
-              maxWidth: double.infinity,
-            ),
-            child: CarouselView(
-              itemExtent: context.width,
-              shape: const RoundedRectangleBorder(),
-              padding: EdgeInsets.zero,
-              itemSnapping: true,
-              children: product.images
-                      ?.map(
-                        (e) => CachedNetworkImage(
-                          width: context.width,
-                          fit: BoxFit.cover,
-                          imageUrl: e,
-                        ),
-                      )
-                      .toList() ??
-                  [],
+    return RefreshIndicator(
+      onRefresh: () => productDetailsCubit.fetchProduct(widget.id ?? widget.product?.id, null),
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        controller: scrollController,
+        children: [
+          Skeleton.replace(
+            replace: true,
+            width: double.infinity,
+            height: context.height * .45,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: context.height * .45,
+                maxWidth: double.infinity,
+              ),
+              child: CarouselView(
+                itemExtent: context.width,
+                shape: const RoundedRectangleBorder(),
+                padding: EdgeInsets.zero,
+                itemSnapping: true,
+                children: product.images
+                        ?.map(
+                          (e) => CachedNetworkImage(
+                            width: context.width,
+                            fit: BoxFit.cover,
+                            imageUrl: e,
+                          ),
+                        )
+                        .toList() ??
+                    [],
+              ),
             ),
           ),
-        ),
-        // Container(
-        //   color: AppColors.kWhite,
-        //   height: 300,
-        //   child: Stack(
-        //     fit: StackFit.expand,
-        //     children: [
-        //       CarouselView(
-        //         itemExtent: context.width,
-        //         shape: const RoundedRectangleBorder(),
-        //         padding: EdgeInsets.zero,
-        //         itemSnapping: true,
-        //         children: product.images
-        //                 ?.map(
-        //                   (e) => CachedNetworkImage(
-        //                     width: context.width,
-        //                     fit: BoxFit.cover,
-        //                     imageUrl: e,
-        //                   ),
-        //                 )
-        //                 .toList() ??
-        //             [],
-        //       ),
-        //       // ListView(
-        //       //   physics: const BouncingScrollPhysics(),
-        //       //   scrollDirection: Axis.horizontal,
-        //       //   controller: scrollController,
-        //       //   children: product.images
-        //       //           ?.map(
-        //       //             (e) => Padding(
-        //       //               padding: const EdgeInsets.only(right: 16),
-        //       //               child: CachedNetworkImage(
-        //       //                 width: context.width,
-        //       //                 fit: BoxFit.cover,
-        //       //                 imageUrl: e,
-        //       //               ),
-        //       //             ),
-        //       //           )
-        //       //           .toList() ??
-        //       //       [],
-        //       // ),
-        //       Positioned(
-        //         top: 8,
-        //         right: 8,
-        //         child: Skeleton.ignore(
-        //           child: DecoratedBox(
-        //             decoration: const ShapeDecoration(
-        //               color: AppColors.kBlack900,
-        //               shape: SmoothRectangleBorder(
-        //                 borderRadius: SmoothBorderRadius.all(
-        //                   SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
-        //                 ),
-        //                 side: BorderSide(
-        //                   color: AppColors.kFoundationPurple100,
-        //                 ),
-        //               ),
-        //             ),
-        //             child: Padding(
-        //               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        //               child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
-        //                 bloc: productDetailsCubit,
-        //                 // buildWhen: (previous, current) => current is ProductDetailsImagePosition,
-        //                 builder: (context, state) {
-        //                   print("building image pos");
-        //                   if (state is ProductDetailsImagePosition) {
-        //                     return Text(
-        //                       "${state.current} / ${state.total}",
-        //                       style: context.textTheme.bodyLarge?.copyWith(
-        //                         color: AppColors.white,
-        //                       ),
-        //                     );
-        //                   }
-        //                   return const SizedBox();
-        //                 },
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       )
-        //     ],
-        //   ),
-        // ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              16.spaceH,
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      product.name ?? "-",
-                      style: context.textTheme.headlineSmall,
+
+          // Container(
+          //   color: AppColors.kWhite,
+          //   height: 300,
+          //   child: Stack(
+          //     fit: StackFit.expand,
+          //     children: [
+          //       CarouselView(
+          //         itemExtent: context.width,
+          //         shape: const RoundedRectangleBorder(),
+          //         padding: EdgeInsets.zero,
+          //         itemSnapping: true,
+          //         children: product.images
+          //                 ?.map(
+          //                   (e) => CachedNetworkImage(
+          //                     width: context.width,
+          //                     fit: BoxFit.cover,
+          //                     imageUrl: e,
+          //                   ),
+          //                 )
+          //                 .toList() ??
+          //             [],
+          //       ),
+          //       // ListView(
+          //       //   physics: const BouncingScrollPhysics(),
+          //       //   scrollDirection: Axis.horizontal,
+          //       //   controller: scrollController,
+          //       //   children: product.images
+          //       //           ?.map(
+          //       //             (e) => Padding(
+          //       //               padding: const EdgeInsets.only(right: 16),
+          //       //               child: CachedNetworkImage(
+          //       //                 width: context.width,
+          //       //                 fit: BoxFit.cover,
+          //       //                 imageUrl: e,
+          //       //               ),
+          //       //             ),
+          //       //           )
+          //       //           .toList() ??
+          //       //       [],
+          //       // ),
+          //       Positioned(
+          //         top: 8,
+          //         right: 8,
+          //         child: Skeleton.ignore(
+          //           child: DecoratedBox(
+          //             decoration: const ShapeDecoration(
+          //               color: AppColors.kBlack900,
+          //               shape: SmoothRectangleBorder(
+          //                 borderRadius: SmoothBorderRadius.all(
+          //                   SmoothRadius(cornerRadius: 8, cornerSmoothing: 1),
+          //                 ),
+          //                 side: BorderSide(
+          //                   color: AppColors.kFoundationPurple100,
+          //                 ),
+          //               ),
+          //             ),
+          //             child: Padding(
+          //               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //               child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
+          //                 bloc: productDetailsCubit,
+          //                 // buildWhen: (previous, current) => current is ProductDetailsImagePosition,
+          //                 builder: (context, state) {
+          //                   print("building image pos");
+          //                   if (state is ProductDetailsImagePosition) {
+          //                     return Text(
+          //                       "${state.current} / ${state.total}",
+          //                       style: context.textTheme.bodyLarge?.copyWith(
+          //                         color: AppColors.white,
+          //                       ),
+          //                     );
+          //                   }
+          //                   return const SizedBox();
+          //                 },
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                16.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        product.name ?? "-",
+                        style: context.textTheme.headlineSmall,
+                      ),
+                    ),
+                    ProductFav(id: widget.product?.id ?? '-')
+                    // IconButton(
+                    //   padding: EdgeInsets.zero,
+                    //   constraints: const BoxConstraints.expand(width: 24, height: 24),
+                    //   onPressed: () {},
+                    //   icon: Skeleton.ignore(
+                    //     child: CustomSvgIcon(
+                    //       assetName: AppAssets.favFill,
+                    //       color: AppColors.kRed,
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                4.spaceH,
+                Text(
+                  (product.price).toINR,
+                  style: context.textTheme.headlineSmall,
+                ),
+                16.spaceH,
+                Text(
+                  product.description ?? '-',
+                  style: context.textTheme.titleMedium,
+                ),
+                16.spaceH,
+                Material(
+                  shape: SmoothRectangleBorder(
+                    borderRadius: 12.smoothBorderRadius,
+                    borderAlign: BorderAlign.inside,
+                  ),
+                  color: AppColors.kWhite,
+                  shadowColor: AppColors.kFoundationPurple100,
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Details",
+                          style: context.textTheme.labelMedium,
+                        ),
+                        16.spaceH,
+                        titleSubtitle("KM Driven", product.kmDriven.readableNumber, assetName: AppAssets.distance),
+                        titleSubtitle("Buy Date", product.bikeBuyDate?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                        titleSubtitle("Insaurance Validity", product.insauranceValidity?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
+                        titleSubtitle("Valid Till", product.bikeValidTill?.toDate().mmmYYY ?? "-", assetName: AppAssets.calenderTill),
+                        titleSubtitle("Number Plate", product.numberPlate ?? "-", assetName: AppAssets.distance),
+                        titleSubtitle("Tyre Condition", product.tyreCondition ?? '-', assetName: AppAssets.distance),
+                        titleSubtitle("Fine", product.fine.readableNumber, assetName: AppAssets.fine),
+                        titleSubtitle("Owners", product.owners.readableNumber, wantDivider: false, assetName: AppAssets.users),
+                      ],
                     ),
                   ),
-                  ProductFav(id: widget.product?.id ?? '-')
-                  // IconButton(
-                  //   padding: EdgeInsets.zero,
-                  //   constraints: const BoxConstraints.expand(width: 24, height: 24),
-                  //   onPressed: () {},
-                  //   icon: Skeleton.ignore(
-                  //     child: CustomSvgIcon(
-                  //       assetName: AppAssets.favFill,
-                  //       color: AppColors.kRed,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-              4.spaceH,
-              Text(
-                (product.price).toINR,
-                style: context.textTheme.headlineSmall,
-              ),
-              4.spaceH,
-              Text(
-                product.description ?? '-',
-                style: context.textTheme.titleMedium,
-              ),
-              32.spaceH,
-              Material(
-                shape: SmoothRectangleBorder(
-                  borderRadius: 12.smoothBorderRadius,
-                  borderAlign: BorderAlign.inside,
                 ),
-                color: AppColors.kWhite,
-                shadowColor: AppColors.kFoundationPurple100,
-                elevation: 8,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Details",
-                        style: context.textTheme.labelMedium,
-                      ),
-                      16.spaceH,
-                      titleSubtitle("KM Driven", product.kmDriven.readableNumber, assetName: AppAssets.distance),
-                      titleSubtitle("Buy Date", product.bikeBuyDate?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
-                      titleSubtitle("Insaurance Validity", product.insauranceValidity?.toDate().mmmYYY ?? "-", assetName: AppAssets.calender),
-                      titleSubtitle("Valid Till", product.bikeValidTill?.toDate().mmmYYY ?? "-", assetName: AppAssets.calenderTill),
-                      titleSubtitle("Number Plate", product.numberPlate ?? "-", assetName: AppAssets.distance),
-                      titleSubtitle("Tyre Condition", product.tyreCondition ?? '-', assetName: AppAssets.distance),
-                      titleSubtitle("Fine", product.fine.readableNumber, assetName: AppAssets.fine),
-                      titleSubtitle("Owners", product.owners.readableNumber, wantDivider: false, assetName: AppAssets.users),
-                    ],
+                32.spaceH,
+                Material(
+                  shape: SmoothRectangleBorder(
+                    borderRadius: 12.smoothBorderRadius,
+                    borderAlign: BorderAlign.inside,
+                  ),
+                  color: AppColors.kWhite,
+                  shadowColor: AppColors.kFoundationPurple100,
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Default Details",
+                          style: context.textTheme.labelMedium,
+                        ),
+                        16.spaceH,
+                        titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
+                        titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
+                        titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
+                        titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
+                        titleSubtitle("Company", "Honda", assetName: AppAssets.company),
+                        titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              32.spaceH,
-              Material(
-                shape: SmoothRectangleBorder(
-                  borderRadius: 12.smoothBorderRadius,
-                  borderAlign: BorderAlign.inside,
-                ),
-                color: AppColors.kWhite,
-                shadowColor: AppColors.kFoundationPurple100,
-                elevation: 8,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Default Details",
-                        style: context.textTheme.labelMedium,
-                      ),
-                      16.spaceH,
-                      titleSubtitle("Wheel", "2", assetName: AppAssets.wheel),
-                      titleSubtitle("Engine cc", "124", assetName: AppAssets.wheel),
-                      titleSubtitle("Launch date", "2 Sep 2024", assetName: AppAssets.calender),
-                      titleSubtitle("On Road Price", "1,75,000", assetName: AppAssets.wheel),
-                      titleSubtitle("Company", "Honda", assetName: AppAssets.company),
-                      titleSubtitle("Mileage", "30-40km", wantDivider: false, assetName: AppAssets.mileage),
-                    ],
-                  ),
-                ),
-              ),
-              100.spaceH,
-            ],
+                100.spaceH,
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
