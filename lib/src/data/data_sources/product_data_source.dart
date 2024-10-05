@@ -96,6 +96,12 @@ class ProductDataSource {
     }
   }
 
+  Future<void> addTransactionIdInProduct({required ProductModel product, required String paymentId}) async {
+    getIt.get<AppFireBaseLoc>().product.doc().update({
+      'transactionID': paymentId,
+    });
+  }
+
   Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) async {
     try {
       product.user ??= [];

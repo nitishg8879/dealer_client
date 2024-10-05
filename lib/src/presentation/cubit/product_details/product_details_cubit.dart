@@ -94,22 +94,28 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
     razorpay.clear();
     createTransaction(success: response);
-    final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!);
-    if (resp is DataSuccess) {
-      final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
-      if (paymentStatus is DataSuccess) {
-        // paymentStatus.data.
+    final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
+    if (paymentStatus is DataSuccess) {
+      final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!);
+      if (resp is DataSuccess) {
+        fetchProduct(productModel!.id!, null);
+        showAlertDialog(
+          "Order Successful",
+          "Payment ID: ${response.paymentId}\n\nYour order has been booked.",
+        );
       }
-      fetchProduct(productModel!.id!, null);
-      showAlertDialog(
-        "Order Successful",
-        "Payment ID: ${response.paymentId}\n\nYour order has been booked.",
-      );
+      if (resp is DataFailed) {
+        showAlertDialog(
+          "Payment Successful",
+          "Payment ID: ${response.paymentId}\n\nWhile booking the product we run into problem: ${resp.message}\n\n we have created your transaction id you can refund your amount, from there.",
+        );
+      }
     }
-    if (resp is DataFailed) {
+
+    if (paymentStatus is DataFailed) {
       showAlertDialog(
-        "Payment Successful",
-        "Payment ID: ${response.paymentId}\n\nWhile booking the product we run into problem: ${resp.message}\n\n we have created your transaction id you can refund your amount, from there.",
+        "In correct Payment",
+        "Payment ID: ${response.paymentId}\nThis transaction is not valid.",
       );
     }
   }
@@ -162,7 +168,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     TransactionsModel txn = TransactionsModel(
       transactionsType: isFail ? TransactionsType.fail : TransactionsType.success,
       amount: productModel?.bookingAmount,
-      label: isFail ? "Failed" : "Booked",
+      label: isFail ? "Booking Fail" : "Booking Success",
       failedReason: isFail ? error.message : "Transaction successfully.",
       txnDateTime: Timestamp.now(),
       userId: getIt.get<AppLocalService>().currentUser?.id,
