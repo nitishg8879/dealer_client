@@ -1,14 +1,20 @@
+import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
+import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
+import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/transaction_usecase.dart';
+import 'package:bike_client_dealer/src/presentation/screens/auth_popup_view.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 part 'product_details_state.dart';
@@ -16,8 +22,102 @@ part 'product_details_state.dart';
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   final FetchProductByIdUsecase _fetchProductByIdUsecase;
   final TransactionCreateUseCase _transactionCreateUseCase;
-  ProductDetailsCubit(this._fetchProductByIdUsecase, this._transactionCreateUseCase) : super(ProductDetailsLoading());
+  ProductDetailsCubit(this._fetchProductByIdUsecase, this._transactionCreateUseCase) : super(ProductDetailsLoading()) {
+    razorpay = Razorpay();
+  }
   ProductModel? productModel;
+  late Razorpay razorpay;
+
+  @override
+  Future<void> close() async {
+    razorpay.clear();
+    super.close();
+  }
+
+  Future<void> makePayment() async {
+    if (!getIt.get<AppLocalService>().isLoggedIn) {
+      AuthPopupViewDialogShow.show(tap: makePayment);
+      return;
+    }
+    emit(ProductDetailsTransactionLoading(true));
+    razorpay.clear();
+    final resp = await getIt.get<ProductDataSource>().canBuyProduct(productId: productModel!.id!);
+    if (resp is DataSuccess) {
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
+      razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+      var options = {
+        'key': getIt.get<AppFireBaseLoc>().razorKey,
+        // 'key': "rzp_test_cjoyPTL0PCSecr",
+        'amount': productModel?.bookingAmount,
+        'name': 'F3 Motors',
+        'description': productModel?.description,
+        'prefill': {
+          "name": getIt.get<AppLocalService>().currentUser?.fullName,
+          'contact': getIt.get<AppLocalService>().currentUser?.phoneNumber,
+          'email': getIt.get<AppLocalService>().currentUser?.email,
+        },
+        'retry': {
+          'enabled': false,
+          'max_count': 0,
+        },
+        "theme": {"color": "#360083"},
+      };
+      print(options);
+      razorpay.open(options);
+    } else {
+      emit(ProductDetailsTransactionLoading(false));
+      showAlertDialog("Alert", resp.message ?? 'Something went wrong.');
+      fetchProduct(productModel!.id, null);
+    }
+  }
+
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    razorpay.clear();
+    showAlertDialog(
+      "Payment Failed",
+      "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
+    );
+    emit(ProductDetailsTransactionLoading(false));
+    // createTransaction(error: response);
+  }
+
+  Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+    razorpay.clear();
+    createTransaction(success: response);
+    final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!);
+    if (resp is DataSuccess) {
+      // final resp = await getIt.get<TransactionDataSource>().verifyPayment(productId: productModel!.id!);
+      fetchProduct(productModel!.id!, null);
+      showAlertDialog(
+        "Order Successful",
+        "Payment ID: ${response.paymentId}\n\nYour order has been booked.",
+      );
+    }
+    if (resp is DataFailed) {
+      showAlertDialog(
+        "Payment Successful",
+        "Payment ID: ${response.paymentId}\n\nWhile booking the product we run into problem: ${resp.message}\n\n we have created your transaction id you can refund your amount, from there.",
+      );
+    }
+  }
+
+  void showAlertDialog(String title, String message) {
+    showDialog(
+      context: AppRoutes.rootNavigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              child: const Text("Ok"),
+              onPressed: () => AppRoutes.rootNavigatorKey.currentContext!.pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
     if (kDebugMode) {
@@ -44,7 +144,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     PaymentFailureResponse? error,
     PaymentSuccessResponse? success,
   }) async {
-    emit(ProductDetailsTransactionLoading(true));
     if (kDebugMode) {
       await Future.delayed(const Duration(seconds: 3));
     }
@@ -70,9 +169,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     final resp = await _transactionCreateUseCase.call(txn: txn);
     if (resp is DataSuccess) {
       HelperFun.showSuccessSnack("Transaction has been created.");
-      if (!isFail) {
-        
-      }
+      if (!isFail) {}
     }
     if (resp is DataFailed) {
       HelperFun.showSuccessSnack(resp.message ?? 'Failt to create transaction.');

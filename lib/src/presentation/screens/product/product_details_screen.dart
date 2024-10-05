@@ -3,7 +3,6 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
-import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
@@ -14,7 +13,6 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -33,11 +31,9 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final scrollController = ScrollController();
   final productDetailsCubit = ProductDetailsCubit(getIt.get(), getIt.get());
-  late Razorpay razorpay;
 
   @override
   void initState() {
-    razorpay = Razorpay();
     super.initState();
     fetchData();
   }
@@ -45,77 +41,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void dispose() {
     productDetailsCubit.close();
-    razorpay.clear();
+    scrollController.dispose();
     super.dispose();
   }
 
   void fetchData() {
     WidgetsBinding.instance.addPostFrameCallback((frame) => productDetailsCubit.fetchProduct(widget.id, widget.product));
-  }
-
-  void showPaymentAcceptDialog() {
-    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
-    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-    razorpay.open({
-      'key': 'rzp_test_cjoyPTL0PCSecr',
-      'amount': 1,
-      'name': 'F3 Motors',
-      'description': 'Fine T-Shirt',
-      'prefill': {
-        "name": "Nitish Gupta",
-        'contact': '8879753332',
-        'email': 'test@razorpay.com',
-      },
-      'retry': {
-        'enabled': false,
-        // 'max_count': 0,
-      },
-      "theme": {"color": "#360083"},
-    });
-  }
-
-  void handlePaymentErrorResponse(PaymentFailureResponse response) {
-    razorpay.clear();
-    showAlertDialog(
-      context,
-      "Payment Failed",
-      "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
-    );
-    productDetailsCubit.createTransaction(error: response);
-  }
-
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    razorpay.clear();
-    //?
-    response.orderId;
-    response.paymentId;
-    response.signature;
-    response.data;
-    //?
-    showAlertDialog(
-      context,
-      "Payment Successful",
-      "Payment ID: ${response.paymentId} \n\nData:${response.data} Order Id:${response.orderId}",
-    );
-    productDetailsCubit.createTransaction(success: response);
-  }
-
-  void showAlertDialog(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            ElevatedButton(
-              child: const Text("Ok"),
-              onPressed: () => context.pop(),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -144,7 +75,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Material _floatActionBtn(BuildContext context) {
+  Widget _floatActionBtn(BuildContext context) {
+    if ((productDetailsCubit.productModel?.bikeBooked ?? true) || !(productDetailsCubit.productModel?.active ?? true)) {
+      return const SizedBox();
+    }
     return Material(
       color: AppColors.kWhite,
       child: Padding(
@@ -191,7 +125,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   return ElevatedButton(
                     onPressed: () {
                       if (!isLoading) {
-                        showPaymentAcceptDialog();
+                        productDetailsCubit.makePayment();
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -225,7 +159,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 size: 20,
                               ),
                               8.spaceW,
-                              Text("Book at ${100.toINR}"),
+                              Text("Book at ${productDetailsCubit.productModel?.bookingAmount.toINR}"),
                             ],
                           ),
                   );
@@ -401,7 +335,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               4.spaceH,
               Text(
-                75000.toINR,
+                (product.price).toINR,
                 style: context.textTheme.headlineSmall,
               ),
               4.spaceH,

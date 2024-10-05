@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppFireBaseLoc {
+  String? get razorKey => dotenv.env['razorKey'];
+  String? get razorValue => dotenv.env['razorValue'];
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? get currentUser => FirebaseAuth.instance.currentUser;
 

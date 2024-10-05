@@ -61,8 +61,7 @@ class ProductRepoImpl implements ProductRepo {
   }
 
   @override
-  Future<DataState<List<CategoryCompanyMdoel>?>>
-      fetchCategoryCompanyModel() async {
+  Future<DataState<List<CategoryCompanyMdoel>?>> fetchCategoryCompanyModel() async {
     final state = await _productDataSource.fetchCategoryCompanyModel();
     if (state is DataSuccess) {
       return state;
@@ -110,7 +109,7 @@ class ProductRepoImpl implements ProductRepo {
       return DataFailed(false, state.statusCode, state.message);
     }
   }
-  
+
   @override
   Future<DataState<List<ProductModel>?>> fetchProductsByIds(List<String> ids) async {
     final state = await _productDataSource.fetchProductsByIds(ids);
@@ -119,5 +118,15 @@ class ProductRepoImpl implements ProductRepo {
     } else {
       return DataFailed(null, state.statusCode, state.message);
     }
+  }
+
+  @override
+  Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) {
+    return _productDataSource.bookProduct(product: product);
+  }
+
+  @override
+  Future<DataState<ProductModel?>> canBuyProduct({required String productId}) {
+    return _productDataSource.canBuyProduct(productId: productId);
   }
 }

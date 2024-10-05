@@ -22,11 +22,13 @@ import 'package:bike_client_dealer/src/domain/use_cases/product/product_total_co
 import 'package:bike_client_dealer/src/domain/use_cases/transaction_usecase.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/home/home_cubit.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
+   await dotenv.load(fileName: ".env");
   //? Needed
   final appLocalService = AppLocalService();
   await appLocalService.init();

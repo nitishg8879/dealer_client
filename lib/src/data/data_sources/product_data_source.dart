@@ -67,7 +67,7 @@ class ProductDataSource {
     return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
   }
 
-  Future<DataState<bool>> canBuyProduct({required String productId}) async {
+  Future<DataState<ProductModel?>> canBuyProduct({required String productId}) async {
     try {
       if (!getIt.get<AppLocalService>().isLoggedIn) {
         throw Exception("User not logged in");
@@ -83,46 +83,44 @@ class ProductDataSource {
           if (productResp.data?.bikeBooked ?? false) {
             throw Exception("Product has been Booked");
           }
-          if (productResp.data?.bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false) {
-            throw Exception("Someone has booked that product");
-          }
-          return DataFailed(false, 500, "${productResp.data?.name} Booked succefully.");
+          return DataSuccess(productResp.data);
         } else {
           throw Exception(productResp.message);
         }
       }
     } catch (e) {
-      return DataFailed(false, 500, e.toString());
+      return DataFailed(null, 500, e.toString());
     }
   }
 
-  Future<DataState<bool>> bookProduct({required String productId}) async {
+  Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) async {
     try {
-      if (!getIt.get<AppLocalService>().isLoggedIn) {
-        throw Exception("User not logged in");
-      } else {
-        final productResp = await fetchProductbyId(productId);
-        if (productResp is DataSuccess) {
-          if ((productResp.data?.active ?? false) == false) {
-            throw Exception("Product is not active");
-          }
-          if ((productResp.data?.sold ?? true) == true) {
-            throw Exception("Product is not active");
-          }
-          return DataFailed(false, 500, "${productResp.data?.name} Booked succefully.");
-        } else {
-          throw Exception(productResp.message);
-        }
-      }
+      product.user ??= [];
+      product.user!.add(getIt.get<AppLocalService>().currentUser!.id!);
+      product.bikeBooked = true;
+      product.bikeLockedTill = Timestamp.fromDate(DateTime.now().add(const Duration(hours: 24)));
+      await FirebaseFirestore.instance.runTransaction(
+        (transaction) async {
+          transaction.update(
+            getIt.get<AppFireBaseLoc>().product.doc(product.id),
+            {
+              "bikeBooked": product.bikeBooked,
+              "bikeLockedTill": product.bikeLockedTill,
+              "user": product.user,
+            },
+          );
+        },
+      ).catchError((error) => throw error);
+      return fetchProductbyId(product.id!);
     } catch (e) {
-      return DataFailed(false, 500, e.toString());
+      return DataFailed(null, 500, e.toString());
     }
   }
 
   Future<DataState<ProductModel?>> fetchProductbyId(String id) async {
     try {
       final resp = await getIt.get<AppFireBaseLoc>().product.doc(id).get().catchError((e) => throw e);
-      return DataSuccess(ProductModel.fromJson(resp.data() as Map<String, dynamic>));
+      return DataSuccess(ProductModel.fromJson(resp.data() as Map<String, dynamic>)..id = resp.id);
     } catch (e) {
       return DataFailed(null, 500, e.toString());
     }
