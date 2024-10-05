@@ -375,6 +375,49 @@ class _ProductFilterViewState extends State<ProductFilterView> {
                 ],
               ),
               12.spaceH,
+              Row(
+                children: [
+                  6.spaceW,
+                  Expanded(
+                    child: Text(
+                      "Show Sold",
+                      style: context.textTheme.headlineSmall?.copyWith(fontSize: 16),
+                    ),
+                  ),
+                  CupertinoSwitch(
+                    activeColor: AppColors.kFoundatiionPurple800,
+                    value: widget.controller.showSold,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.controller.showSold = !widget.controller.showSold;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              12.spaceH,
+              12.spaceH,
+              Row(
+                children: [
+                  6.spaceW,
+                  Expanded(
+                    child: Text(
+                      "Show Booked",
+                      style: context.textTheme.headlineSmall?.copyWith(fontSize: 16),
+                    ),
+                  ),
+                  CupertinoSwitch(
+                    activeColor: AppColors.kFoundatiionPurple800,
+                    value: widget.controller.showBooked,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.controller.showBooked = !widget.controller.showBooked;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              12.spaceH,
               BlocBuilder<HomeCubit, HomeState>(
                 bloc: widget.homeCubit,
                 builder: (context, state) {
@@ -463,8 +506,6 @@ class _ProductFilterViewState extends State<ProductFilterView> {
       ],
     );
   }
-
-  
 }
 
 class AppRangeSelector extends StatelessWidget {

@@ -280,6 +280,8 @@ class ProductDataSource {
                 descending: true,
               )
               .where('active', isEqualTo: true)
+              .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
+              .where('sold', isEqualTo: req?.showSold ?? false)
               .limit(10);
         }
         final resp = await query1.get().catchError((error) => throw error);

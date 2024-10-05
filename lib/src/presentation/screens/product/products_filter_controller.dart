@@ -18,11 +18,16 @@ class ProductsFilterController {
 
   List<String> products = [];
 
+  bool showBooked = false;
+  bool showSold = false;
+
   List<CategoryModel> selectedCategory = [];
   List<CompanyModel> selectedCompany = [];
   List<CategoryCompanyMdoel> selectedCatCompBrands = [];
 
   void clear() {
+    showSold = false;
+    showBooked = false;
     selectedCategory = [];
     selectedCompany = [];
     selectedCatCompBrands = [];
