@@ -55,7 +55,7 @@ class HomeCubit extends Cubit<HomeState> {
           resp[3].data as List<CategoryCompanyMdoel>?;
       var recentProducts = resp[4].data as List<ProductModel>?;
       HomeProducts recentItems =
-          HomeProducts(label: "Recently Added", priority: 0, products: []);
+          HomeProducts(label: "Recently Added", priority: 0, products: [],showFullProducts: true);
       for (var i = 0; i < 4; i++) {
         if ((recentProducts?.length ?? 0) > i) {
           recentItems.products!.add(recentProducts![i].id!);

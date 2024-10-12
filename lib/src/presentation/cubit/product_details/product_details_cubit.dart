@@ -49,7 +49,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
       var options = {
         'key': getIt.get<AppFireBaseLoc>().razorKey,
-        'amount': productModel?.bookingAmount,
+        'amount': resp.data?.bookingAmount,
         'name': 'F3 Motors',
         'description': productModel?.description,
         'prefill': {
@@ -79,6 +79,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   }
 
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    print("handlePaymentErrorResponse");
     razorpay.clear();
     showAlertDialog(
       "Payment Failed",
@@ -92,11 +93,12 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   }
 
   Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+    print("handlePaymentSuccessResponse");
     razorpay.clear();
     createTransaction(success: response);
     final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
     if (paymentStatus is DataSuccess) {
-      final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!);
+      final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!, txnId: response.paymentId ?? '');
       if (resp is DataSuccess) {
         fetchProduct(productModel!.id!, null);
         showAlertDialog(

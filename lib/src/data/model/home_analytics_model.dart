@@ -61,8 +61,9 @@ class HomeProducts {
   String? label;
   int? priority;
   List<String>? products;
+  bool showFullProducts = false;
 
-  HomeProducts({this.label, this.priority, this.products});
+  HomeProducts({this.label, this.priority, this.products, this.showFullProducts = false});
 
   HomeProducts.fromJson(Map<String, dynamic> json) {
     label = json['label'];

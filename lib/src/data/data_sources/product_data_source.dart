@@ -1,5 +1,6 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
+import 'package:bike_client_dealer/core/util/constants/app_const.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
@@ -102,12 +103,14 @@ class ProductDataSource {
     });
   }
 
-  Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) async {
+  Future<DataState<ProductModel?>> bookProduct({required ProductModel product, required String txnId}) async {
     try {
       product.user ??= [];
+      product.transactionID ??= [];
       product.user!.add(getIt.get<AppLocalService>().currentUser!.id!);
+      product.transactionID!.add(txnId);
       product.bikeBooked = true;
-      product.bikeLockedTill = Timestamp.fromDate(DateTime.now().add(const Duration(hours: 24)));
+      product.bikeLockedTill = Timestamp.fromDate(DateTime.now().add(Duration(hours: AppConst.bookingHours)));
       await FirebaseFirestore.instance.runTransaction(
         (transaction) async {
           transaction.update(
@@ -267,10 +270,7 @@ class ProductDataSource {
           query1 = getIt
               .get<AppFireBaseLoc>()
               .product
-              .orderBy(
-                'creationDate',
-                descending: true,
-              )
+              .orderBy('creationDate', descending: true)
               .startAfterDocument(lastDocument)
               .where('active', isEqualTo: true)
               .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
@@ -280,13 +280,7 @@ class ProductDataSource {
           query1 = getIt
               .get<AppFireBaseLoc>()
               .product
-              .orderBy(
-                'creationDate',
-                descending: true,
-              )
-              .where(
-                'field',
-              )
+              .orderBy('creationDate', descending: true)
               .where('active', isEqualTo: true)
               .where('bikeBooked', isEqualTo: req?.showBooked ?? false)
               .where('sold', isEqualTo: req?.showSold ?? false)
@@ -298,6 +292,21 @@ class ProductDataSource {
           lastdoc(resp.docs.last);
         }
       }
+      for (var i = 0; i < products.length; i++) {
+        if (!(products[i].sold ?? false) &&
+            (products[i].active ?? false) &&
+            (products[i].bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false)) {
+          print("Calling Booked Updated Transaction");
+          products[i].bikeLockedTill = null;
+          products[i].bikeBooked = false;
+          getIt.get<AppFireBaseLoc>().product.doc(products[i].id).update({
+            "bikeBooked": false,
+            "bikeLockedTill": null,
+          });
+          products[i].id = null;
+        }
+      }
+      products.removeWhere((e) => e.id == null);
       if (products.isNotEmpty) {
         products = products.toSet().toList();
       }

@@ -76,7 +76,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget _floatActionBtn(BuildContext context) {
-    print(productDetailsCubit.productModel?.toJson());
     if (productDetailsCubit.productModel?.active == null) {
       return const SizedBox();
     }
