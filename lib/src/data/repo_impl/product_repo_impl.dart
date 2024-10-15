@@ -122,10 +122,10 @@ class ProductRepoImpl implements ProductRepo {
     }
   }
 
-  @override
-  Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) {
-    return _productDataSource.bookProduct(product: product);
-  }
+  // @override
+  // Future<DataState<ProductModel?>> bookProduct({required ProductModel product}) {
+  //   return _productDataSource.bookProduct(product: product, txnId: '');
+  // }
 
   @override
   Future<DataState<ProductModel?>> canBuyProduct({required String productId}) {

@@ -7,6 +7,7 @@ import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
+import 'package:bike_client_dealer/src/data/model/order_transaction_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -123,6 +124,16 @@ class ProductDataSource {
           );
         },
       ).catchError((error) => throw error);
+      getIt.get<AppFireBaseLoc>().order.add(OrderTransactionModel(
+            txnId: txnId,
+            userId: getIt.get<AppLocalService>().currentUser!.id!,
+            createdTime: Timestamp.now(),
+            validTill: product.bikeLockedTill!,
+            productId: product.id ?? "-",
+            status: [
+              BookingStatus.Created,
+            ],
+          ).toJson());
       return fetchProductbyId(product.id!);
     } catch (e) {
       return DataFailed(null, 500, e.toString());

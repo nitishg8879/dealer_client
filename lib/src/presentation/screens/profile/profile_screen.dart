@@ -5,6 +5,7 @@ import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/auth/auth_cubit.dart';
+import 'package:bike_client_dealer/src/presentation/screens/profile/edit_profile_view.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_tile_section.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -81,6 +82,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: InkWell(
                       onTap: () {
                         // context.pushNamed(Routes.editProfile);
+                        showModalBottomSheet(
+                          context: context,
+                          showDragHandle: true,
+                          isDismissible: true,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+                          builder: (context) {
+                            return EditProfileView(
+                              fullName: getIt.get<AppLocalService>().currentUser?.fullName,
+                              phoneNo: getIt.get<AppLocalService>().currentUser?.phoneNumber,
+                              email: getIt.get<AppLocalService>().currentUser?.email,
+                            );
+                          },
+                        ).then((result) {
+                          if (result is bool && result) {
+                            setState(() {});
+                          }
+                        });
                       },
                       borderRadius: 100.borderRadius2,
                       child: Padding(

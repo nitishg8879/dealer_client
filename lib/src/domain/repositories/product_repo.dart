@@ -19,7 +19,7 @@ abstract class ProductRepo {
   Future<DataState<bool>> addToFavourite(String id);
   Future<DataState<bool>> removeFromFavourite(String id);
   Future<DataState<List<ProductModel>?>> fetchProductsByIds(List<String> ids);
-  Future<DataState<ProductModel?>> bookProduct({required ProductModel product});
+  // Future<DataState<ProductModel?>> bookProduct({required ProductModel product});
   Future<DataState<ProductModel?>> canBuyProduct({required String productId});
   Future<DataState<List<ProductModel>?>> fetchProducts({
     ProductsFilterController? req,

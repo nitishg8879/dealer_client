@@ -21,6 +21,7 @@ class AppFireBaseLoc {
   final String usersAdminTableName = "usersAdmin";
   final String usersTableName = "users";
   final String homeDataTableTableName = "homeData";
+  final String ordersTableName = "orders";
   CollectionReference<Map<String, dynamic>> get categories => _firestore.collection(categoriesTableName);
   CollectionReference<Map<String, dynamic>> get company => _firestore.collection(companiesTableName);
   CollectionReference<Map<String, dynamic>> get model => _firestore.collection(modelsTableName);
@@ -32,6 +33,7 @@ class AppFireBaseLoc {
   CollectionReference<Map<String, dynamic>> get usersAdmin => _firestore.collection(usersAdminTableName);
   CollectionReference<Map<String, dynamic>> get users => _firestore.collection(usersTableName);
   CollectionReference<Map<String, dynamic>> get homeData => _firestore.collection(homeDataTableTableName);
+  CollectionReference<Map<String, dynamic>> get order => _firestore.collection(ordersTableName);
 
   //? Storage Bucket
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
