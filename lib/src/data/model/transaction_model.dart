@@ -27,7 +27,7 @@ class TransactionsModel {
   final Timestamp? txnDateTime;
   final String? userId;
   final String? productId;
-  final String? id;
+  String? id;
 
   factory TransactionsModel.fromJson(Map<String, dynamic> json) {
     return TransactionsModel(

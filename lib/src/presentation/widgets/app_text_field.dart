@@ -59,11 +59,21 @@ class _AppTextFieldState extends State<AppTextField> {
           controller: widget.controller,
           obscureText: isObsecure,
           keyboardType: widget.keyboardType,
-          style: context.textTheme.displayMedium,
+          style: context.textTheme.displayMedium?.copyWith(
+            color: widget.readOnly ? AppColors.kBlack900.withOpacity(.6) : AppColors.kBlack900,
+          ),
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
             hintText: widget.hintText,
             contentPadding: const EdgeInsets.all(14),
+            focusedBorder: widget.readOnly
+                ? OutlineInputBorder(
+                    borderRadius: 10.borderRadius2,
+                    borderSide: const BorderSide(
+                      color: AppColors.kGrey100,
+                    ),
+                  )
+                : null,
             border: OutlineInputBorder(
               borderRadius: 10.borderRadius2,
               borderSide: const BorderSide(

@@ -60,7 +60,7 @@ class TransactionDataSource {
           .catchError((error) {
         throw error;
       });
-      return DataSuccess(resp.docs.map((e) => TransactionsModel.fromJson(e.data())).toList());
+      return DataSuccess(resp.docs.map((e) => TransactionsModel.fromJson(e.data())..id = e.id).toList());
     } catch (e) {
       return DataFailed(<TransactionsModel>[], 400, e.toString());
     }

@@ -1,12 +1,15 @@
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/auth_data_source.dart';
+import 'package:bike_client_dealer/src/data/data_sources/order_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/transaction_data_source.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/auth_repo_impl.dart';
+import 'package:bike_client_dealer/src/data/repo_impl/order_repo_impl.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/product_repo_impl.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/transaction_repo_impl.dart';
 import 'package:bike_client_dealer/src/domain/repositories/auth_repo.dart';
+import 'package:bike_client_dealer/src/domain/repositories/order_repo.dart';
 import 'package:bike_client_dealer/src/domain/repositories/product_repo.dart';
 import 'package:bike_client_dealer/src/domain/repositories/transaction_repo.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/auth/login_usecase.dart';
@@ -58,6 +61,10 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => FetchProductByIdUsecase(getIt.get()));
   getIt.registerLazySingleton(() => FetchFavouriteProductsUseCase(getIt.get()));
   getIt.registerLazySingleton(() => ProductTotalCountUsecase(getIt.get()));
+
+  //? Order
+  getIt.registerLazySingleton(() => OrderDataSource());
+  getIt.registerLazySingleton<OrderRepo>(() => OrderRepoImpl(getIt.get()));
 
   //? Transaction
   getIt.registerLazySingleton(() => TransactionDataSource());
