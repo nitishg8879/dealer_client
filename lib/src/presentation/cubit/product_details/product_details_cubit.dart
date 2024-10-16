@@ -114,6 +114,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
 
     if (paymentStatus is DataFailed) {
+      getIt.get<ProductDataSource>().unlockProduct(product: productModel!);
       showAlertDialog(
         "In correct Payment",
         "Payment ID: ${response.paymentId}\nThis transaction is not valid.",
