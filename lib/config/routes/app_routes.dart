@@ -5,6 +5,7 @@ import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/chat_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/favourite_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/order_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/product_details_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_screen.dart';
@@ -42,6 +43,11 @@ class AppRoutes {
             name: Routes.profile,
             builder: (context, state) => const ProfileScreen(),
             routes: [
+              GoRoute(
+                path: Routes.order,
+                name: Routes.order,
+                builder: (context, state) => const OrderScreen(),
+              ),
               GoRoute(
                 path: Routes.transaction,
                 name: Routes.transaction,

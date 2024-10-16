@@ -18,9 +18,7 @@ class AppLocalService {
     if (encodedjsnData != null) {
       final decodedjson = await jsonDecode(encodedjsnData);
       if (decodedjson['creationDate'] != null) {
-        decodedjson['creationDate'] = Timestamp.fromDate(
-            DateFormat("dd/MM/yyyy HH:mm:ss a")
-                .parse(decodedjson['creationDate']));
+        decodedjson['creationDate'] = Timestamp.fromDate(DateFormat("dd/MM/yyyy HH:mm:ss a").parse(decodedjson['creationDate']));
       }
       currentUser = UserModel.fromJson(decodedjson);
       if (kDebugMode) {
@@ -30,14 +28,12 @@ class AppLocalService {
     } else {
       currentUser = null;
     }
-
+    print(currentUser?.toJson(fromSave: false));
     isLoggedIn = currentUser != null;
   }
 
   Future<void> login(UserModel newUser) async {
-    await _secureStorage.write(
-        key: _currentUserKey,
-        value: jsonEncode(newUser.toJson(fromSave: false)));
+    await _secureStorage.write(key: _currentUserKey, value: jsonEncode(newUser.toJson(fromSave: false)));
     await init();
   }
 

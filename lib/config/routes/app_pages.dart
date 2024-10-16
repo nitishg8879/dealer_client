@@ -6,6 +6,7 @@ abstract class Routes {
   static const chats = _Paths.chats;
   static const profile = _Paths.profile;
   static const transaction = _Paths.transaction;
+  static const order = _Paths.order;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const chats = '/chats';
   static const profile = 'profile';
   static const transaction = 'transaction';
+  static const order = 'order';
 }

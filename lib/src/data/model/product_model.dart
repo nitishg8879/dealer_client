@@ -6,6 +6,7 @@ class ProductModel {
   bool? active;
   bool? sold;
   bool? bikeBooked;
+  bool? bikeLocked;
   Timestamp? bikeLockedTill;
   //? category
   String? category;
@@ -45,6 +46,7 @@ class ProductModel {
     this.active,
     this.sold,
     this.bikeBooked,
+    this.bikeLocked,
     this.bikeLockedTill,
     //? category
     this.category,
@@ -85,6 +87,7 @@ class ProductModel {
     active = json['active'];
     sold = json['sold'];
     bikeBooked = json['bikeBooked'];
+    bikeLocked = json['bikeLocked']??false;
     bikeLockedTill = (json['bikeLockedTill'] as Timestamp?);
     //? category
     category = json['category'];
@@ -126,6 +129,7 @@ class ProductModel {
       'active': active,
       'sold': sold,
       'bikeBooked': bikeBooked,
+      'bikeLocked': bikeLocked,
       'bikeLockedTill': bikeLockedTill, // Timestamp fields can be directly added
       //? Category
       'category': category,

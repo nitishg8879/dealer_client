@@ -144,9 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 routePath: Routes.transaction,
               ),
               ProfileTileTileModel(
-                icon: Icons.person_add_alt,
+                icon: Icons.playlist_add_check_circle,
                 titile: "Orders",
-                routePath: Routes.home,
+                routePath: Routes.order,
               ),
               ProfileTileTileModel(
                 icon: Icons.favorite,

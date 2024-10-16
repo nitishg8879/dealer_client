@@ -35,7 +35,7 @@ class OrderDataSource {
             isEqualTo: getIt.get<AppLocalService>().currentUser!.id,
           )
           .orderBy(
-            'txnDateTime',
+            'createdTime',
             descending: true,
           )
           .get()

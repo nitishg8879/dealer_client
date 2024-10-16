@@ -7,7 +7,6 @@ import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/company_model.dart';
 import 'package:bike_client_dealer/src/data/model/home_analytics_model.dart';
-import 'package:bike_client_dealer/src/data/model/order_transaction_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/domain/repositories/order_repo.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/products_filter_controller.dart';
@@ -89,7 +88,21 @@ class ProductDataSource {
           if (productResp.data?.bikeBooked ?? false) {
             throw Exception("Product has been Booked");
           }
-          return DataSuccess(productResp.data);
+          if (productResp.data?.bikeLocked ?? false) {
+            throw Exception("Someone is Ordering.");
+          }
+          await FirebaseFirestore.instance.runTransaction(
+            (transaction) async {
+              transaction.update(
+                getIt.get<AppFireBaseLoc>().product.doc(productId),
+                {
+                  "bikeLocked": true,
+                  "bikeLockedTill": Timestamp.fromDate(DateTime.now().add(Duration(minutes: AppConst.bookingLockedMinutes))),
+                },
+              );
+            },
+          ).catchError((error) => throw Exception("Someone is Ordering..."));
+          return fetchProductbyId(productId);
         } else {
           throw Exception(productResp.message);
         }
@@ -105,6 +118,15 @@ class ProductDataSource {
     });
   }
 
+  Future<void> unlockProduct({required ProductModel product}) async {
+    await getIt.get<AppFireBaseLoc>().product.doc(product.id).update({
+      "bikeBooked": false,
+      "bikeLocked": false,
+      "bikeLockedTill": null,
+      "user": null,
+    });
+  }
+
   Future<DataState<ProductModel?>> bookProduct({required ProductModel product, required String txnId}) async {
     try {
       product.user ??= [];
@@ -113,19 +135,14 @@ class ProductDataSource {
       product.transactionID!.add(txnId);
       product.bikeBooked = true;
       product.bikeLockedTill = Timestamp.fromDate(DateTime.now().add(Duration(hours: AppConst.bookingHours)));
-      await FirebaseFirestore.instance.runTransaction(
-        (transaction) async {
-          transaction.update(
-            getIt.get<AppFireBaseLoc>().product.doc(product.id),
-            {
-              "bikeBooked": product.bikeBooked,
-              "bikeLockedTill": product.bikeLockedTill,
-              "user": product.user,
-            },
-          );
-        },
-      ).catchError((error) => throw error);
-      getIt.get<OrderRepo>().createOrder(product: product,txnId: txnId);
+      getIt.get<OrderRepo>().createOrder(product: product, txnId: txnId);
+      await getIt.get<AppFireBaseLoc>().product.doc(product.id).update({
+        "bikeBooked": true,
+        "bikeLocked": true,
+        "bikeLockedTill": product.bikeLockedTill,
+        "user": product.user,
+      });
+
       return fetchProductbyId(product.id!);
     } catch (e) {
       return DataFailed(null, 500, e.toString());
@@ -135,7 +152,9 @@ class ProductDataSource {
   Future<DataState<ProductModel?>> fetchProductbyId(String id) async {
     try {
       final resp = await getIt.get<AppFireBaseLoc>().product.doc(id).get().catchError((e) => throw e);
-      return DataSuccess(ProductModel.fromJson(resp.data() as Map<String, dynamic>)..id = resp.id);
+      var product = ProductModel.fromJson(resp.data() as Map<String, dynamic>)..id = resp.id;
+      var list = performOperationInProducts([product]);
+      return DataSuccess(list.first);
     } catch (e) {
       return DataFailed(null, 500, e.toString());
     }
@@ -181,7 +200,7 @@ class ProductDataSource {
         return const DataSuccess([]);
       }
       final resp = await getIt.get<AppFireBaseLoc>().product.where(FieldPath.documentId, whereIn: productsId).get();
-      return DataSuccess(_convertJsonToList(resp));
+      return DataSuccess(performOperationInProducts(_convertJsonToList(resp)));
     } catch (e) {
       return DataFailed(null, 500, e.toString());
     }
@@ -295,21 +314,21 @@ class ProductDataSource {
           lastdoc(resp.docs.last);
         }
       }
-      for (var i = 0; i < products.length; i++) {
-        if (!(products[i].sold ?? false) &&
-            (products[i].active ?? false) &&
-            (products[i].bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false)) {
-          print("Calling Booked Updated Transaction");
-          products[i].bikeLockedTill = null;
-          products[i].bikeBooked = false;
-          getIt.get<AppFireBaseLoc>().product.doc(products[i].id).update({
-            "bikeBooked": false,
-            "bikeLockedTill": null,
-          });
-          products[i].id = null;
-        }
-      }
-      products.removeWhere((e) => e.id == null);
+      products = performOperationInProducts(products);
+      // for (var i = 0; i < products.length; i++) {
+      //   if (!(products[i].sold ?? false) &&
+      //       (products[i].active ?? false) &&
+      //       (products[i].bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false)) {
+      //     products[i].bikeLockedTill = null;
+      //     products[i].bikeBooked = false;
+      //     getIt.get<AppFireBaseLoc>().product.doc(products[i].id).update({
+      //       "bikeBooked": false,
+      //       "bikeLockedTill": null,
+      //     });
+      //     products[i].id = null;
+      //   }
+      // }
+      // products.removeWhere((e) => e.id == null);
       if (products.isNotEmpty) {
         products = products.toSet().toList();
       }
@@ -318,6 +337,21 @@ class ProductDataSource {
       print(e.toString());
       return DataFailed(null, 204, e.toString());
     }
+  }
+
+  List<ProductModel> performOperationInProducts(List<ProductModel> items) {
+    for (var i = 0; i < items.length; i++) {
+      if (!(items[i].sold ?? false) && (items[i].active ?? false) && (items[i].bikeLockedTill?.toDate().isBefore(DateTime.now()) ?? false)) {
+        items[i].bikeLockedTill = null;
+        items[i].bikeBooked = false;
+        getIt.get<AppFireBaseLoc>().product.doc(items[i].id).update({
+          "bikeBooked": false,
+          "bikeLockedTill": null,
+          "bikeLocked": false,
+        });
+      }
+    }
+    return items;
   }
 
   Future<DataState<int?>> fetchProductsCount({

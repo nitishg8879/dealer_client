@@ -78,13 +78,13 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
   }
 
-  void handlePaymentErrorResponse(PaymentFailureResponse response) {
-    print("handlePaymentErrorResponse");
+  Future<void> handlePaymentErrorResponse(PaymentFailureResponse response) async {
     razorpay.clear();
     showAlertDialog(
       "Payment Failed",
       "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
     );
+    await getIt.get<ProductDataSource>().unlockProduct(product: productModel!);
     if (response.error?['metadata']['payment_id'] != null) {
       createTransaction(error: response);
     } else {
@@ -93,7 +93,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   }
 
   Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
-    print("handlePaymentSuccessResponse");
     razorpay.clear();
     createTransaction(success: response);
     final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
@@ -157,9 +156,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     PaymentFailureResponse? error,
     PaymentSuccessResponse? success,
   }) async {
-    if (kDebugMode) {
-      await Future.delayed(const Duration(seconds: 3));
-    }
     final isFail = error != null;
     String? paymentId;
     if (isFail) {
@@ -182,7 +178,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     final resp = await _transactionCreateUseCase.call(txn: txn);
     if (resp is DataSuccess) {
       HelperFun.showSuccessSnack("Transaction has been created.");
-      if (!isFail) {}
     }
     if (resp is DataFailed) {
       HelperFun.showSuccessSnack(resp.message ?? 'Failt to create transaction.');
