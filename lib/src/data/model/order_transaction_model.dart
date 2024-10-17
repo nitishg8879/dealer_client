@@ -5,12 +5,13 @@ enum BookingStatus {
   AutoRejected(2),
   RejectedByAdmin(3),
   CancelledByYou(4),
-  Booked(5);
+  RefundIntiated(5),
+  Booked(6);
 
   final int value;
-  
+
   const BookingStatus(this.value);
-  
+
   static BookingStatus fromValue(int value) {
     return BookingStatus.values.firstWhere((status) => status.value == value);
   }
@@ -21,6 +22,8 @@ enum BookingStatus {
         return "Created";
       case BookingStatus.AutoRejected:
         return "Auto Rejected";
+      case BookingStatus.RefundIntiated:
+        return "Refunded Intiated";
       case BookingStatus.RejectedByAdmin:
         return "Rejected By Admin";
       case BookingStatus.CancelledByYou:
@@ -38,6 +41,7 @@ class OrderTransactionModel {
   Timestamp validTill;
   String productId;
   List<BookingStatus> status;
+  String? id;
 
   OrderTransactionModel({
     required this.txnId,
@@ -68,9 +72,7 @@ class OrderTransactionModel {
       createdTime: json['createdTime'] as Timestamp,
       validTill: json['validTill'] as Timestamp,
       productId: json['productId'],
-      status: (json['status'] as List<dynamic>)
-          .map((value) => BookingStatus.fromValue(value))
-          .toList(), // Convert integer to enum
+      status: (json['status'] as List<dynamic>).map((value) => BookingStatus.fromValue(value)).toList(), // Convert integer to enum
     );
   }
 }

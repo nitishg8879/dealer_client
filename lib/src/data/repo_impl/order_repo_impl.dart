@@ -16,4 +16,9 @@ class OrderRepoImpl extends OrderRepo {
   Future<DataState<List<OrderTransactionModel>>> fetchOrders() {
     return _orderDataSource.fetchOrders();
   }
+
+  @override
+  Future<DataState<String?>> cancelAndRefund({required String orderId}) {
+    return _orderDataSource.cancelAndRefund(orderId: orderId);
+  }
 }

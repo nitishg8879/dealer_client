@@ -17,6 +17,7 @@ import 'package:bike_client_dealer/src/domain/use_cases/auth/logout_usecase.dart
 import 'package:bike_client_dealer/src/domain/use_cases/categories/category_compnay_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/categories/category_fetch_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/categories/company_fetch_usecase.dart';
+import 'package:bike_client_dealer/src/domain/use_cases/orders/cancel_refund_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/orders/order_fetch_use_case.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fav_usecase.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
@@ -67,6 +68,7 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => OrderDataSource());
   getIt.registerLazySingleton<OrderRepo>(() => OrderRepoImpl(getIt.get()));
   getIt.registerLazySingleton(() => OrderFetchUseCase(getIt.get()));
+  getIt.registerLazySingleton(() => CancelRefundUsecase(getIt.get()));
 
   //? Transaction
   getIt.registerLazySingleton(() => TransactionDataSource());

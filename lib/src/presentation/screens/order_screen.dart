@@ -1,10 +1,10 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
+import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/src/data/model/order_transaction_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/order/order_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +18,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  final bloc = OrderCubit(getIt.get());
+  final bloc = OrderCubit(getIt.get(), getIt.get());
   @override
   void initState() {
     super.initState();
@@ -63,6 +63,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       productId: "productId",
                       status: [],
                     ),
+                    bloc: bloc,
                   );
                 },
               ),
@@ -80,7 +81,7 @@ class _OrderScreenState extends State<OrderScreen> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(top: index == 0 ? 16 : 0, bottom: 16),
-                  child: OrderCard(order: state.orders[index]),
+                  child: OrderCard(order: state.orders[index], bloc: bloc),
                 );
               },
             );
@@ -96,12 +97,41 @@ class _OrderScreenState extends State<OrderScreen> {
 
 class OrderCard extends StatelessWidget {
   final OrderTransactionModel order;
-  const OrderCard({super.key, required this.order});
+  final OrderCubit bloc;
+  const OrderCard({super.key, required this.order, required this.bloc});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(order.txnId),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          16.spaceH,
+          Text("Status: ${order.status.map((e) => e.displayName).toList()}"),
+          16.spaceH,
+          Row(
+            children: [
+              if (order.status.contains(BookingStatus.RefundIntiated))
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text("Show Refund Status"),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      bloc.cancelAndRefund(order.id!);
+                    },
+                    child: Text("Cancel & Refund"),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
