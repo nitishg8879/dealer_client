@@ -2,6 +2,7 @@ import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/constants/app_const.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/model/category_company_mdoel.dart';
 import 'package:bike_client_dealer/src/data/model/category_model%20copy.dart';
@@ -127,22 +128,38 @@ class ProductDataSource {
     });
   }
 
-  Future<DataState<ProductModel?>> bookProduct({required ProductModel product, required String txnId}) async {
+  Future<DataState<ProductModel?>> bookProduct({
+    required ProductModel product,
+    required String paymentId,
+    required String txnId,
+  }) async {
     try {
-      product.user ??= [];
-      product.transactionID ??= [];
-      product.user!.add(getIt.get<AppLocalService>().currentUser!.id!);
-      product.transactionID!.add(txnId);
-      product.bikeBooked = true;
+      product.userOrders ??= [];
       product.bikeLockedTill = Timestamp.fromDate(DateTime.now().add(Duration(hours: AppConst.bookingHours)));
-      getIt.get<OrderRepo>().createOrder(product: product, txnId: txnId);
-      await getIt.get<AppFireBaseLoc>().product.doc(product.id).update({
-        "bikeBooked": true,
-        "bikeLocked": true,
-        "bikeLockedTill": product.bikeLockedTill,
-        "user": product.user,
-      });
+      String? orderId;
 
+      try {
+        orderId = await getIt.get<OrderRepo>().createOrder(product: product, paymentId: paymentId, txnId: txnId);
+      } catch (e) {
+        HelperFun.showAlertDialog(
+          "Alert",
+          "Fail to create order but your transaction has been created.\nYou can contact to us we will help you.",
+        );
+      } finally {
+        product.userOrders?.add(ProductOrderModel(
+          orderId: orderId,
+          paymentId: paymentId,
+          txnId: txnId,
+          userId: getIt.get<AppLocalService>().currentUser!.id!,
+        ));
+        await getIt.get<AppFireBaseLoc>().product.doc(product.id).update({
+          "bikeBooked": true,
+          "bikeLocked": true,
+          "bikeLockedTill": product.bikeLockedTill,
+          "userOrders": product.userOrders?.map((e) => e.toJson()).toList() ?? [],
+        });
+      }
+      
       return fetchProductbyId(product.id!);
     } catch (e) {
       return DataFailed(null, 500, e.toString());

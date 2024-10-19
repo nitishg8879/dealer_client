@@ -52,23 +52,26 @@ class _TransactionScreenState extends State<TransactionScreen> {
             return Center(child: ErrorView(onreTry: fetchData, errorMsg: state.error));
           }
           if (state is TransactionLoading) {
-            return Skeletonizer(
-              enabled: true,
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return TransactionCard(
-                      txn: TransactionsModel(
-                    transactionsType: TransactionsType.success,
-                    amount: 1323,
-                    label: "2232dsfdf",
-                    failedReason: "failedReason",
-                    txnDateTime: Timestamp.now(),
-                    userId: "userId",
-                    productId: "productId",
-                    paymentId: '',
-                  ));
-                },
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Skeletonizer(
+                enabled: true,
+                child: ListView.builder(
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return TransactionCard(
+                        txn: TransactionsModel(
+                      transactionsType: TransactionsType.success,
+                      amount: 1323,
+                      label: "2232dsfdf",
+                      failedReason: "failedReason",
+                      txnDateTime: Timestamp.now(),
+                      userId: "userId",
+                      productId: "productId",
+                      paymentId: '',
+                    ));
+                  },
+                ),
               ),
             );
           }
@@ -78,15 +81,19 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 child: Text("No Transaction found"),
               );
             }
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: state.list.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(top: index == 0 ? 16 : 0, bottom: 16),
-                  child: TransactionCard(txn: state.list[index]),
-                );
-              },
+            return RefreshIndicator(
+              onRefresh: bloc.fetchData,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: state.list.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: index == 0 ? 16 : 0, bottom: 16),
+                    child: TransactionCard(txn: state.list[index]),
+                  );
+                },
+              ),
             );
           }
           return const Center(
@@ -169,18 +176,20 @@ class TransactionCard extends StatelessWidget {
                 style: context.textTheme.headlineSmall,
               ),
               5.spaceH,
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: txn.transactionsType?.color.withOpacity(.3),
-                  borderRadius: 4.borderRadius,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(
-                    txn.transactionsType?.name ?? '-',
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      color: txn.transactionsType?.color,
-                      fontSize: 12,
+              Skeleton.ignore(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: txn.transactionsType?.color.withOpacity(.3),
+                    borderRadius: 4.borderRadius,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      txn.transactionsType?.name ?? '-',
+                      style: context.textTheme.headlineSmall?.copyWith(
+                        color: txn.transactionsType?.color,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),

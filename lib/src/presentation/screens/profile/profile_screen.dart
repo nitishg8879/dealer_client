@@ -34,9 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         pageName: "Profile",
       ),
       body: ListView(
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           24.spaceH,
+
           //? Profile
           DecoratedBox(
             decoration: BoxDecoration(
@@ -117,6 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           24.spaceH,
+
           //? General
           ProfileTileSelection(
             title: "General",
@@ -134,6 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
 
+          //? Products
           24.spaceH,
           ProfileTileSelection(
             title: "Products",
@@ -152,6 +156,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.favorite,
                 titile: "Favourites",
                 routePath: Routes.favourite,
+              ),
+              ProfileTileTileModel(
+                icon: Icons.favorite,
+                titile: "Sell",
+                routePath: Routes.sell,
+              ),
+              ProfileTileTileModel(
+                icon: Icons.location_history_outlined,
+                titile: "Listen",
+                routePath: Routes.listenProductScreen,
               ),
             ],
           ),

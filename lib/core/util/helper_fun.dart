@@ -1,5 +1,6 @@
 import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/confirmation_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +17,7 @@ class HelperFun {
       allowMultiple: true,
       type: allowedExtensions != null ? FileType.custom : FileType.any,
       allowedExtensions: allowedExtensions,
+      
     );
   }
 
@@ -40,6 +42,19 @@ class HelperFun {
   static void goNextPage(String routeName) {
     AppRoutes.rootNavigatorKey.currentContext?.goNamed(
       routeName,
+    );
+  }
+
+  static void showAlertDialog(String title, String message) {
+    showDialog(
+      barrierDismissible: false,
+      context: AppRoutes.rootNavigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          titleText: title,
+          contentText: message,
+        );
+      },
     );
   }
 

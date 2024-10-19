@@ -6,6 +6,7 @@ import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/transaction_data_source.dart';
+import 'package:bike_client_dealer/src/data/model/payment_verify_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 import 'package:bike_client_dealer/src/domain/use_cases/product/fetch_product_by_id_usecase.dart';
@@ -17,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/retry.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 part 'product_details_state.dart';
@@ -73,40 +75,47 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       razorpay.open(options);
     } else {
       emit(ProductDetailsTransactionLoading(false));
-      showAlertDialog("Alert", resp.message ?? 'Something went wrong.');
+      HelperFun.showAlertDialog("Alert", resp.message ?? 'Something went wrong.');
       fetchProduct(productModel!.id, null);
     }
   }
 
   Future<void> handlePaymentErrorResponse(PaymentFailureResponse response) async {
     razorpay.clear();
-    await getIt.get<ProductDataSource>().unlockProduct(product: productModel!);
+    getIt.get<ProductDataSource>().unlockProduct(product: productModel!);
     if (response.error?['metadata']['payment_id'] != null) {
       createTransaction(error: response);
-      showAlertDialog(
+      HelperFun.showAlertDialog(
         "Payment Failed",
         "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}",
       );
-    } else {
-      emit(ProductDetailsTransactionLoading(false));
     }
+    emit(ProductDetailsTransactionLoading(false));
   }
 
   Future<void> handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
     razorpay.clear();
-    createTransaction(success: response);
-    final paymentStatus = await getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-');
+    final resp = await Future.wait([
+      createTransaction(success: response),
+      getIt.get<TransactionDataSource>().verifyPayment(paymentId: response.paymentId ?? '-'),
+    ]);
+    final txnId = resp[0] as String?;
+    final paymentStatus = resp[1] as DataState<PaymentVerifyModel?>;
     if (paymentStatus is DataSuccess) {
-      final resp = await getIt.get<ProductDataSource>().bookProduct(product: productModel!, txnId: response.paymentId ?? '');
+      final resp = await getIt.get<ProductDataSource>().bookProduct(
+            product: productModel!,
+            paymentId: response.paymentId ?? '',
+            txnId: txnId ?? '-',
+          );
       if (resp is DataSuccess) {
         fetchProduct(productModel!.id!, null);
-        showAlertDialog(
+        HelperFun.showAlertDialog(
           "Order Successful",
           "Payment ID: ${response.paymentId}\n\nYour order has been booked.",
         );
       }
       if (resp is DataFailed) {
-        showAlertDialog(
+        HelperFun.showAlertDialog(
           "Payment Successful",
           "Payment ID: ${response.paymentId}\n\nWhile booking the product we run into problem: ${resp.message}\n\n we have created your transaction id you can refund your amount, from there.",
         );
@@ -115,25 +124,15 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
     if (paymentStatus is DataFailed) {
       getIt.get<ProductDataSource>().unlockProduct(product: productModel!);
-      showAlertDialog(
+      HelperFun.showAlertDialog(
         "In correct Payment",
         "Payment ID: ${response.paymentId}\nThis transaction is not valid.",
       );
     }
+    emit(ProductDetailsTransactionLoading(false));
   }
 
-  void showAlertDialog(String title, String message) {
-    showDialog(
-      barrierDismissible: false,
-      context: AppRoutes.rootNavigatorKey.currentContext!,
-      builder: (BuildContext context) {
-        return ConfirmationDialog(
-          titleText: title,
-          contentText: message,
-        );
-      },
-    );
-  }
+  
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
     if (product != null) {
@@ -153,7 +152,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
   }
 
-  Future<void> createTransaction({
+  Future<String?> createTransaction({
     PaymentFailureResponse? error,
     PaymentSuccessResponse? success,
   }) async {
@@ -178,12 +177,12 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     );
     final resp = await _transactionCreateUseCase.call(txn: txn);
     if (resp is DataSuccess) {
-      // HelperFun.showSuccessSnack("Transaction has been created.");
+      return resp.data;
     }
     if (resp is DataFailed) {
-      HelperFun.showSuccessSnack(resp.message ?? 'Failt to create transaction.');
+      HelperFun.showErrorSnack(resp.message ?? 'Failt to create transaction.');
     }
-    emit(ProductDetailsTransactionLoading(false));
+    return null;
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/product_details/product_details_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
@@ -128,7 +129,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            productDetailsCubit.showAlertDialog(
+            HelperFun.showAlertDialog(
               "Alert",
               "Someone has booked this product.\n\nIf for some reason user not buy this product.This product will be unlock after\n${productDetailsCubit.productModel?.bikeLockedTill?.toDate().ddMMYYYYhhMMSS}",
             );

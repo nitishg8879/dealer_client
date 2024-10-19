@@ -5,10 +5,12 @@ import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/chat_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/favourite_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/home_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/listen_product_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/order_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/all_product_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/product/product_details_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/profile/profile_screen.dart';
+import 'package:bike_client_dealer/src/presentation/screens/sell/sell_screen.dart';
 import 'package:bike_client_dealer/src/presentation/screens/transaction/transaction_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -52,6 +54,16 @@ class AppRoutes {
                 path: Routes.transaction,
                 name: Routes.transaction,
                 builder: (context, state) => const TransactionScreen(),
+              ),
+              GoRoute(
+                path: Routes.sell,
+                name: Routes.sell,
+                builder: (context, state) => const SellScreen(),
+              ),
+              GoRoute(
+                path: Routes.listenProductScreen,
+                name: Routes.listenProductScreen,
+                builder: (context, state) => const ListenProductScreen(),
               ),
             ],
           ),

@@ -17,7 +17,7 @@ class TransactionRepoImpl implements TransactionRepo {
   }
 
   @override
-  Future<DataState<bool>> createTransaction(TransactionsModel txn) async {
+  Future<DataState<String?>> createTransaction(TransactionsModel txn) async {
     return _transactionDataSource.createTransaction(txn);
   }
 }

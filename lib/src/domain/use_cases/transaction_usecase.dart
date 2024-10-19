@@ -15,7 +15,7 @@ class TransactionCreateUseCase {
   TransactionRepo _transactionRepo;
   TransactionCreateUseCase(this._transactionRepo);
 
-  Future<DataState<bool>> call({TransactionsModel? txn}) async {
+  Future<DataState<String?>> call({TransactionsModel? txn}) async {
     if (txn == null) {
       throw Exception("Txn can't be empty");
     }

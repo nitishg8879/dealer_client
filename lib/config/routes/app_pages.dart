@@ -7,6 +7,8 @@ abstract class Routes {
   static const profile = _Paths.profile;
   static const transaction = _Paths.transaction;
   static const order = _Paths.order;
+  static const sell = _Paths.sell;
+  static const listenProductScreen = _Paths.listenProductScreen;
 }
 
 abstract class _Paths {
@@ -19,4 +21,6 @@ abstract class _Paths {
   static const profile = 'profile';
   static const transaction = 'transaction';
   static const order = 'order';
+  static const sell = 'sell';
+  static const listenProductScreen = 'listenProductScreen';
 }

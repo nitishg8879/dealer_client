@@ -61,7 +61,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       createdTime: Timestamp.now(),
                       validTill: Timestamp.now(),
                       productId: "productId",
-                      status: [],
+                      status: [], paymentId: '',
                     ),
                     bloc: bloc,
                   );

@@ -8,8 +8,8 @@ class OrderRepoImpl extends OrderRepo {
   final OrderDataSource _orderDataSource;
   OrderRepoImpl(this._orderDataSource);
   @override
-  Future<void> createOrder({required String txnId, required ProductModel product}) {
-    return _orderDataSource.createOrder(txnId: txnId, product: product);
+  Future<String?> createOrder({required String paymentId, required ProductModel product, required String txnId}) {
+    return _orderDataSource.createOrder(paymentId: paymentId, product: product,txnId: txnId);
   }
 
   @override

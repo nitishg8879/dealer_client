@@ -35,10 +35,9 @@ class ProductModel {
   List<String>? favourites;
   //?Payment
   num? bookingAmount;
-  List<String>? transactionID;
-  List<String>? user;
+  List<ProductOrderModel>? userOrders;
   //?Chats
-  String? conversationId;
+  List<String>? conversationIds;
 
   ProductModel({
     this.id,
@@ -74,11 +73,10 @@ class ProductModel {
     this.views,
     this.favourites,
     //? PAYEMNTS
-    this.transactionID,
     this.bookingAmount,
-    this.user,
+    this.userOrders,
     //? Chats
-    this.conversationId,
+    this.conversationIds,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -87,7 +85,7 @@ class ProductModel {
     active = json['active'];
     sold = json['sold'];
     bikeBooked = json['bikeBooked'];
-    bikeLocked = json['bikeLocked']??false;
+    bikeLocked = json['bikeLocked'] ?? false;
     bikeLockedTill = (json['bikeLockedTill'] as Timestamp?);
     //? category
     category = json['category'];
@@ -116,15 +114,18 @@ class ProductModel {
     favourites = (json['favourites'] as List<dynamic>?)?.cast<String>();
     //?Payment
     bookingAmount = json['bookingAmount'];
-    transactionID = (json['transactionID'] as List<dynamic>?)?.cast<String>();
-    user = (json['user'] as List<dynamic>?)?.cast<String>();
+    if (json['userOrders'] != null) {
+      userOrders = [];
+      for (var element in json['userOrders']) {
+        userOrders?.add(ProductOrderModel.fromJson(element));
+      }
+    }
     //? Chats
-    conversationId = json['conversationId'];
+    conversationIds = (json['conversationIds'] as List<dynamic>?)?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
     return {
-      // 'id': id,
       //? Status
       'active': active,
       'sold': sold,
@@ -158,10 +159,9 @@ class ProductModel {
       'favourites': favourites, // List of strings
       //? Payment
       'bookingAmount': bookingAmount,
-      'transactionID': transactionID,
-      'user': user,
+      'userOrders': userOrders?.map((e) => e.toJson()).toList() ?? [],
       //? Chats
-      'conversationId': conversationId,
+      'conversationId': conversationIds,
     };
   }
 
@@ -173,6 +173,31 @@ class ProductModel {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+class ProductOrderModel {
+  String? paymentId;
+  String? orderId;
+  String? txnId;
+  String? userId;
+
+  ProductOrderModel({this.paymentId, this.orderId, this.txnId, this.userId});
+
+  ProductOrderModel.fromJson(Map<String, dynamic> json) {
+    paymentId = json['paymentId'];
+    orderId = json['orderId'];
+    txnId = json['txnId'];
+    userId = json['userId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['paymentId'] = paymentId;
+    data['orderId'] = orderId;
+    data['txnId'] = txnId;
+    data['userId'] = userId;
+    return data;
+  }
 }
 
 ProductModel dummyProduct = ProductModel(

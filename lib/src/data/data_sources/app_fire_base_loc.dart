@@ -39,14 +39,6 @@ class AppFireBaseLoc {
 
   //? Storage Bucket
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-  final String categoryBucket = "categoryBucket/";
-  final String companyBucket = "company/";
-  final String productsBucket = "products/";
-  final String carsouelBucket = "carsouel/";
-  final String chatBucket = "chat/";
-  Reference get categoryStorage => _firebaseStorage.ref().child(categoryBucket);
-  Reference get companyStorage => _firebaseStorage.ref().child(companyBucket);
-  Reference get productStorage => _firebaseStorage.ref().child(productsBucket);
-  Reference get carsouelStorage => _firebaseStorage.ref().child(carsouelBucket);
-  Reference get chatStorage => _firebaseStorage.ref().child(chatBucket);
+  final String sellBucket = "sell/";
+  Reference get sellStorage => _firebaseStorage.ref().child(sellBucket);
 }

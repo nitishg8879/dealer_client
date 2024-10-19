@@ -3,5 +3,5 @@ import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 
 abstract class TransactionRepo {
   Future<DataState<List<TransactionsModel>>> fetchTransactions();
-  Future<DataState<bool>> createTransaction(TransactionsModel txn);
+  Future<DataState<String?>> createTransaction(TransactionsModel txn);
 }

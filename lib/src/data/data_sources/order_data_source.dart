@@ -8,19 +8,19 @@ import 'package:bike_client_dealer/src/data/model/raise_dispute_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderDataSource {
-  Future<void> createOrder({required String txnId, required ProductModel product}) async {
-    await getIt.get<AppFireBaseLoc>().order.add(
+  Future<String?> createOrder({required String paymentId, required ProductModel product, required String txnId}) async {
+    final resp = await getIt.get<AppFireBaseLoc>().order.add(
           OrderTransactionModel(
             txnId: txnId,
+            paymentId: paymentId,
             userId: getIt.get<AppLocalService>().currentUser!.id!,
             createdTime: Timestamp.now(),
             validTill: product.bikeLockedTill!,
             productId: product.id ?? "-",
-            status: [
-              BookingStatus.Created,
-            ],
+            status: [BookingStatus.Created],
           ).toJson(),
         );
+    return resp.id;
   }
 
   Future<DataState<String?>> cancelAndRefund({required String orderId}) async {
@@ -37,13 +37,15 @@ class OrderDataSource {
           await getIt
               .get<AppFireBaseLoc>()
               .raiseDispute
-              .add(RaiseDisputeModel(
-                creationDate: Timestamp.now(),
-                orderId: orderId,
-                status: RaiseDisputeStatus.inProgress,
-                userId: getIt.get<AppLocalService>().currentUser!.id,
-                txnId: data.data?.txnId,
-              ).toJson())
+              .add(
+                RaiseDisputeModel(
+                  creationDate: Timestamp.now(),
+                  orderId: orderId,
+                  status: RaiseDisputeStatus.inProgress,
+                  userId: getIt.get<AppLocalService>().currentUser!.id,
+                  txnId: data.data?.txnId,
+                ).toJson(),
+              )
               .catchError((error) => throw error);
           data.data?.status.add(BookingStatus.RefundIntiated);
           await getIt.get<AppFireBaseLoc>().order.doc(orderId).update(data.data!.toJson());

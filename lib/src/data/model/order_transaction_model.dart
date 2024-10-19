@@ -36,6 +36,7 @@ enum BookingStatus {
 
 class OrderTransactionModel {
   String txnId;
+  String paymentId;
   String userId;
   Timestamp createdTime;
   Timestamp validTill;
@@ -45,6 +46,7 @@ class OrderTransactionModel {
 
   OrderTransactionModel({
     required this.txnId,
+    required this.paymentId,
     required this.userId,
     required this.createdTime,
     required this.validTill,
@@ -56,6 +58,7 @@ class OrderTransactionModel {
   Map<String, dynamic> toJson() {
     return {
       'txnId': txnId,
+      'paymentId': paymentId,
       'userId': userId,
       'createdTime': createdTime,
       'validTill': validTill,
@@ -68,6 +71,7 @@ class OrderTransactionModel {
   factory OrderTransactionModel.fromJson(Map<String, dynamic> json) {
     return OrderTransactionModel(
       txnId: json['txnId'],
+      paymentId: json['paymentId'],
       userId: json['userId'],
       createdTime: json['createdTime'] as Timestamp,
       validTill: json['validTill'] as Timestamp,

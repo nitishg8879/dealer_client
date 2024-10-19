@@ -9,15 +9,15 @@ import 'package:bike_client_dealer/src/data/model/transaction_model.dart';
 import 'package:http/http.dart' as http;
 
 class TransactionDataSource {
-  Future<DataState<bool>> createTransaction(TransactionsModel txn) async {
+  Future<DataState<String?>> createTransaction(TransactionsModel txn) async {
     if (!getIt.get<AppLocalService>().isLoggedIn || getIt.get<AppLocalService>().currentUser?.id == null) {
-      return const DataFailed(false, 400, "User is not logged in.");
+      return const DataFailed(null, 400, "User is not logged in.");
     }
     try {
-      await getIt.get<AppFireBaseLoc>().transactions.add(txn.toJson()).catchError((error) => throw error);
-      return const DataFailed(true, 200, "Transaction Added");
+      var savedTransactions = await getIt.get<AppFireBaseLoc>().transactions.add(txn.toJson()).catchError((error) => throw error);
+      return DataSuccess(savedTransactions.id);
     } catch (e) {
-      return DataFailed(false, 400, e.toString());
+      return DataFailed(null, 400, e.toString());
     }
   }
 
