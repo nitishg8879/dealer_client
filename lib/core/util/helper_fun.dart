@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/confirmation_dialog.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
@@ -17,8 +21,51 @@ class HelperFun {
       allowMultiple: true,
       type: allowedExtensions != null ? FileType.custom : FileType.any,
       allowedExtensions: allowedExtensions,
-      
     );
+  }
+
+  static Future<String?> uploadFile(Reference ref, PlatformFile file, void Function(double val) onProgress) async {
+    String? fileURL;
+    try {
+      UploadTask uploadTask;
+      if (kIsWeb) {
+        uploadTask = ref.putData(file.bytes!);
+      } else {
+        uploadTask = ref.putData(await File(file.path!).readAsBytes());
+      }
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress(progress);
+      });
+      await uploadTask.whenComplete(() async {
+        fileURL = await ref.getDownloadURL();
+      });
+    } catch (e) {
+      rethrow;
+    }
+    return fileURL;
+  }
+
+  static String extractFileName(String url) {
+    // Extract the last part of the URL after 'categoryBucket%2F'
+    Uri uri = Uri.parse(url);
+    String fullPath = uri.pathSegments.last;
+
+    // Decode the '%2F' to '/'
+    String decodedPath = Uri.decodeFull(fullPath);
+
+    // Return just the file name by splitting on '/'
+    return decodedPath.split('/').last;
+  }
+
+  static List<String> setSearchParameters(String name) {
+    List<String> searchOptions = [];
+    String temp = "";
+    for (int i = 0; i < name.length; i++) {
+      temp = temp + name[i];
+      searchOptions.add(temp.toLowerCase());
+    }
+    return searchOptions;
   }
 
   static void openDocument(String filePath) async {

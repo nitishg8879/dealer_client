@@ -3,6 +3,7 @@ import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart'
 import 'package:bike_client_dealer/src/data/data_sources/auth_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/order_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
+import 'package:bike_client_dealer/src/data/data_sources/sell_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/transaction_data_source.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/auth_repo_impl.dart';
 import 'package:bike_client_dealer/src/data/repo_impl/order_repo_impl.dart';
@@ -75,4 +76,7 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton<TransactionRepo>(() => TransactionRepoImpl(getIt.get()));
   getIt.registerLazySingleton(() => TransactionFetchUseCase(getIt.get()));
   getIt.registerLazySingleton(() => TransactionCreateUseCase(getIt.get()));
+
+  //? Sell
+  getIt.registerLazySingleton(() => SellDataSource());
 }

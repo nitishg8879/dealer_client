@@ -15,6 +15,7 @@ class AppTextField extends StatefulWidget {
   final void Function()? onTap;
   final void Function(String val)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
+  final String? Function(String?)? validator;
 
   const AppTextField({
     super.key,
@@ -27,6 +28,7 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.onChanged,
     this.inputFormatters,
+    this.validator,
     this.isPassword = false,
     this.readOnly = false,
   });
@@ -63,6 +65,7 @@ class _AppTextFieldState extends State<AppTextField> {
             color: widget.readOnly ? AppColors.kBlack900.withOpacity(.6) : AppColors.kBlack900,
           ),
           inputFormatters: widget.inputFormatters,
+          validator: widget.validator,
           decoration: InputDecoration(
             hintText: widget.hintText,
             contentPadding: const EdgeInsets.all(14),

@@ -15,6 +15,7 @@ enum ProductSellStatus {
 }
 
 class ProductSellModel {
+  String? id;
   List<String>? images;
   String? name;
   List<String>? searchqueryonname;
@@ -59,9 +60,10 @@ class ProductSellModel {
   }
 
   // Manual toJson method with null safety
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool isUpdate = false}) {
     return {
       'images': images,
+      if (!isUpdate) 'creationDate': Timestamp.now(),
       'name': name,
       'searchqueryonname': searchqueryonname,
       'kmdrvien': kmdrvien,
