@@ -1,40 +1,84 @@
-import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:file_picker/file_picker.dart' show PlatformFile;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel {
-  final String message;
-  final bool isSender;
-  final DateTime dateTime;
-  final List<PlatformFile>? doc;
-  final ProductModel? product;
+  String? id;
+  String? user;
+  int? unreadChatCount;
+  String? profileUrl;
+  String? name;
+  List<String>? nameQuery;
+  String? managerId;
+  Timestamp? lastMessageTime;
+  String? lastMessage;
+
   ChatModel({
-    required this.message,
-    required this.isSender,
-    required this.dateTime,
-    this.doc,
-    this.product,
+    required this.user,
+    this.unreadChatCount,
+    required this.profileUrl,
+    required this.name,
+    this.managerId,
+    this.lastMessageTime,
+    required this.nameQuery,
+    this.lastMessage,
   });
+
+  ChatModel.fromJson(Map<String, dynamic> json) {
+    user = json['user'];
+    unreadChatCount = json['unreadChatCount'];
+    profileUrl = json['profileUrl'];
+    name = json['name'];
+    managerId = json['managerId'];
+    nameQuery = (json['nameQuery'] as List<dynamic>?)?.cast<String>();
+    lastMessage = json['lastMessage'];
+    lastMessageTime = json['lastMessageTime'] as Timestamp?;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user'] = user;
+    data['unreadChatCount'] = unreadChatCount;
+    data['profileUrl'] = profileUrl;
+    data['nameQuery'] = nameQuery;
+    data['lastMessage'] = lastMessage;
+    data['name'] = name;
+    data['managerId'] = managerId;
+    data['lastMessageTime'] = lastMessageTime;
+    return data;
+  }
 }
 
-List<ChatModel> dummyMessage = [
-  // ChatModel(
-  //   message: "Hey",
-  //   isSender: true,
-  //   dateTime: DateTime.now(),
-  // ),
-  // ChatModel(
-  //   message: "Hello",
-  //   isSender: false,
-  //   dateTime: DateTime.now().add(const Duration(seconds: 2)),
-  // ),
-  // ChatModel(
-  //   message: "What is the Price of x pulse 200",
-  //   isSender: true,
-  //   dateTime: DateTime.now().add(const Duration(seconds: 4)),
-  // ),
-  // ChatModel(
-  //   message: "it's around something 75k",
-  //   isSender: false,
-  //   dateTime: DateTime.now().add(const Duration(seconds: 7)),
-  // ),
-];
+class Conversation {
+  String? productID;
+  String? message;
+  bool isSender = true;
+  Timestamp? time;
+  String? id;
+  List<String>? documensts;
+
+  Conversation({
+    this.productID,
+    required this.message,
+    required this.isSender,
+    required this.time,
+    this.documensts,
+    this.id,
+  });
+
+  Conversation.fromJson(Map<String, dynamic> json) {
+    productID = json['productID'];
+    message = json['message'];
+    time = json['time'] as Timestamp?;
+    isSender = json['isSender'];
+    documensts = (json['documensts'] as List<dynamic>?)?.cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['message'] = message;
+    data['productID'] = productID;
+    data['time'] = time;
+    data['isSender'] = isSender;
+    data['documensts'] = documensts;
+    return data;
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/auth_data_source.dart';
+import 'package:bike_client_dealer/src/data/data_sources/chat_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/order_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/data_sources/sell_data_source.dart';
@@ -79,4 +80,7 @@ Future<void> configureDependencies() async {
 
   //? Sell
   getIt.registerLazySingleton(() => SellDataSource());
+
+  //? Chat
+  getIt.registerLazySingleton(() => ChatDataSource());
 }

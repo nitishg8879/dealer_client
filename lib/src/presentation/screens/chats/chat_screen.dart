@@ -2,16 +2,18 @@ import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
-import 'package:bike_client_dealer/src/data/model/chat_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
+import 'package:bike_client_dealer/src/presentation/cubit/chat/chat_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/chat_doc_view.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/message_ui.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -22,39 +24,31 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  bool isSender = true;
   final border = OutlineInputBorder(borderRadius: 12.borderRadius2, borderSide: const BorderSide(width: 0));
   final textEditingController = TextEditingController();
   FilePickerResult? _filePickerResult;
   ProductModel? _pinProduct;
+  final chatBloc = ChatCubit();
   @override
   void initState() {
-    dummyMessage = dummyMessage.reversed.toList();
     super.initState();
   }
 
-  final dummyProduct = ProductModel(
-    images: [
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-      'https://bd.gaadicdn.com/processedimages/ktm/2021-390-duke/494X300/2021-390-duke64e477cc9c099.jpg?imwidth=400&impolicy=resize',
-    ],
-    kmDriven: 2000,
-    name: "KTM 200 Duke 1",
-    // ownerType: "1st Owner",
-    // price: 75000,
-    // year: 2023,
-    // branch: "Andheri,Mumbai",
-  );
+  void fetchChats() {
+    WidgetsBinding.instance.addPostFrameCallback((frame) {
+      chatBloc.fetchChats();
+    });
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: AppColors.amaranth,
       appBar: AppAppbar(
         flexibleSpace: FlexibleSpaceBar(
           title: Image.asset(
@@ -85,23 +79,38 @@ class _ChatScreenState extends State<ChatScreen> {
         fit: StackFit.expand,
         children: [
           //? Chats List
-          Positioned(
-            top: 0,
-            bottom: context.height * .09,
-            left: 0,
-            right: 0,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              reverse: true,
-              scrollDirection: Axis.vertical,
-              itemCount: dummyMessage.length,
-              itemBuilder: (context, index) {
-                return MessageUI(chatModel: dummyMessage[index]);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return 8.spaceH;
-              },
-            ),
+          BlocBuilder<ChatCubit, ChatState>(
+            bloc: chatBloc,
+            builder: (context, state) {
+              if (state is ChatLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is ChatError) {
+                return ErrorView(
+                  onreTry: chatBloc.fetchChats,
+                  errorMsg: state.errorMsg,
+                );
+              }
+              if (state is ChatLoaded) {
+                return Positioned(
+                  top: 0,
+                  bottom: context.height * .09,
+                  left: 0,
+                  right: 0,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    itemCount: state.chats.length,
+                    itemBuilder: (context, index) => MessageUI(chat: state.chats[index]),
+                    separatorBuilder: (BuildContext context, int index) => 8.spaceH,
+                  ),
+                );
+              }
+              return const Center(
+                child: Text("Wrong State"),
+              );
+            },
           ),
 
           //? Upload File View and Product Selection UI
@@ -194,21 +203,21 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      dummyMessage = dummyMessage.reversed.toList();
-                      final chat = ChatModel(
-                        message: textEditingController.text.trim(),
-                        isSender: isSender,
-                        dateTime: DateTime.now(),
-                        doc: _filePickerResult?.files,
-                        product: _pinProduct,
-                      );
-                      _pinProduct = null;
-                      dummyMessage.add(chat);
-                      isSender = !isSender;
-                      dummyMessage = dummyMessage.reversed.toList();
-                      textEditingController.clear();
-                      _filePickerResult = null;
-                      setState(() {});
+                      // dummyMessage = dummyMessage.reversed.toList();
+                      // final chat = ChatModel(
+                      //   message: textEditingController.text.trim(),
+                      //   isSender: isSender,
+                      //   dateTime: DateTime.now(),
+                      //   doc: _filePickerResult?.files,
+                      //   product: _pinProduct,
+                      // );
+                      // _pinProduct = null;
+                      // dummyMessage.add(chat);
+                      // isSender = !isSender;
+                      // dummyMessage = dummyMessage.reversed.toList();
+                      // textEditingController.clear();
+                      // _filePickerResult = null;
+                      // setState(() {});
                     },
                     borderRadius: 50.borderRadius2,
                     child: const Padding(
@@ -277,11 +286,5 @@ class _ChatScreenState extends State<ChatScreen> {
     } else {
       return const SizedBox();
     }
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
   }
 }

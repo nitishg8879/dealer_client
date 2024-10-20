@@ -11,6 +11,8 @@ class UserModel {
   String? fullName;
   User? user;
   bool? active;
+  String? chatId;
+  String? conversationId;
   Timestamp? creationDate;
   String? suspendReason;
   List<String>? favProduct;
@@ -24,6 +26,8 @@ class UserModel {
     required this.creationDate,
     required this.favProduct,
     this.active = true,
+    this.chatId,
+    this.conversationId,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +35,8 @@ class UserModel {
     profileUrl = json['profileUrl'];
     phoneNumber = json['phoneNumber'];
     uuid = json['uuid'];
+    conversationId = json['conversationId'];
+    chatId = json['chatId'];
     fullName = json['fullName'];
     creationDate = json['creationDate'];
     active = json['active'];
@@ -47,6 +53,8 @@ class UserModel {
     data['uuid'] = uuid;
     data['fullName'] = fullName;
     data['active'] = active;
+    data['chatId'] = chatId;
+    data['conversationId'] = conversationId;
     data['suspendReason'] = suspendReason;
     data['favProduct'] = favProduct ?? <String>[];
     if (fromSave) {
