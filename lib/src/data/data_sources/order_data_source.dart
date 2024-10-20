@@ -2,9 +2,9 @@ import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
+import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/order_transaction_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
-import 'package:bike_client_dealer/src/data/model/raise_dispute_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderDataSource {
@@ -34,19 +34,7 @@ class OrderDataSource {
         } else if (data.data?.status.contains(BookingStatus.RefundIntiated) ?? false) {
           throw Exception("Can't Cancel & Refund the order has been Refunded.");
         } else {
-          await getIt
-              .get<AppFireBaseLoc>()
-              .raiseDispute
-              .add(
-                RaiseDisputeModel(
-                  creationDate: Timestamp.now(),
-                  orderId: orderId,
-                  status: RaiseDisputeStatus.inProgress,
-                  userId: getIt.get<AppLocalService>().currentUser!.id,
-                  txnId: data.data?.txnId,
-                ).toJson(),
-              )
-              .catchError((error) => throw error);
+          getIt.get<ProductDataSource>().unlockProduct(product: ProductModel(id: data.data!.productId));
           data.data?.status.add(BookingStatus.RefundIntiated);
           await getIt.get<AppFireBaseLoc>().order.doc(orderId).update(data.data!.toJson());
           return const DataSuccess("Refund Has been Raised");

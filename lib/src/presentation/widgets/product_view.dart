@@ -16,17 +16,12 @@ class ProductView extends StatelessWidget {
   final bool fromChatPin;
   final void Function()? onChatPinCLose;
   final bool fromChatReadyOnly;
-  // final Color addedFavColor, notAddedFavColor;
-  // final double iconSize;
   const ProductView({
     super.key,
     required this.product,
     this.row = true,
     this.fromChatPin = false,
     this.onChatPinCLose,
-    // this.iconSize = 18,
-    // this.addedFavColor = AppColors.kRed,
-    // this.notAddedFavColor = AppColors.kRed,
     this.fromChatReadyOnly = false,
   });
 
@@ -51,26 +46,28 @@ class ProductView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         8.spaceH,
-        ClipRRect(
-          borderRadius: 10.borderRadius,
-          child: Visibility(
-            visible: product.images != null,
-            replacement: Container(
-              width: double.infinity,
-              height: 93,
-            ),
-            child: CachedNetworkImage(
-              imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
-              width: double.infinity,
-              height: 93,
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) {
-                return const Center(child: Icon(Icons.error));
-              },
+        Expanded(
+          child: ClipRRect(
+            borderRadius: 10.borderRadius,
+            child: Visibility(
+              visible: product.images != null,
+              replacement: const SizedBox(
+                width: double.infinity,
+                height: 93,
+              ),
+              child: CachedNetworkImage(
+                imageUrl: product.images != null && (product.images?.isNotEmpty ?? false) ? product.images!.first : '',
+                width: double.infinity,
+                height: 93,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return const Center(child: Icon(Icons.error));
+                },
+              ),
             ),
           ),
         ),
-        8.spaceH,
+        6.spaceH,
         Row(
           children: [
             Expanded(
@@ -86,18 +83,9 @@ class ProductView extends StatelessWidget {
               notAddedFavColor: AppColors.kBlack900,
               size: 14,
             )
-            // Skeleton.ignore(
-            //   child: InkWell(
-            //     onTap: () {},
-            //     child: const CustomSvgIcon(
-            //       assetName: AppAssets.fav,
-            //       size: 14,
-            //     ),
-            //   ),
-            // )
           ],
         ),
-        8.spaceH,
+        6.spaceH,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -211,6 +199,7 @@ class ProductView extends StatelessWidget {
             ],
           ],
         ),
+        6.spaceH,
       ],
     );
   }

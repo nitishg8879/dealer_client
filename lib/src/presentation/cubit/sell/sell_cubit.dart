@@ -1,5 +1,6 @@
 import 'package:bike_client_dealer/config/routes/app_routes.dart';
 import 'package:bike_client_dealer/core/di/injector.dart';
+import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
@@ -23,10 +24,8 @@ class SellCubit extends Cubit<SellState> {
       final resp = await getIt
           .get<AppFireBaseLoc>()
           .productBuy
-          .orderBy(
-            'creationDate',
-            descending: true,
-          )
+          .where('userId', isEqualTo: getIt.get<AppLocalService>().currentUser!.id)
+          .orderBy('creationDate', descending: true)
           .get()
           .catchError((error) => throw error);
       emit(SellLoaded(resp.docs.map((e) => ProductSellModel.fromJson(e.data())..id = e.id).toList()));
@@ -78,10 +77,10 @@ class SellCubit extends Cubit<SellState> {
         emit(SellUploading('Pending $filesCount'));
         for (var element in localFile) {
           final url = await HelperFun.uploadFile(
-            getIt.get<AppFireBaseLoc>().sellStorage,
+            getIt.get<AppFireBaseLoc>().sellStorage.child(element.name),
             element,
             (val) {
-              emit(SellUploading('Pending $filesCount $val%'));
+              emit(SellUploading('Pending $filesCount:  $val%  '));
             },
           );
           if (url != null) {
@@ -92,6 +91,8 @@ class SellCubit extends Cubit<SellState> {
         emit(SellUploading('Creating'));
       }
       if (sellProduct.id == null) {
+        sellProduct.status = ProductSellStatus.InReview;
+        sellProduct.userId = getIt.get<AppLocalService>().currentUser!.id!;
         await getIt.get<AppFireBaseLoc>().productBuy.add(sellProduct.toJson());
       } else {
         await getIt.get<AppFireBaseLoc>().productBuy.doc(sellProduct.id).update(sellProduct.toJson(isUpdate: true));

@@ -1,11 +1,9 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
-import 'package:bike_client_dealer/core/util/app_text_input_formatter.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/sell/sell_cubit.dart';
+import 'package:bike_client_dealer/src/presentation/screens/sell/sell_product_card_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_appbar.dart';
-import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -66,12 +64,17 @@ class _SellScreenState extends State<SellScreen> {
             );
           }
           if (state is SellLoaded) {
+            if (state.data.isEmpty) {
+              return const Center(
+                child: Text("No Sell Found."),
+              );
+            }
             return ListView.builder(
               itemCount: state.data.length,
               itemBuilder: (context, index) {
-                return ListTile(
+                return SellProductCard(
+                  model: state.data[index],
                   onTap: () => cubit.openSellForm(context, data: state.data[index]),
-                  title: Text(state.data[index].name ?? '-'),
                 );
               },
             );

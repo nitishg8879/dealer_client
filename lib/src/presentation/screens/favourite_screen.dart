@@ -93,7 +93,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               } else if (state is FavouriteLoaded) {
                 if (state.products.isEmpty) {
                   return const Center(
-                    child: Text("No Favourite item found."),
+                    child: Text("No favourite found."),
                   );
                 }
                 return GridView.builder(

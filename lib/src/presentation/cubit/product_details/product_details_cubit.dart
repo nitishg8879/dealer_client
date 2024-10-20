@@ -75,7 +75,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       razorpay.open(options);
     } else {
       emit(ProductDetailsTransactionLoading(false));
-      HelperFun.showAlertDialog("Alert", resp.message ?? 'Something went wrong.');
+      HelperFun.showAlertDialog("Alert", (resp.message ?? 'Something went wrong.').replaceAll("Exception:", ""));
       fetchProduct(productModel!.id, null);
     }
   }
@@ -131,8 +131,6 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
     emit(ProductDetailsTransactionLoading(false));
   }
-
-  
 
   Future<void> fetchProduct(String? id, ProductModel? product) async {
     if (product != null) {

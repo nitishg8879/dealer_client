@@ -35,6 +35,7 @@ extension AppDateFormat on DateTime {
   String get hhmma => DateFormat('hh:mm a').format(this);
   String get ddMMYYYYHHMMSS => DateFormat('dd/MM/yyyy HH:mm:ss a').format(this);
   String get ddMMYYYYhhMMSS => DateFormat('dd MMM, yyyy hh:mm a').format(this);
+  String get orderTime => DateFormat('dd MMM, hh:mm a').format(this);
 
   String get mmmYYY => DateFormat('MMM, yyyy').format(this);
   String get monthYear => DateFormat('MMMM  yyyy').format(this);

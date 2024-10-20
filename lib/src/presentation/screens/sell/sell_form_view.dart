@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/app_text_input_formatter.dart';
-import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
-import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_sell_model.dart';
 import 'package:bike_client_dealer/src/presentation/cubit/sell/sell_cubit.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/app_text_field.dart';
@@ -14,7 +12,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SellFormView extends StatefulWidget {
@@ -53,6 +50,10 @@ class _SellFormViewState extends State<SellFormView> {
     super.dispose();
   }
 
+  bool get isApproved {
+    return productSellModel?.status == ProductSellStatus.Approve;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -71,41 +72,42 @@ class _SellFormViewState extends State<SellFormView> {
                 16.spaceH,
                 Row(
                   children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        if (files.length >= 5) {
-                          HelperFun.showErrorSnack("You can only upload 5 images.");
-                          return;
-                        }
-                        HelperFun.pickFile().then((result) async {
-                          if (result != null) {
-                            for (var element in result.files) {
-                              int fileSizeInBytes;
-                              if (kIsWeb) {
-                                fileSizeInBytes = element.bytes!.length;
-                              } else {
-                                File file = File(element.path!);
-                                fileSizeInBytes = await file.length();
-                              }
-                              double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-                              if (fileSizeInMB < 5) {
-                                files.addAll(result.files);
-                              } else {
-                                HelperFun.showErrorSnack("Upload file which is less than 5MB.");
-                              }
-                            }
-                            setState(() {});
+                    if (!isApproved)
+                      OutlinedButton(
+                        onPressed: () {
+                          if (files.length >= 5) {
+                            HelperFun.showErrorSnack("You can only upload 5 images.");
+                            return;
                           }
-                        });
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Icon(
-                          Icons.filter,
-                          color: AppColors.kBlack900,
+                          HelperFun.pickFile().then((result) async {
+                            if (result != null) {
+                              for (var element in result.files) {
+                                int fileSizeInBytes;
+                                if (kIsWeb) {
+                                  fileSizeInBytes = element.bytes!.length;
+                                } else {
+                                  File file = File(element.path!);
+                                  fileSizeInBytes = await file.length();
+                                }
+                                double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+                                if (fileSizeInMB < 5) {
+                                  files.add(element);
+                                } else {
+                                  HelperFun.showErrorSnack("Upload file which is less than 5MB.");
+                                }
+                              }
+                              setState(() {});
+                            }
+                          });
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Icon(
+                            Icons.filter,
+                            color: AppColors.kBlack900,
+                          ),
                         ),
                       ),
-                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -116,12 +118,19 @@ class _SellFormViewState extends State<SellFormView> {
                             for (var networkFile in productSellModel?.images ?? []) ...[
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: ClipRRect(
-                                  borderRadius: 16.borderRadius,
-                                  child: CachedNetworkImage(
-                                    imageUrl: networkFile,
-                                    width: 80,
-                                    height: 60,
+                                child: GestureDetector(
+                                  onDoubleTap: () {
+                                    deleteFiles.add(networkFile);
+                                    productSellModel?.images?.remove(networkFile);
+                                    setState(() {});
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: 16.borderRadius,
+                                    child: CachedNetworkImage(
+                                      imageUrl: networkFile,
+                                      width: 80,
+                                      height: 60,
+                                    ),
                                   ),
                                 ),
                               )
@@ -131,24 +140,36 @@ class _SellFormViewState extends State<SellFormView> {
                               if (kIsWeb)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: ClipRRect(
-                                    borderRadius: 16.borderRadius,
-                                    child: Image.memory(
-                                      localFile.bytes!,
-                                      width: 80,
-                                      height: 60,
+                                  child: GestureDetector(
+                                    onDoubleTap: () {
+                                      files.remove(localFile);
+                                      setState(() {});
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: 16.borderRadius,
+                                      child: Image.memory(
+                                        localFile.bytes!,
+                                        width: 80,
+                                        height: 60,
+                                      ),
                                     ),
                                   ),
                                 )
                               else
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: ClipRRect(
-                                    borderRadius: 16.borderRadius,
-                                    child: Image.file(
-                                      File(localFile.path!),
-                                      width: 80,
-                                      height: 60,
+                                  child: GestureDetector(
+                                    onDoubleTap: () {
+                                      files.remove(localFile);
+                                      setState(() {});
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: 16.borderRadius,
+                                      child: Image.file(
+                                        File(localFile.path!),
+                                        width: 80,
+                                        height: 60,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -162,6 +183,7 @@ class _SellFormViewState extends State<SellFormView> {
                 16.spaceH,
                 AppTextField(
                   label: "Name",
+                  readOnly: isApproved,
                   initialValue: productSellModel?.name,
                   onChanged: (name) => productSellModel?.name = name,
                   validator: (val) {
@@ -174,6 +196,7 @@ class _SellFormViewState extends State<SellFormView> {
                 16.spaceH,
                 AppTextField(
                   label: "KM Driven",
+                  readOnly: isApproved,
                   initialValue: productSellModel?.kmdrvien?.toString() ?? '',
                   onChanged: (km) => productSellModel?.kmdrvien = int.tryParse(km.replaceAll(",", "")),
                   keyboardType: TextInputType.number,
@@ -191,6 +214,7 @@ class _SellFormViewState extends State<SellFormView> {
                 16.spaceH,
                 AppTextField(
                   label: "Your Price",
+                  readOnly: isApproved,
                   keyboardType: TextInputType.number,
                   initialValue: productSellModel?.price?.toString() ?? '',
                   onChanged: (price) => productSellModel?.price = double.tryParse(price.replaceAll(",", "").replaceAll("₹", "")),
@@ -210,6 +234,7 @@ class _SellFormViewState extends State<SellFormView> {
                     Expanded(
                       child: AppTextField(
                         label: "Owners",
+                        readOnly: isApproved,
                         keyboardType: TextInputType.number,
                         inputFormatters: [NumbersOnlyInputFormatter()],
                         initialValue: productSellModel?.owners?.toString() ?? '',
@@ -226,6 +251,7 @@ class _SellFormViewState extends State<SellFormView> {
                     Expanded(
                       child: AppTextField(
                         label: "Keys",
+                        readOnly: isApproved,
                         keyboardType: TextInputType.number,
                         initialValue: productSellModel?.keys?.toString() ?? '',
                         onChanged: (keys) => productSellModel?.keys = int.tryParse(keys),
@@ -252,21 +278,23 @@ class _SellFormViewState extends State<SellFormView> {
                           }
                           return null;
                         },
-                        onTap: () async {
-                          final result = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
-                            lastDate: DateTime.now(),
-                            initialDate: productSellModel?.buyDate?.toDate(),
-                          );
-                          if (result != null) {
-                            productSellModel?.buyDate = Timestamp.fromDate(result);
-                            buyDateTc.text = result.mmmYYY;
-                          } else {
-                            buyDateTc.clear();
-                            productSellModel?.buyDate = null;
-                          }
-                        },
+                        onTap: isApproved
+                            ? null
+                            : () async {
+                                final result = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime.now().subtract(const Duration(days: 365 * 100)),
+                                  lastDate: DateTime.now(),
+                                  initialDate: productSellModel?.buyDate?.toDate(),
+                                );
+                                if (result != null) {
+                                  productSellModel?.buyDate = Timestamp.fromDate(result);
+                                  buyDateTc.text = result.mmmYYY;
+                                } else {
+                                  buyDateTc.clear();
+                                  productSellModel?.buyDate = null;
+                                }
+                              },
                         suffix: Icon(Icons.date_range),
                         controller: buyDateTc,
                       ),
@@ -282,21 +310,23 @@ class _SellFormViewState extends State<SellFormView> {
                           }
                           return null;
                         },
-                        onTap: () async {
-                          final result = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
-                            lastDate: DateTime.now().add(const Duration(days: 365 * 100)),
-                            initialDate: productSellModel?.validTill?.toDate(),
-                          );
-                          if (result != null) {
-                            productSellModel?.validTill = Timestamp.fromDate(result);
-                            validTillTc.text = result.mmmYYY;
-                          } else {
-                            validTillTc.clear();
-                            productSellModel?.validTill = null;
-                          }
-                        },
+                        onTap: isApproved
+                            ? null
+                            : () async {
+                                final result = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+                                  lastDate: DateTime.now().add(const Duration(days: 365 * 100)),
+                                  initialDate: productSellModel?.validTill?.toDate(),
+                                );
+                                if (result != null) {
+                                  productSellModel?.validTill = Timestamp.fromDate(result);
+                                  validTillTc.text = result.mmmYYY;
+                                } else {
+                                  validTillTc.clear();
+                                  productSellModel?.validTill = null;
+                                }
+                              },
                         suffix: Icon(Icons.date_range),
                         controller: validTillTc,
                       ),
@@ -304,46 +334,47 @@ class _SellFormViewState extends State<SellFormView> {
                   ],
                 ),
                 16.spaceH,
-                ElevatedButton(
-                  onPressed: () {
-                    if (files.isEmpty && (productSellModel?.images?.isEmpty ?? true)) {
-                      HelperFun.showErrorSnack("Please Upload images.");
-                    } else if (formKey.currentState?.validate() ?? false) {
-                      widget.sellCubit.addOrUpdateSellProduct(
-                        sellProduct: productSellModel!,
-                        localFile: files,
-                        deleteFile: deleteFiles,
-                      );
-                    }
-                  },
-                  child: BlocBuilder<SellCubit, SellState>(
-                    bloc: widget.sellCubit,
-                    buildWhen: (previous, current) => current is SellUploading,
-                    builder: (context, state) {
-                      if (state is SellUploading) {
-                        if (state.status != null) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(state.status ?? ''),
-                              16.spaceW,
-                              SizedBox(
-                                width: 13,
-                                height: 13,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1.5,
-                                  color: AppColors.kWhite,
-                                ),
-                              )
-                            ],
-                          );
-                        }
+                if (!isApproved)
+                  ElevatedButton(
+                    onPressed: () {
+                      if (files.isEmpty && (productSellModel?.images?.isEmpty ?? true)) {
+                        HelperFun.showErrorSnack("Please Upload images.");
+                      } else if (formKey.currentState?.validate() ?? false) {
+                        widget.sellCubit.addOrUpdateSellProduct(
+                          sellProduct: productSellModel!,
+                          localFile: files,
+                          deleteFile: deleteFiles,
+                        );
                       }
-                      return Text(productSellModel?.id == null ? "Review" : "Update");
                     },
+                    child: BlocBuilder<SellCubit, SellState>(
+                      bloc: widget.sellCubit,
+                      buildWhen: (previous, current) => current is SellUploading,
+                      builder: (context, state) {
+                        if (state is SellUploading) {
+                          if (state.status != null) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(state.status ?? ''),
+                                16.spaceW,
+                                SizedBox(
+                                  width: 13,
+                                  height: 13,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.5,
+                                    color: AppColors.kWhite,
+                                  ),
+                                )
+                              ],
+                            );
+                          }
+                        }
+                        return Text(productSellModel?.id == null ? "Review" : "Update");
+                      },
+                    ),
                   ),
-                ),
                 20.spaceH,
               ],
             ),

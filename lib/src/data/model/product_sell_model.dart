@@ -1,4 +1,6 @@
+import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 enum ProductSellStatus {
   InReview(1),
@@ -12,10 +14,35 @@ enum ProductSellStatus {
   static ProductSellStatus fromValue(int value) {
     return ProductSellStatus.values.firstWhere((status) => status.value == value);
   }
+
+  // Getter for readable name
+  String get readableName {
+    switch (this) {
+      case ProductSellStatus.InReview:
+        return 'In Review';
+      case ProductSellStatus.Approve:
+        return 'Approved';
+      case ProductSellStatus.Reject:
+        return 'Rejected';
+    }
+  }
+
+  // Getter for color
+  Color get color {
+    switch (this) {
+      case ProductSellStatus.InReview:
+        return AppColors.kOrange600; // or any color format like '#FFA500' for orange
+      case ProductSellStatus.Approve:
+        return AppColors.kOrange600; // or '#00FF00' for green
+      case ProductSellStatus.Reject:
+        return AppColors.kOrange600; // or '#FF0000' for red
+    }
+  }
 }
 
 class ProductSellModel {
   String? id;
+  String? branchId;
   List<String>? images;
   String? name;
   List<String>? searchqueryonname;
@@ -23,13 +50,17 @@ class ProductSellModel {
   double? price;
   int? owners;
   int? keys;
+  String? userId;
   Timestamp? buyDate;
   Timestamp? validTill;
-  List<ProductSellStatus>? status;
-  String? rejectReason;
+  Timestamp? creationDate;
+  ProductSellStatus? status;
+  String? note;
 
   ProductSellModel({
     this.images,
+    this.branchId,
+    this.userId,
     this.name,
     this.searchqueryonname,
     this.kmdrvien,
@@ -39,7 +70,8 @@ class ProductSellModel {
     this.buyDate,
     this.validTill,
     this.status,
-    this.rejectReason,
+    this.creationDate,
+    this.note,
   });
 
   // Manual fromJson method with null safety
@@ -47,15 +79,18 @@ class ProductSellModel {
     return ProductSellModel(
       images: (json['images'] as List?)?.map((item) => item as String).toList(),
       name: json['name'] as String?,
+      userId: json['userId'] as String?,
+      branchId: json['branchId'] as String?,
       searchqueryonname: (json['searchqueryonname'] as List?)?.map((item) => item as String).toList(),
       kmdrvien: json['kmdrvien'] as int?,
       price: (json['price'] as num?)?.toDouble(),
       owners: json['owners'] as int?,
       keys: json['keys'] as int?,
       buyDate: json['buyDate'] as Timestamp?,
+      creationDate: json['creationDate'] as Timestamp?,
       validTill: json['validTill'] as Timestamp?,
-      status: (json['status'] as List?)?.map((s) => ProductSellStatus.fromValue(s)).toList(),
-      rejectReason: json['rejectReason'] as String?,
+      status: json['status'] != null ? ProductSellStatus.fromValue(json['status']) : null,
+      note: json['note'] as String?,
     );
   }
 
@@ -70,10 +105,11 @@ class ProductSellModel {
       'price': price,
       'owners': owners,
       'keys': keys,
+      'userId': userId,
       'buyDate': buyDate,
       'validTill': validTill,
-      'status': status?.map((s) => s.value).toList(), // Saving enum as list of int
-      'rejectReason': rejectReason,
+      'status': status?.value,
+      'note': note,
     };
   }
 }

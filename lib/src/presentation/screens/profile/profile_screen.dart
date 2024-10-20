@@ -104,10 +104,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         });
                       },
                       borderRadius: 100.borderRadius2,
-                      child: Padding(
+                      child: const Padding(
                         padding: EdgeInsets.all(8),
                         child: Icon(
-                          Icons.edit,
+                          Icons.mode_edit_outline_outlined,
                           color: AppColors.kFoundationPurple400,
                           size: 20,
                         ),
@@ -125,13 +125,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: "General",
             items: [
               ProfileTileTileModel(
-                icon: Icons.message,
+                icon: Icons.message_outlined,
                 titile: "Chats",
-                routePath: Routes.home,
+                routePath: Routes.chats,
               ),
               ProfileTileTileModel(
                 icon: Icons.support_agent,
-                titile: "Support",
+                titile: "Contact Us",
+                routePath: Routes.home,
+              ),
+              ProfileTileTileModel(
+                icon: Icons.location_on_outlined,
+                titile: "Branches",
                 routePath: Routes.home,
               ),
             ],
@@ -143,29 +148,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: "Products",
             items: [
               ProfileTileTileModel(
-                icon: Icons.account_balance,
+                icon: Icons.account_balance_outlined,
                 titile: "Transactions",
                 routePath: Routes.transaction,
               ),
               ProfileTileTileModel(
-                icon: Icons.playlist_add_check_circle,
+                icon: Icons.playlist_add_check_circle_outlined,
                 titile: "Orders",
                 routePath: Routes.order,
               ),
               ProfileTileTileModel(
-                icon: Icons.favorite,
+                icon: Icons.favorite_border,
                 titile: "Favourites",
                 routePath: Routes.favourite,
               ),
               ProfileTileTileModel(
-                icon: Icons.favorite,
+                icon: Icons.sell_outlined,
                 titile: "Sell",
                 routePath: Routes.sell,
-              ),
-              ProfileTileTileModel(
-                icon: Icons.location_history_outlined,
-                titile: "Listen",
-                routePath: Routes.listenProductScreen,
               ),
             ],
           ),

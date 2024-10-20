@@ -73,45 +73,89 @@ class ProductDataSource {
     return List.from(resp.docs.map((e) => ProductModel.fromJson(e.data())..id = e.id).toList());
   }
 
+  // Future<DataState<ProductModel?>> canBuyProduct({required String productId}) async {
+  //   try {
+  //     if (!getIt.get<AppLocalService>().isLoggedIn) {
+  //       throw Exception("User not logged in");
+  //     } else {
+  //       final productResp = await fetchProductbyId(productId);
+  //       if (productResp is DataSuccess) {
+  //         if (productResp.data?.active == null || !(productResp.data!.active!)) {
+  //           throw Exception("Product is not active");
+  //         }
+  //         if ((productResp.data?.sold ?? false)) {
+  //           throw Exception("Product has been sold");
+  //         }
+  //         if (productResp.data?.bikeBooked ?? false) {
+  //           throw Exception("Product has been Booked");
+  //         }
+  //         if (productResp.data?.bikeLocked ?? false) {
+  //           throw Exception("Someone is Ordering.");
+  //         }
+  //         await FirebaseFirestore.instance.runTransaction(
+  //           (transaction) async {
+  //             transaction.update(
+  //               getIt.get<AppFireBaseLoc>().product.doc(productId),
+  //               {
+  //                 "bikeLocked": true,
+  //                 "bikeLockedTill": Timestamp.fromDate(DateTime.now().add(Duration(minutes: AppConst.bookingLockedMinutes))),
+  //               },
+  //             );
+  //           },
+  //         ).catchError((error) => throw Exception("Someone is Ordering..."));
+  //         return fetchProductbyId(productId);
+  //       } else {
+  //         throw Exception(productResp.message);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     return DataFailed(null, 500, e.toString());
+  //   }
+  // }
+
   Future<DataState<ProductModel?>> canBuyProduct({required String productId}) async {
-    try {
-      if (!getIt.get<AppLocalService>().isLoggedIn) {
-        throw Exception("User not logged in");
-      } else {
-        final productResp = await fetchProductbyId(productId);
-        if (productResp is DataSuccess) {
-          if (productResp.data?.active == null || !(productResp.data!.active!)) {
-            throw Exception("Product is not active");
-          }
-          if ((productResp.data?.sold ?? false)) {
-            throw Exception("Product has been sold");
-          }
-          if (productResp.data?.bikeBooked ?? false) {
-            throw Exception("Product has been Booked");
-          }
-          if (productResp.data?.bikeLocked ?? false) {
-            throw Exception("Someone is Ordering.");
-          }
-          await FirebaseFirestore.instance.runTransaction(
-            (transaction) async {
-              transaction.update(
-                getIt.get<AppFireBaseLoc>().product.doc(productId),
-                {
-                  "bikeLocked": true,
-                  "bikeLockedTill": Timestamp.fromDate(DateTime.now().add(Duration(minutes: AppConst.bookingLockedMinutes))),
-                },
-              );
-            },
-          ).catchError((error) => throw Exception("Someone is Ordering..."));
-          return fetchProductbyId(productId);
-        } else {
-          throw Exception(productResp.message);
-        }
-      }
-    } catch (e) {
-      return DataFailed(null, 500, e.toString());
+  try {
+    if (!getIt.get<AppLocalService>().isLoggedIn) {
+      throw Exception("User not logged in");
     }
+    // Start transaction
+    final transactionResult = await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final productDoc = getIt.get<AppFireBaseLoc>().product.doc(productId);
+      final productSnapshot = await transaction.get(productDoc); 
+      if (!productSnapshot.exists) {
+        throw Exception("Product not found");
+      }
+      final productData = productSnapshot.data();
+      // Check conditions inside the transaction
+      if (productData?['active'] == null || !(productData?['active'])) {
+        throw Exception("Product is not active");
+      }
+      if (productData?['sold'] == true) {
+        throw Exception("Product has been sold");
+      }
+      if (productData?['bikeBooked'] == true) {
+        throw Exception("Product has been Booked");
+      }
+      if (productData?['bikeLocked'] == true) {
+        throw Exception("Someone is ordering the product.");
+      }
+
+      // Lock the product for this transaction
+      transaction.update(productDoc, {
+        "bikeLocked": true,
+        "bikeLockedTill": Timestamp.fromDate(DateTime.now().add(Duration(minutes: AppConst.bookingLockedMinutes))),
+      });
+
+      return productData; // Return the product data if all checks pass
+    }).catchError((error) => throw Exception("Someone is ordering..."));
+
+    // If transaction was successful, fetch the product again
+    return fetchProductbyId(productId);
+  } catch (e) {
+    return DataFailed(null, 500, e.toString());
   }
+}
+
 
   Future<void> addTransactionIdInProduct({required ProductModel product, required String paymentId}) async {
     getIt.get<AppFireBaseLoc>().product.doc().update({
@@ -124,7 +168,7 @@ class ProductDataSource {
       "bikeBooked": false,
       "bikeLocked": false,
       "bikeLockedTill": null,
-      "user": null,
+      "sold": false,
     });
   }
 
@@ -159,7 +203,7 @@ class ProductDataSource {
           "userOrders": product.userOrders?.map((e) => e.toJson()).toList() ?? [],
         });
       }
-      
+
       return fetchProductbyId(product.id!);
     } catch (e) {
       return DataFailed(null, 500, e.toString());
