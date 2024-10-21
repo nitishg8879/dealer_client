@@ -29,9 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
   FilePickerResult? _filePickerResult;
   ProductModel? _pinProduct;
   final chatBloc = ChatCubit();
+  final scrollCtr = ScrollController();
   @override
   void initState() {
     super.initState();
+    fetchChats();
   }
 
   void fetchChats() {
@@ -42,6 +44,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    scrollCtr.dispose();
+    chatBloc.close();
     textEditingController.dispose();
     super.dispose();
   }
@@ -81,6 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
           //? Chats List
           BlocBuilder<ChatCubit, ChatState>(
             bloc: chatBloc,
+            buildWhen: (previous, current) => current is! ChatSending,
             builder: (context, state) {
               if (state is ChatLoading) {
                 return const Center(
@@ -100,6 +105,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   left: 0,
                   right: 0,
                   child: ListView.separated(
+                    controller: scrollCtr,
+                    reverse: true,
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     itemCount: state.chats.length,
                     itemBuilder: (context, index) => MessageUI(chat: state.chats[index]),
@@ -202,30 +209,23 @@ class _ChatScreenState extends State<ChatScreen> {
                     borderRadius: 50.borderRadius,
                   ),
                   child: InkWell(
-                    onTap: () {
-                      // dummyMessage = dummyMessage.reversed.toList();
-                      // final chat = ChatModel(
-                      //   message: textEditingController.text.trim(),
-                      //   isSender: isSender,
-                      //   dateTime: DateTime.now(),
-                      //   doc: _filePickerResult?.files,
-                      //   product: _pinProduct,
-                      // );
-                      // _pinProduct = null;
-                      // dummyMessage.add(chat);
-                      // isSender = !isSender;
-                      // dummyMessage = dummyMessage.reversed.toList();
-                      // textEditingController.clear();
-                      // _filePickerResult = null;
-                      // setState(() {});
-                    },
+                    onTap: () => chatBloc.sendMessage(textEditingController, _filePickerResult, _pinProduct),
                     borderRadius: 50.borderRadius2,
-                    child: const Padding(
-                      padding: EdgeInsets.all(14.0),
-                      child: Icon(
-                        Icons.send,
-                        size: 18,
-                        color: AppColors.kWhite,
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: BlocBuilder<ChatCubit, ChatState>(
+                        bloc: chatBloc,
+                        buildWhen: (previous, current) => current is ChatSending,
+                        builder: (context, state) {
+                          if (state is ChatSending && state.sending) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(color: AppColors.kWhite, strokeWidth: 2),
+                            );
+                          }
+                          return const Icon(Icons.send, size: 18, color: AppColors.kWhite);
+                        },
                       ),
                     ),
                   ),

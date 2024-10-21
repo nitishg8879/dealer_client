@@ -56,13 +56,10 @@ class Conversation {
   List<String>? documensts;
 
   Conversation({
-    this.productID,
     required this.message,
-    required this.isSender,
-    required this.time,
+    this.productID,
     this.documensts,
-    this.id,
-  });
+  })  : time = Timestamp.now();
 
   Conversation.fromJson(Map<String, dynamic> json) {
     productID = json['productID'];

@@ -40,5 +40,7 @@ class AppFireBaseLoc {
   //? Storage Bucket
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   final String sellBucket = "sell/";
+  final String chatBucket = "chat/";
   Reference get sellStorage => _firebaseStorage.ref().child(sellBucket);
+  Reference get chatStorage => _firebaseStorage.ref().child(chatBucket);
 }

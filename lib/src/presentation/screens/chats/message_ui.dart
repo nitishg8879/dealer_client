@@ -33,18 +33,18 @@ class MessageUI extends StatelessWidget {
             // crossAxisAlignment: chat.isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (chat.documensts != null && chat.documensts!.isNotEmpty)
-                // ChatDocView(
-                //   files: chat.documensts ?? [],
-                //   width: (chat.documensts ?? []).length < 4 ? (80 * (chat.documensts ?? []).length).toDouble() : (80 * 4),
-                //   readOnly: true,
-                // ),
-                if (chat.productID != null)
-                  // ProductView(
-                  // product: chat.product!,
-                  //   fromChatReadyOnly: true,
-                  // ),
-                  ChatUIForNormalText(chat: chat),
+              // if (chat.documensts != null && chat.documensts!.isNotEmpty)
+              // ChatDocView(
+              //   files: chat.documensts ?? [],
+              //   width: (chat.documensts ?? []).length < 4 ? (80 * (chat.documensts ?? []).length).toDouble() : (80 * 4),
+              //   readOnly: true,
+              // ),
+              // if (chat.productID != null)
+              // ProductView(
+              // product: chat.product!,
+              //   fromChatReadyOnly: true,
+              // ),
+              ChatUIForNormalText(chat: chat),
             ],
           ),
         ),
