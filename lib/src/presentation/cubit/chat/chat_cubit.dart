@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
@@ -23,7 +25,8 @@ class ChatCubit extends Cubit<ChatState> {
   String? get chatId => getIt.get<AppLocalService>().currentUser?.chatId;
   String? get conversationId => getIt.get<AppLocalService>().currentUser?.conversationId;
 
-  Future<void> fetchChats({bool callLoading = true}) async {
+  Timer? timer;
+  void fetchChats({bool callLoading = true}) async {
     try {
       if (callLoading) {
         emit(ChatLoading());
@@ -37,9 +40,12 @@ class ChatCubit extends Cubit<ChatState> {
       if (chatModel?.unreadChatCount != null && chatModel?.unreadChatCount == 0) {
         myMessageCount = 0;
       }
+      if (!callLoading && chatModel?.unreadChatCount != null) {
+        myMessageCount = chatModel?.unreadChatCount ?? 0;
+      }
       final chatResp = await getIt.get<AppFireBaseLoc>().conversation.doc(conversationId).get();
-      final dynamicChats = chatResp.data()?['conversation'] as List<dynamic>;
-      emit(ChatLoaded(dynamicChats.map((e) => Conversation.fromJson(e)).toList().reversed.toList()));
+      final dynamicChats = chatResp.data()?['conversation'] as List<dynamic>?;
+      emit(ChatLoaded(dynamicChats?.map((e) => Conversation.fromJson(e)).toList().reversed.toList() ?? []));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -50,6 +56,7 @@ class ChatCubit extends Cubit<ChatState> {
       throw Exception("User not logged in.");
     }
     if (currentUser.chatId == null) {
+      print("intializeUserChat");
       final tempchatModel = ChatModel(
         user: currentUser.id,
         profileUrl: currentUser.profileUrl,
@@ -99,5 +106,16 @@ class ChatCubit extends Cubit<ChatState> {
     fetchChats(callLoading: false);
   }
 
-  void refreshChatStreamly() {}
+  void refreshChatStreamly() {
+    timer ??= Timer.periodic(Duration(seconds: 3), (a) {
+      print("refreshChatStreamly ${a.tick}");
+      fetchChats(callLoading: false);
+    });
+  }
+
+  @override
+  Future<void> close() {
+    timer?.cancel();
+    return super.close();
+  }
 }

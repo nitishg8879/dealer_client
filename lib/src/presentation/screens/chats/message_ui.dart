@@ -13,16 +13,16 @@ class MessageUI extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderRadius = 14.smoothRadius;
     return Align(
-      alignment: (chat.isSender) ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: (chat.isUser) ? Alignment.centerRight : Alignment.centerLeft,
       child: DecoratedBox(
         decoration: ShapeDecoration(
-          color: chat.isSender ? AppColors.kFoundationPurple200 : AppColors.kPurple60,
+          color: chat.isUser ? AppColors.kFoundationPurple200 : AppColors.kPurple60,
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius.only(
               topRight: borderRadius,
-              topLeft: chat.isSender ? borderRadius : 0.smoothRadius,
+              topLeft: chat.isUser ? borderRadius : 0.smoothRadius,
               bottomLeft: borderRadius,
-              bottomRight: chat.isSender ? 0.smoothRadius : borderRadius,
+              bottomRight: chat.isUser ? 0.smoothRadius : borderRadius,
             ),
           ),
         ),
@@ -30,7 +30,7 @@ class MessageUI extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            // crossAxisAlignment: chat.isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            // crossAxisAlignment: chat.isUser ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // if (chat.documensts != null && chat.documensts!.isNotEmpty)

@@ -39,6 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void fetchChats() {
     WidgetsBinding.instance.addPostFrameCallback((frame) {
       chatBloc.fetchChats();
+      chatBloc.refreshChatStreamly();
     });
   }
 

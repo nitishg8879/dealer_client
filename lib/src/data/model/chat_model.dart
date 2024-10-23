@@ -50,7 +50,7 @@ class ChatModel {
 class Conversation {
   String? productID;
   String? message;
-  bool isSender = true;
+  bool isUser = true;
   Timestamp? time;
   String? id;
   List<String>? documensts;
@@ -65,7 +65,7 @@ class Conversation {
     productID = json['productID'];
     message = json['message'];
     time = json['time'] as Timestamp?;
-    isSender = json['isSender'];
+    isUser = json['isUser'];
     documensts = (json['documensts'] as List<dynamic>?)?.cast<String>();
   }
 
@@ -74,7 +74,7 @@ class Conversation {
     data['message'] = message;
     data['productID'] = productID;
     data['time'] = time;
-    data['isSender'] = isSender;
+    data['isUser'] = isUser;
     data['documensts'] = documensts;
     return data;
   }
