@@ -15,6 +15,13 @@ class FavouriteCubit extends Cubit<FavouriteState> {
     this._fetchFavouriteProductsUseCase,
   ) : super(FavouriteLoading());
 
+  @override
+  void emit(FavouriteState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> fetchFavouriteProducts() async {
     emit(FavouriteLoading());
     final resp = await _fetchFavouriteProductsUseCase.call(ids: getIt.get<AppLocalService>().currentUser?.favProduct ?? []);

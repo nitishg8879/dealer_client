@@ -29,11 +29,13 @@ class AllProductScreen extends StatefulWidget {
   final CategoryModel? selectedCategory;
   final CompanyModel? selectedCompany;
   final List<String>? products;
+  final bool fromSelecting;
   const AllProductScreen({
     super.key,
     this.selectedCategory,
     this.selectedCompany,
     this.products,
+    this.fromSelecting = false,
   });
 
   @override
@@ -204,7 +206,15 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
                 itemBuilder: (context, index) {
-                  return ProductView(product: productCubit.products[index], row: false);
+                  return ProductView(
+                    product: productCubit.products[index],
+                    row: false,
+                    onTap: widget.fromSelecting
+                        ? () {
+                            context.pop(productCubit.products[index]);
+                          }
+                        : null,
+                  );
                 },
                 itemCount: productCubit.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,6 +233,11 @@ class _AllProductScreenState extends State<AllProductScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: ProductView(
+                        onTap: widget.fromSelecting
+                            ? () {
+                                context.pop(productCubit.products[index]);
+                              }
+                            : null,
                         product: productCubit.products[index],
                         row: true,
                       ),
@@ -282,11 +297,12 @@ class _AllProductScreenState extends State<AllProductScreen> {
   AppAppbar _buildAppbar(BuildContext context) {
     return AppAppbar(
       onback: context.pop,
+      pageName: widget.fromSelecting ? "Select" : null,
       actions: [
         UnconstrainedBox(
           child: OutlinedButton(
             onPressed: () {
-              showSearch(context: context, delegate: AllProductsSearch());
+              showSearch(context: context, delegate: AllProductsSearch(fromSelecting: widget.fromSelecting));
             },
             child: const CustomSvgIcon(
               assetName: AppAssets.search,
@@ -314,25 +330,26 @@ class _AllProductScreenState extends State<AllProductScreen> {
             },
           ),
         ),
-        16.spaceW,
-        UnconstrainedBox(
-          child: OutlinedButton(
-            onPressed: () {
-              if (!getIt.get<AppLocalService>().isLoggedIn) {
-                AuthPopupViewDialogShow.show(tap: () {
+        if (!widget.fromSelecting) 16.spaceW,
+        if (!widget.fromSelecting)
+          UnconstrainedBox(
+            child: OutlinedButton(
+              onPressed: () {
+                if (!getIt.get<AppLocalService>().isLoggedIn) {
+                  AuthPopupViewDialogShow.show(tap: () {
+                    context.goNamed(Routes.favourite);
+                  });
+                } else {
                   context.goNamed(Routes.favourite);
-                });
-              } else {
-                context.goNamed(Routes.favourite);
-              }
-            },
-            child: const CustomSvgIcon(
-              assetName: AppAssets.favFill,
-              color: AppColors.kRed,
-              size: 20,
+                }
+              },
+              child: const CustomSvgIcon(
+                assetName: AppAssets.favFill,
+                color: AppColors.kRed,
+                size: 20,
+              ),
             ),
           ),
-        ),
         16.spaceW,
       ],
     );
@@ -340,6 +357,10 @@ class _AllProductScreenState extends State<AllProductScreen> {
 }
 
 class AllProductsSearch extends SearchDelegate {
+  bool fromSelecting;
+  AllProductsSearch({
+    this.fromSelecting = false,
+  });
   Future<List<ProductModel>> searchProducts(String query) async {
     if (query.isEmpty) return [];
     List<ProductModel> results = [];
@@ -397,7 +418,12 @@ class AllProductsSearch extends SearchDelegate {
             return ListTile(
               title: Text(results[index].name ?? '-'),
               onTap: () {
-                context.pushNamed(Routes.productDetails, extra: results[index]);
+                if (fromSelecting) {
+                  close(context, results[index]);
+                  context.pop(results[index]);
+                } else {
+                  context.pushNamed(Routes.productDetails, extra: results[index]);
+                }
               },
             );
           },
@@ -424,7 +450,12 @@ class AllProductsSearch extends SearchDelegate {
             return ListTile(
               title: Text(suggestions[index].name ?? '-'),
               onTap: () {
-                context.pushNamed(Routes.productDetails, extra: suggestions[index]);
+                if (fromSelecting) {
+                  close(context, suggestions[index]);
+                  context.pop(suggestions[index]);
+                } else {
+                  context.pushNamed(Routes.productDetails, extra: suggestions[index]);
+                }
               },
             );
           },

@@ -14,11 +14,13 @@ class ProductView extends StatelessWidget {
   final ProductModel product;
   final bool row;
   final bool fromChatPin;
+  final void Function()? onTap;
   final void Function()? onChatPinCLose;
   final bool fromChatReadyOnly;
   const ProductView({
     super.key,
     required this.product,
+    this.onTap,
     this.row = true,
     this.fromChatPin = false,
     this.onChatPinCLose,
@@ -29,7 +31,11 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: () {
-        context.push(Routes.productDetails, extra: product);
+        if (onTap == null) {
+          context.push(Routes.productDetails, extra: product);
+        } else {
+          onTap!();
+        }
       },
       child: SizedBox(
         width: double.infinity,

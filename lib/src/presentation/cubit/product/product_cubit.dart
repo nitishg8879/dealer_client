@@ -21,6 +21,13 @@ class ProductCubit extends Cubit<ProductState> {
   int? totalData;
   List<ProductModel> products = [];
 
+  @override
+  void emit(ProductState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> fetchProducts(
     ProductsFilterController req,
     void Function(DocumentSnapshot<Object?>) lastdoc,

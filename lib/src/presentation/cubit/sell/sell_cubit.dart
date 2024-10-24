@@ -18,6 +18,13 @@ class SellCubit extends Cubit<SellState> {
   SellCubit() : super(SellLoading());
   bool isFormSaving = false;
 
+  @override
+  void emit(SellState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> fetchSellProducts() async {
     try {
       emit(SellLoading());

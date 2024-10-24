@@ -4,28 +4,38 @@ import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
-import 'package:bike_client_dealer/src/data/data_sources/chat_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/chat_model.dart';
 import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/data/model/user_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:file_picker/src/file_picker_result.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:get_it/get_it.dart';
 
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatLoading());
+  final ValueNotifier<int> pinValue = ValueNotifier<int>(0);
 
   ChatModel? chatModel;
+  FilePickerResult? filePickerResult;
+  ProductModel? pinProduct;
   int myMessageCount = 0;
+  final loadedProduct = <ProductModel>[];
   String? get chatId => getIt.get<AppLocalService>().currentUser?.chatId;
   String? get conversationId => getIt.get<AppLocalService>().currentUser?.conversationId;
 
   Timer? timer;
+  
+  @override
+  void emit(ChatState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   void fetchChats({bool callLoading = true}) async {
     try {
       if (callLoading) {
@@ -45,7 +55,30 @@ class ChatCubit extends Cubit<ChatState> {
       }
       final chatResp = await getIt.get<AppFireBaseLoc>().conversation.doc(conversationId).get();
       final dynamicChats = chatResp.data()?['conversation'] as List<dynamic>?;
-      emit(ChatLoaded(dynamicChats?.map((e) => Conversation.fromJson(e)).toList().reversed.toList() ?? []));
+      final list = dynamicChats
+              ?.map((e) {
+                var pr = Conversation.fromJson(e);
+                if (pr.productID != null) {
+                  loadedProduct.firstWhere(
+                    (a) {
+                      if (pr.productID == a.id) {
+                        pr.loadedProduct = a;
+                      }
+                      return pr.productID == a.id;
+                    },
+                    orElse: () {
+                      return ProductModel();
+                    },
+                  );
+                }
+                return pr;
+              })
+              .toList()
+              .reversed
+              .toList() ??
+          [];
+
+      emit(ChatLoaded(list));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -75,7 +108,7 @@ class ChatCubit extends Cubit<ChatState> {
     }
   }
 
-  Future<void> sendMessage(TextEditingController messageCtr, FilePickerResult? filePickerResult, ProductModel? pinProduct) async {
+  Future<void> sendMessage(TextEditingController messageCtr) async {
     if (state is ChatSending && (state as ChatSending).sending) return;
     emit(ChatSending(true));
     myMessageCount = myMessageCount + 1;
@@ -101,7 +134,10 @@ class ChatCubit extends Cubit<ChatState> {
     await getIt.get<AppFireBaseLoc>().conversation.doc(conversationId).update({
       'conversation': FieldValue.arrayUnion([newConversation.toJson()])
     });
+    filePickerResult = null;
+    pinProduct = null;
     messageCtr.clear();
+    pinValue.value += 1;
     emit(ChatSending(false));
     fetchChats(callLoading: false);
   }

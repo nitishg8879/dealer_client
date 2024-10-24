@@ -161,7 +161,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           children: [
             Expanded(
               child: ElevatedButton(
-                onPressed: () => context.push(Routes.chats),
+                onPressed: () => context.pushNamed(Routes.chats, extra: productDetailsCubit.productModel),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.kBlack900,
                   shape: const SmoothRectangleBorder(

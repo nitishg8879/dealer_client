@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/config/routes/app_pages.dart';
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/constants/app_assets.dart';
@@ -11,13 +12,16 @@ import 'package:bike_client_dealer/src/presentation/widgets/custom_svg_icon.dart
 import 'package:bike_client_dealer/src/presentation/widgets/error_view.dart';
 import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final ProductModel? productModel;
+  const ChatScreen({
+    super.key,
+    this.productModel,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -26,12 +30,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final border = OutlineInputBorder(borderRadius: 12.borderRadius2, borderSide: const BorderSide(width: 0));
   final textEditingController = TextEditingController();
-  FilePickerResult? _filePickerResult;
-  ProductModel? _pinProduct;
   final chatBloc = ChatCubit();
   final scrollCtr = ScrollController();
   @override
   void initState() {
+    if (widget.productModel != null) {
+      chatBloc.pinProduct = widget.productModel;
+    }
     super.initState();
     fetchChats();
   }
@@ -110,7 +115,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     reverse: true,
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     itemCount: state.chats.length,
-                    itemBuilder: (context, index) => MessageUI(chat: state.chats[index]),
+                    itemBuilder: (context, index) => MessageUI(
+                      chat: state.chats[index],
+                      onLoadProduct: (pm) {
+                        state.chats[index].loadedProduct = pm;
+                        chatBloc.loadedProduct.add(pm);
+                      },
+                    ),
                     separatorBuilder: (BuildContext context, int index) => 8.spaceH,
                   ),
                 );
@@ -126,7 +137,11 @@ class _ChatScreenState extends State<ChatScreen> {
             bottom: context.height * .09,
             left: 8,
             right: 8,
-            child: pinView(),
+            child: ValueListenableBuilder(
+                valueListenable: chatBloc.pinValue,
+                builder: (BuildContext context, value, Widget? child) {
+                  return pinView();
+                }),
           ),
 
           // ?? chat Textfield and send button
@@ -161,9 +176,18 @@ class _ChatScreenState extends State<ChatScreen> {
                               splashRadius: 15,
                               visualDensity: VisualDensity.compact,
                               onPressed: () {
-                                _filePickerResult = null;
-                                _pinProduct = dummyProduct;
-                                setState(() {});
+                                chatBloc.filePickerResult = null;
+                                context
+                                    .pushNamed(
+                                  Routes.allProduct,
+                                  extra: true,
+                                )
+                                    .then((val) {
+                                  if (val != null && val is ProductModel) {
+                                    chatBloc.pinProduct = val;
+                                    chatBloc.pinValue.value += 1;
+                                  }
+                                });
                               },
                               icon: const Icon(
                                 Icons.car_repair_outlined,
@@ -181,8 +205,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               onPressed: () {
                                 HelperFun.pickFile().then((files) {
                                   if (files != null) {
-                                    _filePickerResult = files;
-                                    setState(() {});
+                                    chatBloc.filePickerResult = files;
+                                    chatBloc.pinValue.value += 1;
                                   }
                                 });
                               },
@@ -210,7 +234,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     borderRadius: 50.borderRadius,
                   ),
                   child: InkWell(
-                    onTap: () => chatBloc.sendMessage(textEditingController, _filePickerResult, _pinProduct),
+                    onTap: () => chatBloc.sendMessage(textEditingController),
                     borderRadius: 50.borderRadius2,
                     child: SizedBox(
                       width: 48,
@@ -240,7 +264,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget pinView() {
-    if (_filePickerResult != null) {
+    // return Text(chatBloc.pinValue.value.toString());
+    if (chatBloc.filePickerResult != null) {
       return SizedBox(
         width: double.infinity,
         height: 100,
@@ -253,16 +278,15 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           color: AppColors.kPurple60,
           child: ChatDocView(
-            files: _filePickerResult?.files ?? [],
+            localFiles: chatBloc.filePickerResult?.files ?? [],
             onFullEmpty: () {
-              setState(() {
-                _filePickerResult = null;
-              });
+              chatBloc.filePickerResult = null;
+              chatBloc.pinValue.value += 1;
             },
           ),
         ),
       );
-    } else if (_pinProduct != null) {
+    } else if (chatBloc.pinProduct != null) {
       return SizedBox(
         width: double.infinity,
         height: 110,
@@ -275,11 +299,11 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           color: AppColors.kPurple60,
           child: ProductView(
-            product: _pinProduct!,
+            product: chatBloc.pinProduct!,
             fromChatPin: true,
             onChatPinCLose: () {
-              _pinProduct = null;
-              setState(() {});
+              chatBloc.pinProduct = null;
+              chatBloc.pinValue.value += 1;
             },
           ),
         ),

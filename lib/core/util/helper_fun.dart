@@ -7,8 +7,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path/path.dart' as path;
 import 'package:go_router/go_router.dart';
 // import 'package:open_file/open_file.dart' as open;
 
@@ -66,6 +69,25 @@ class HelperFun {
       searchOptions.add(temp.toLowerCase());
     }
     return searchOptions;
+  }
+
+  /// Method to open a document (PDF, image, Excel, etc.) in an external app
+  static Future<void> openDocumentFromUrl(String documentUrl) async {
+    // Parse the URL
+    final Uri uri = Uri.parse(documentUrl);
+
+    // Check if the URL can be launched
+    if (await canLaunchUrl(uri)) {
+      try {
+        // Launch the URL in an external application
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (e) {
+        print('Error opening document: $e');
+        throw 'Could not open document: $documentUrl';
+      }
+    } else {
+      throw 'Could not launch $documentUrl';
+    }
   }
 
   static void openDocument(String filePath) async {
@@ -150,5 +172,19 @@ class HelperFun {
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(12))),
       ),
     );
+  }
+
+  static String getFileExtensionFromUrl(String encodedUrl) {
+    // Decode the URL
+    String decodedUrl = Uri.decodeFull(encodedUrl);
+
+    // Extract the filename part from the URL
+    Uri uri = Uri.parse(decodedUrl);
+    String fullPath = uri.pathSegments.last;
+
+    // Get the file extension
+    String extension = path.extension(fullPath).replaceFirst(".", '');
+
+    return extension;
   }
 }

@@ -122,15 +122,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              const Spacer(),
-              OutlinedButton(
-                onPressed: () {},
-                child: const CustomSvgIcon(
-                  assetName: AppAssets.notification,
-                  color: AppColors.kCardGrey400,
-                  size: 20,
-                ),
-              ),
+              // const Spacer(),
+              // OutlinedButton(
+              //   onPressed: () {},
+              //   child: const CustomSvgIcon(
+              //     assetName: AppAssets.notification,
+              //     color: AppColors.kCardGrey400,
+              //     size: 20,
+              //   ),
+              // ),
+              const Expanded(child: SizedBox()),
               16.spaceW,
               OutlinedButton(
                 onPressed: () {

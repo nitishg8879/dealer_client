@@ -1,3 +1,4 @@
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel {
@@ -49,6 +50,7 @@ class ChatModel {
 
 class Conversation {
   String? productID;
+  ProductModel? loadedProduct;
   String? message;
   bool isUser = true;
   Timestamp? time;

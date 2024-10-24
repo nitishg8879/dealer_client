@@ -17,6 +17,13 @@ class OrderCubit extends Cubit<OrderState> {
   CancelRefundUsecase _cancelAndRefundUseCase;
   OrderCubit(this._orderFetchUseCase, this._cancelAndRefundUseCase) : super(OrderLoading());
 
+  @override
+  void emit(OrderState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+  
   Future<void> fetchOrders() async {
     emit(OrderLoading());
     final data = await _orderFetchUseCase.call();

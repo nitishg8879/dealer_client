@@ -1,13 +1,23 @@
 import 'package:bike_client_dealer/config/themes/app_colors.dart';
+import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
+import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/chat_model.dart';
+import 'package:bike_client_dealer/src/data/model/product_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/chats/chat_doc_view.dart';
+import 'package:bike_client_dealer/src/presentation/widgets/product_view.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 class MessageUI extends StatelessWidget {
   final Conversation chat;
-  const MessageUI({super.key, required this.chat});
+  final Function(ProductModel pm) onLoadProduct;
+  const MessageUI({
+    super.key,
+    required this.onLoadProduct,
+    required this.chat,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +43,36 @@ class MessageUI extends StatelessWidget {
             // crossAxisAlignment: chat.isUser ? CrossAxisAlignment.start : CrossAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // if (chat.documensts != null && chat.documensts!.isNotEmpty)
-              // ChatDocView(
-              //   files: chat.documensts ?? [],
-              //   width: (chat.documensts ?? []).length < 4 ? (80 * (chat.documensts ?? []).length).toDouble() : (80 * 4),
-              //   readOnly: true,
-              // ),
-              // if (chat.productID != null)
-              // ProductView(
-              // product: chat.product!,
-              //   fromChatReadyOnly: true,
-              // ),
+              if (chat.documensts != null && chat.documensts!.isNotEmpty)
+                ChatDocView(
+                  networkFile: chat.documensts ?? [],
+                  width: (chat.documensts ?? []).length < 4 ? (80 * (chat.documensts ?? []).length).toDouble() : (80 * 4),
+                  readOnly: true,
+                ),
+              if (chat.productID != null)
+                if (chat.loadedProduct == null)
+                  FutureBuilder<DataState<ProductModel?>>(
+                    future: getIt.get<ProductDataSource>().fetchProductbyId(chat.productID!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      }
+                      if (snapshot.hasData && snapshot.data?.data != null) {
+                        onLoadProduct(snapshot.data!.data!);
+                        return ProductView(
+                          product: snapshot.data!.data!,
+                        );
+                      }
+                      return const Text("Fail to load Product");
+                    },
+                  )
+                else
+                  ProductView(
+                    product: chat.loadedProduct!,
+                  ),
               ChatUIForNormalText(chat: chat),
             ],
           ),

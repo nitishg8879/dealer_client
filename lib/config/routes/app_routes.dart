@@ -33,7 +33,9 @@ class AppRoutes {
       GoRoute(
         path: Routes.chats,
         name: Routes.chats,
-        builder: (context, state) => const ChatScreen(),
+        builder: (context, state) => ChatScreen(
+          productModel: state.extra is ProductModel ? state.extra as ProductModel : null,
+        ),
       ),
       GoRoute(
         path: Routes.home,
@@ -72,6 +74,7 @@ class AppRoutes {
             name: Routes.allProduct,
             builder: (context, state) {
               return AllProductScreen(
+                fromSelecting: state.extra is bool ? state.extra as bool : false,
                 products: state.extra is List<String> ? state.extra as List<String> : null,
                 selectedCategory: state.extra is CategoryModel ? state.extra as CategoryModel : null,
                 selectedCompany: state.extra is CompanyModel ? state.extra as CompanyModel : null,

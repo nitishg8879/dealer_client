@@ -10,6 +10,14 @@ class TransactionCubit extends Cubit<TransactionState> {
   final TransactionFetchUseCase _transactionFetchUseCase;
   TransactionCubit(this._transactionFetchUseCase) : super(TransactionLoading());
 
+
+  @override
+  void emit(TransactionState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> fetchData() async {
     emit(TransactionLoading());
     final resp = await _transactionFetchUseCase.call();

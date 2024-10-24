@@ -38,6 +38,13 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     super.close();
   }
 
+  @override
+  void emit(ProductDetailsState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> makePayment() async {
     if (!getIt.get<AppLocalService>().isLoggedIn) {
       AuthPopupViewDialogShow.show(tap: makePayment);
@@ -183,10 +190,5 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     return null;
   }
 
-  @override
-  void emit(ProductDetailsState state) {
-    if (!isClosed) {
-      super.emit(state);
-    }
-  }
+  
 }
