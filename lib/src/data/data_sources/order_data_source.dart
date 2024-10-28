@@ -1,6 +1,7 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/product_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/order_transaction_model.dart';
@@ -18,6 +19,7 @@ class OrderDataSource {
             validTill: product.bikeLockedTill!,
             productId: product.id ?? "-",
             status: [BookingStatus.Created],
+            userName: HelperFun.setSearchParameters(getIt.get<AppLocalService>().currentUser?.fullName ?? ''),
           ).toJson(),
         );
     return resp.id;

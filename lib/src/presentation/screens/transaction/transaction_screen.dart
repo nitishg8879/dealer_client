@@ -66,6 +66,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       userId: "userId",
                       productId: "productId",
                       paymentId: '',
+                      userName: [],
                     ));
                   },
                 ),

@@ -67,6 +67,7 @@ class OrderTransactionModel {
   String? refundtxnId;
   String paymentId;
   String userId;
+  final List<String>? userName;
   Timestamp createdTime;
   Timestamp validTill;
   String productId;
@@ -82,6 +83,7 @@ class OrderTransactionModel {
     required this.validTill,
     required this.productId,
     required this.status,
+    required this.userName,
     this.rejectReason,
     this.refundtxnId,
   });
@@ -93,6 +95,7 @@ class OrderTransactionModel {
       'rejectReason': rejectReason,
       'paymentId': paymentId,
       'userId': userId,
+      "userName": userName,
       'refundtxnId': refundtxnId,
       'createdTime': createdTime,
       'validTill': validTill,
@@ -105,6 +108,7 @@ class OrderTransactionModel {
   factory OrderTransactionModel.fromJson(Map<String, dynamic> json) {
     return OrderTransactionModel(
       txnId: json['txnId'],
+      userName: (json['userName'] as List<dynamic>?)?.cast<String>(),
       paymentId: json['paymentId'],
       userId: json['userId'],
       refundtxnId: json['refundtxnId'],

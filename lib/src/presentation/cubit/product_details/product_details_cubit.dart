@@ -179,6 +179,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       paymentId: paymentId,
       orderId: success?.orderId,
       signature: success?.signature,
+      userName: HelperFun.setSearchParameters(getIt.get<AppLocalService>().currentUser?.fullName ?? ''),
     );
     final resp = await _transactionCreateUseCase.call(txn: txn);
     if (resp is DataSuccess) {
@@ -189,6 +190,4 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     }
     return null;
   }
-
-  
 }

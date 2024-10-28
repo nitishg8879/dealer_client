@@ -12,6 +12,7 @@ class TransactionsModel {
     required this.userId,
     required this.productId,
     required this.paymentId,
+    required this.userName,
     this.orderId,
     this.signature,
     this.id,
@@ -26,6 +27,7 @@ class TransactionsModel {
   final String? failedReason;
   final Timestamp? txnDateTime;
   final String? userId;
+  final List<String>? userName;
   final String? productId;
   String? id;
 
@@ -40,6 +42,7 @@ class TransactionsModel {
       failedReason: json["failedReason"],
       txnDateTime: json["txnDateTime"] as Timestamp?,
       userId: json["userId"],
+      userName: (json['userName'] as List<dynamic>?)?.cast<String>(),
       productId: json["productId"],
     );
   }
@@ -51,6 +54,7 @@ class TransactionsModel {
         "orderId": orderId,
         "signature": signature,
         "label": label,
+        "userName": userName,
         "failedReason": failedReason,
         "txnDateTime": txnDateTime,
         "userId": userId,
