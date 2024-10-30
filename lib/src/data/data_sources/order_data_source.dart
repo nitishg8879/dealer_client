@@ -15,6 +15,7 @@ class OrderDataSource {
             txnId: txnId,
             paymentId: paymentId,
             userId: getIt.get<AppLocalService>().currentUser!.id!,
+            userEmail: getIt.get<AppLocalService>().currentUser!.email!,
             createdTime: Timestamp.now(),
             validTill: product.bikeLockedTill!,
             productId: product.id ?? "-",

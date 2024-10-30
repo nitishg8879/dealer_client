@@ -28,7 +28,7 @@ enum BookingStatus {
       case BookingStatus.RejectedByAdmin:
         return "Rejected By Admin";
       case BookingStatus.CancelledByYou:
-        return "Cancelled By You";
+        return "Cancelled By User";
       case BookingStatus.RefundIntiated:
         return "Refund Initiated";
       case BookingStatus.RefundApproved:
@@ -45,17 +45,17 @@ enum BookingStatus {
       case BookingStatus.Created:
         return Colors.blue; // Blue for created
       case BookingStatus.AutoRejected:
-        return Colors.orange; // Orange for auto rejected
+        return Colors.red; // Orange for auto rejected
       case BookingStatus.RejectedByAdmin:
         return Colors.red; // Red for rejected by admin
       case BookingStatus.CancelledByYou:
-        return Colors.grey; // Grey for cancelled by user
+        return Colors.red; // Grey for cancelled by user
       case BookingStatus.RefundIntiated:
         return Colors.purple; // Purple for refund initiated
       case BookingStatus.RefundApproved:
         return Colors.green; // Green for refund approved
       case BookingStatus.RefundRejected:
-        return Colors.redAccent; // Red Accent for refund rejected
+        return Colors.red; // Red Accent for refund rejected
       case BookingStatus.Booked:
         return Colors.green; // Green for booked
     }
@@ -67,16 +67,19 @@ class OrderTransactionModel {
   String? refundtxnId;
   String paymentId;
   String userId;
+  String userEmail;
   final List<String>? userName;
   Timestamp createdTime;
   Timestamp validTill;
   String productId;
   List<BookingStatus> status;
+  BookingStatus? lastStatus;
   String? rejectReason;
   String? id;
 
   OrderTransactionModel({
     required this.txnId,
+    required this.userEmail,
     required this.paymentId,
     required this.userId,
     required this.createdTime,
@@ -85,15 +88,19 @@ class OrderTransactionModel {
     required this.status,
     required this.userName,
     this.rejectReason,
+    this.lastStatus,
     this.refundtxnId,
   });
 
   // Convert the OrderTransactionModel to a Map to store in Firestore
   Map<String, dynamic> toJson() {
+    lastStatus = status.last;
     return {
       'txnId': txnId,
       'rejectReason': rejectReason,
+      'lastStatus': lastStatus?.value,
       'paymentId': paymentId,
+      'userEmail': userEmail,
       'userId': userId,
       "userName": userName,
       'refundtxnId': refundtxnId,
@@ -108,9 +115,11 @@ class OrderTransactionModel {
   factory OrderTransactionModel.fromJson(Map<String, dynamic> json) {
     return OrderTransactionModel(
       txnId: json['txnId'],
+      userEmail: json['userEmail'],
       userName: (json['userName'] as List<dynamic>?)?.cast<String>(),
       paymentId: json['paymentId'],
       userId: json['userId'],
+      lastStatus: BookingStatus.fromValue(json['lastStatus']),
       refundtxnId: json['refundtxnId'],
       rejectReason: json['rejectReason'],
       createdTime: json['createdTime'] as Timestamp,
