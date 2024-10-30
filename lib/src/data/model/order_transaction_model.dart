@@ -5,11 +5,10 @@ enum BookingStatus {
   Created(1),
   AutoRejected(2),
   RejectedByAdmin(3),
-  CancelledByYou(4),
-  RefundIntiated(5),
-  RefundApproved(6),
-  RefundRejected(7),
-  Booked(8);
+  RefundIntiated(4),
+  RefundApproved(5),
+  RefundRejected(6),
+  Booked(7);
 
   final int value;
 
@@ -27,8 +26,6 @@ enum BookingStatus {
         return "Auto Rejected";
       case BookingStatus.RejectedByAdmin:
         return "Rejected By Admin";
-      case BookingStatus.CancelledByYou:
-        return "Cancelled By User";
       case BookingStatus.RefundIntiated:
         return "Refund Initiated";
       case BookingStatus.RefundApproved:
@@ -48,8 +45,6 @@ enum BookingStatus {
         return Colors.red; // Orange for auto rejected
       case BookingStatus.RejectedByAdmin:
         return Colors.red; // Red for rejected by admin
-      case BookingStatus.CancelledByYou:
-        return Colors.red; // Grey for cancelled by user
       case BookingStatus.RefundIntiated:
         return Colors.purple; // Purple for refund initiated
       case BookingStatus.RefundApproved:
