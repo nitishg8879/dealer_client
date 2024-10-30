@@ -58,16 +58,16 @@ enum BookingStatus {
 }
 
 class OrderTransactionModel {
-  String txnId;
+  String? txnId;
   String? refundtxnId;
-  String paymentId;
-  String userId;
-  String userEmail;
+  String? paymentId;
+  String? userId;
+  String? userEmail;
   final List<String>? userName;
-  Timestamp createdTime;
-  Timestamp validTill;
-  String productId;
-  List<BookingStatus> status;
+  Timestamp? createdTime;
+  Timestamp? validTill;
+  String? productId;
+  List<BookingStatus>? status;
   BookingStatus? lastStatus;
   String? rejectReason;
   String? id;
@@ -89,7 +89,7 @@ class OrderTransactionModel {
 
   // Convert the OrderTransactionModel to a Map to store in Firestore
   Map<String, dynamic> toJson() {
-    lastStatus = status.last;
+    lastStatus = status?.last;
     return {
       'txnId': txnId,
       'rejectReason': rejectReason,
@@ -102,7 +102,7 @@ class OrderTransactionModel {
       'createdTime': createdTime,
       'validTill': validTill,
       'productId': productId,
-      'status': status.map((e) => e.value).toList(), // Store as integer
+      'status': status?.map((e) => e.value).toList()??[], // Store as integer
     };
   }
 

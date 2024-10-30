@@ -97,7 +97,7 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DataState<ProductModel?>>(
-      future: getIt.get<ProductDataSource>().fetchProductbyId(order.productId),
+      future: getIt.get<ProductDataSource>().fetchProductbyId(order.productId ?? '-'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -210,7 +210,7 @@ class OrderCard extends StatelessWidget {
                               ],
                             ),
                             8.spaceH,
-                            if (!order.status.contains(BookingStatus.RefundIntiated)) ...[
+                            if (!(order.status?.contains(BookingStatus.RefundIntiated) ?? true)) ...[
                               12.spaceH,
                               InkWell(
                                 onTap: () {
@@ -238,7 +238,7 @@ class OrderCard extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      (order.validTill.toDate().isAfter(DateTime.now()) ? "Cancel And Refund" : "Refund"),
+                                      (order.validTill!.toDate().isAfter(DateTime.now()) ? "Cancel And Refund" : "Refund"),
                                       style: context.textTheme.bodyLarge?.copyWith(
                                         color: AppColors.kWhite,
                                       ),
@@ -261,7 +261,7 @@ class OrderCard extends StatelessWidget {
                         children: [
                           InkWell(
                             onTap: () {
-                              bloc.fetchTransactionById(order.txnId).then((val) {
+                              bloc.fetchTransactionById(order.txnId!).then((val) {
                                 showModalBottomSheet(
                                   context: AppRoutes.rootNavigatorKey.currentContext!,
                                   useSafeArea: true,
@@ -287,7 +287,7 @@ class OrderCard extends StatelessWidget {
                           if (order.refundtxnId != null)
                             InkWell(
                               onTap: () {
-                                bloc.fetchTransactionById(order.txnId).then((val) {
+                                bloc.fetchTransactionById(order.txnId!).then((val) {
                                   showModalBottomSheet(
                                     context: AppRoutes.rootNavigatorKey.currentContext!,
                                     useSafeArea: true,
@@ -326,7 +326,7 @@ class OrderCard extends StatelessWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: order.status
-                          .map((e) => DecoratedBox(
+                          ?.map((e) => DecoratedBox(
                                 decoration: BoxDecoration(
                                   color: e.color.withOpacity(.3),
                                   borderRadius: 4.borderRadius,
@@ -342,7 +342,7 @@ class OrderCard extends StatelessWidget {
                                   ),
                                 ),
                               ))
-                          .toList(),
+                          .toList()??[],
                     ),
                   ),
                   8.spaceH,
@@ -352,16 +352,16 @@ class OrderCard extends StatelessWidget {
                       buildTitleAndSubTitle(
                         context,
                         "Creation Date",
-                        order.createdTime.toDate().orderTime,
+                        order.createdTime?.toDate().orderTime??'',
                         cross: CrossAxisAlignment.start,
                       ),
-                      if (!(order.status.contains(BookingStatus.RefundIntiated) ||
-                          order.status.contains(BookingStatus.AutoRejected) ||
-                          order.status.contains(BookingStatus.RejectedByAdmin)))
+                      if (!(order.status!.contains(BookingStatus.RefundIntiated) ||
+                          order.status!.contains(BookingStatus.AutoRejected) ||
+                          order.status!.contains(BookingStatus.RejectedByAdmin)))
                         buildTitleAndSubTitle(
                           context,
                           "Valid Till",
-                          order.validTill.toDate().orderTime,
+                          order.validTill!.toDate().orderTime,
                         ),
                     ],
                   ),

@@ -30,13 +30,13 @@ class OrderDataSource {
     try {
       final data = await fetchOrderById(id: orderId);
       if (data is DataSuccess) {
-        if (data.data?.status.contains(BookingStatus.Booked) ?? false) {
+        if (data.data?.status!.contains(BookingStatus.Booked) ?? false) {
           throw Exception("Can't Cancel & Refund the order has been booked.");
-        } else if (data.data?.status.contains(BookingStatus.RefundIntiated) ?? false) {
+        } else if (data.data?.status!.contains(BookingStatus.RefundIntiated) ?? false) {
           throw Exception("Can't Cancel & Refund the order has been Refunded.");
         } else {
           getIt.get<ProductDataSource>().unlockProduct(product: ProductModel(id: data.data!.productId));
-          data.data?.status.add(BookingStatus.RefundIntiated);
+          data.data?.status!.add(BookingStatus.RefundIntiated);
           await getIt.get<AppFireBaseLoc>().order.doc(orderId).update(data.data!.toJson());
           return const DataSuccess("Refund Has been Raised");
         }
