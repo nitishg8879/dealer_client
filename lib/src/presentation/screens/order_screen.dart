@@ -357,8 +357,7 @@ class OrderCard extends StatelessWidget {
                       ),
                       if (!(order.status.contains(BookingStatus.RefundIntiated) ||
                           order.status.contains(BookingStatus.AutoRejected) ||
-                          order.status.contains(BookingStatus.RejectedByAdmin) ||
-                          order.status.contains(BookingStatus.CancelledByYou)))
+                          order.status.contains(BookingStatus.RejectedByAdmin)))
                         buildTitleAndSubTitle(
                           context,
                           "Valid Till",

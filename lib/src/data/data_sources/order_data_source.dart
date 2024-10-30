@@ -32,8 +32,6 @@ class OrderDataSource {
       if (data is DataSuccess) {
         if (data.data?.status.contains(BookingStatus.Booked) ?? false) {
           throw Exception("Can't Cancel & Refund the order has been booked.");
-        } else if (data.data?.status.contains(BookingStatus.CancelledByYou) ?? false) {
-          throw Exception("Can't Cancel & Refund the order has been Cancelled by you.");
         } else if (data.data?.status.contains(BookingStatus.RefundIntiated) ?? false) {
           throw Exception("Can't Cancel & Refund the order has been Refunded.");
         } else {
