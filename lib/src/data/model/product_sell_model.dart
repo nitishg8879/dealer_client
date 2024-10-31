@@ -33,9 +33,9 @@ enum ProductSellStatus {
       case ProductSellStatus.InReview:
         return AppColors.kOrange600; // or any color format like '#FFA500' for orange
       case ProductSellStatus.Approve:
-        return AppColors.kOrange600; // or '#00FF00' for green
+        return AppColors.kGreen600; // or '#00FF00' for green
       case ProductSellStatus.Reject:
-        return AppColors.kOrange600; // or '#FF0000' for red
+        return AppColors.kRed; // or '#FF0000' for red
     }
   }
 }

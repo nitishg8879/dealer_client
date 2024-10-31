@@ -14,7 +14,7 @@ enum BookingStatus {
 
   const BookingStatus(this.value);
 
-  static BookingStatus fromValue(int value) {
+  static BookingStatus? fromValue(int value) {
     return BookingStatus.values.firstWhere((status) => status.value == value);
   }
 
@@ -26,6 +26,8 @@ enum BookingStatus {
         return "Auto Rejected";
       case BookingStatus.RejectedByAdmin:
         return "Rejected By Admin";
+      // case BookingStatus.CancelledByYou:
+      //   return "Cancelled By User";
       case BookingStatus.RefundIntiated:
         return "Refund Initiated";
       case BookingStatus.RefundApproved:
@@ -45,6 +47,8 @@ enum BookingStatus {
         return Colors.red; // Orange for auto rejected
       case BookingStatus.RejectedByAdmin:
         return Colors.red; // Red for rejected by admin
+      // case BookingStatus.CancelledByYou:
+      //   return Colors.red; // Grey for cancelled by user
       case BookingStatus.RefundIntiated:
         return Colors.purple; // Purple for refund initiated
       case BookingStatus.RefundApproved:
@@ -58,16 +62,16 @@ enum BookingStatus {
 }
 
 class OrderTransactionModel {
-  String? txnId;
+  String txnId;
   String? refundtxnId;
-  String? paymentId;
-  String? userId;
+  String paymentId;
+  String userId;
   String? userEmail;
   final List<String>? userName;
-  Timestamp? createdTime;
-  Timestamp? validTill;
-  String? productId;
-  List<BookingStatus>? status;
+  Timestamp createdTime;
+  Timestamp validTill;
+  String productId;
+  List<BookingStatus> status;
   BookingStatus? lastStatus;
   String? rejectReason;
   String? id;
@@ -89,7 +93,7 @@ class OrderTransactionModel {
 
   // Convert the OrderTransactionModel to a Map to store in Firestore
   Map<String, dynamic> toJson() {
-    lastStatus = status?.last;
+    lastStatus = status.last;
     return {
       'txnId': txnId,
       'rejectReason': rejectReason,
@@ -102,7 +106,7 @@ class OrderTransactionModel {
       'createdTime': createdTime,
       'validTill': validTill,
       'productId': productId,
-      'status': status?.map((e) => e.value).toList()??[], // Store as integer
+      'status': status.map((e) => e.value).toList(), // Store as integer
     };
   }
 
@@ -110,9 +114,9 @@ class OrderTransactionModel {
   factory OrderTransactionModel.fromJson(Map<String, dynamic> json) {
     return OrderTransactionModel(
       txnId: json['txnId'],
-      userEmail: json['userEmail'],
       userName: (json['userName'] as List<dynamic>?)?.cast<String>(),
       paymentId: json['paymentId'],
+      userEmail: json['userEmail'] ?? '',
       userId: json['userId'],
       lastStatus: BookingStatus.fromValue(json['lastStatus']),
       refundtxnId: json['refundtxnId'],
@@ -120,7 +124,7 @@ class OrderTransactionModel {
       createdTime: json['createdTime'] as Timestamp,
       validTill: json['validTill'] as Timestamp,
       productId: json['productId'],
-      status: (json['status'] as List<dynamic>).map((value) => BookingStatus.fromValue(value)).toList(), // Convert integer to enum
+      status: (json['status'] as List<dynamic>).map((value) => BookingStatus.fromValue(value)!).toList(), // Convert integer to enum
     );
   }
 }

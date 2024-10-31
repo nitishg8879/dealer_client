@@ -41,7 +41,6 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> cancelAndRefund(String orderId) async {
-    
     emit(OrderLoading());
     final data = await _cancelAndRefundUseCase.call(orderId: orderId).catchError((err) {
       fetchOrders();

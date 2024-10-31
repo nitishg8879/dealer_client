@@ -210,7 +210,7 @@ class OrderCard extends StatelessWidget {
                               ],
                             ),
                             8.spaceH,
-                            if (!(order.status?.contains(BookingStatus.RefundIntiated) ?? true)) ...[
+                            if (!(order.status.contains(BookingStatus.RefundIntiated))) ...[
                               12.spaceH,
                               InkWell(
                                 onTap: () {
@@ -287,7 +287,7 @@ class OrderCard extends StatelessWidget {
                           if (order.refundtxnId != null)
                             InkWell(
                               onTap: () {
-                                bloc.fetchTransactionById(order.txnId!).then((val) {
+                                bloc.fetchTransactionById(order.refundtxnId ?? '-').then((val) {
                                   showModalBottomSheet(
                                     context: AppRoutes.rootNavigatorKey.currentContext!,
                                     useSafeArea: true,
@@ -295,11 +295,13 @@ class OrderCard extends StatelessWidget {
                                     showDragHandle: true,
                                     enableDrag: true,
                                     isScrollControlled: false,
-                                    builder: (context) => Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: SizedBox(
-                                        height: 125,
-                                        child: TransactionCard(txn: val),
+                                    builder: (context) => IntrinsicHeight(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: SizedBox(
+                                          // height: 125,
+                                          child: TransactionCard(txn: val),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -326,7 +328,7 @@ class OrderCard extends StatelessWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: order.status
-                          ?.map((e) => DecoratedBox(
+                          .map((e) => DecoratedBox(
                                 decoration: BoxDecoration(
                                   color: e.color.withOpacity(.3),
                                   borderRadius: 4.borderRadius,
@@ -342,7 +344,7 @@ class OrderCard extends StatelessWidget {
                                   ),
                                 ),
                               ))
-                          .toList()??[],
+                          .toList(),
                     ),
                   ),
                   8.spaceH,
@@ -352,7 +354,7 @@ class OrderCard extends StatelessWidget {
                       buildTitleAndSubTitle(
                         context,
                         "Creation Date",
-                        order.createdTime?.toDate().orderTime??'',
+                        order.createdTime?.toDate().orderTime ?? '',
                         cross: CrossAxisAlignment.start,
                       ),
                       if (!(order.status!.contains(BookingStatus.RefundIntiated) ||
