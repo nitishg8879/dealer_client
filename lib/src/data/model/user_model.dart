@@ -9,6 +9,7 @@ class UserModel {
   String? phoneNumber;
   String? uuid;
   String? fullName;
+  List<String>? nameOnQuery;
   User? user;
   bool? active;
   String? chatId;
@@ -25,6 +26,7 @@ class UserModel {
     required this.fullName,
     required this.creationDate,
     required this.favProduct,
+    required this.nameOnQuery,
     this.active = true,
     this.chatId,
     this.conversationId,
@@ -34,6 +36,7 @@ class UserModel {
     email = json['email'];
     profileUrl = json['profileUrl'];
     phoneNumber = json['phoneNumber'];
+    nameOnQuery = (json['nameOnQuery'] as List<dynamic>?)?.cast<String>();
     uuid = json['uuid'];
     conversationId = json['conversationId'];
     chatId = json['chatId'];
@@ -49,6 +52,7 @@ class UserModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['email'] = email;
     data['profileUrl'] = profileUrl;
+    data['nameOnQuery'] = nameOnQuery;
     data['phoneNumber'] = phoneNumber;
     data['uuid'] = uuid;
     data['fullName'] = fullName;

@@ -1,6 +1,7 @@
 import 'package:bike_client_dealer/core/di/injector.dart';
 import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/data_state.dart';
+import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
 import 'package:bike_client_dealer/src/data/data_sources/auth_data_source.dart';
 import 'package:bike_client_dealer/src/data/model/user_model.dart';
@@ -23,12 +24,14 @@ class AuthRepoImpl implements AuthRepo {
         fullName: state.data?.displayName,
         creationDate: Timestamp.now(),
         favProduct: [],
+        nameOnQuery: HelperFun.setSearchParameters(state.data?.displayName ?? ''),
       );
       final resp = await getIt<AppFireBaseLoc>().users.where('email', isEqualTo: user.email).get();
       if (resp.docs.length == 1) {
         //? Old User
         user = UserModel.fromJson(resp.docs.first.data())..id = resp.docs.first.id;
       } else {
+        
         //? New user
         final createdUser = await getIt<AppFireBaseLoc>().users.add(user.toJson());
         user.id = createdUser.id;

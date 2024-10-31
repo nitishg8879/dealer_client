@@ -43,6 +43,7 @@ enum ProductSellStatus {
 class ProductSellModel {
   String? id;
   String? branchId;
+  String? conversationId;
   List<String>? images;
   String? name;
   List<String>? searchqueryonname;
@@ -58,6 +59,7 @@ class ProductSellModel {
   String? note;
 
   ProductSellModel({
+    this.conversationId,
     this.images,
     this.branchId,
     this.userId,
@@ -79,6 +81,7 @@ class ProductSellModel {
     return ProductSellModel(
       images: (json['images'] as List?)?.map((item) => item as String).toList(),
       name: json['name'] as String?,
+      conversationId: json['conversationId'] as String?,
       userId: json['userId'] as String?,
       branchId: json['branchId'] as String?,
       searchqueryonname: (json['searchqueryonname'] as List?)?.map((item) => item as String).toList(),
@@ -100,6 +103,7 @@ class ProductSellModel {
       'images': images,
       if (!isUpdate) 'creationDate': Timestamp.now(),
       'name': name,
+      'conversationId': conversationId,
       'searchqueryonname': searchqueryonname,
       'kmdrvien': kmdrvien,
       'price': price,

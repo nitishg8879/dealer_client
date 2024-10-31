@@ -4,7 +4,9 @@ import 'package:bike_client_dealer/core/services/app_local_service.dart';
 import 'package:bike_client_dealer/core/util/app_extension.dart';
 import 'package:bike_client_dealer/core/util/helper_fun.dart';
 import 'package:bike_client_dealer/src/data/data_sources/app_fire_base_loc.dart';
+import 'package:bike_client_dealer/src/data/model/chat_model%20copy.dart';
 import 'package:bike_client_dealer/src/data/model/product_sell_model.dart';
+import 'package:bike_client_dealer/src/data/model/user_model.dart';
 import 'package:bike_client_dealer/src/presentation/screens/sell/sell_form_view.dart';
 import 'package:bloc/bloc.dart';
 import 'package:file_picker/file_picker.dart';
@@ -60,6 +62,29 @@ class SellCubit extends Cubit<SellState> {
     });
   }
 
+  Future<void> intializeUserChat(UserModel? currentUser) async {
+    if (currentUser == null) {
+      throw Exception("User not logged in.");
+    }
+    if (currentUser.chatId == null) {
+      final tempchatModel = ChatModel(
+        user: currentUser.id,
+        profileUrl: currentUser.profileUrl,
+        name: currentUser.fullName,
+        nameQuery: HelperFun.setSearchParameters(currentUser.fullName!),
+      );
+      final resp = await getIt.get<AppFireBaseLoc>().chats.add(tempchatModel.toJson());
+      currentUser.chatId = resp.id;
+      currentUser.conversationId = resp.id;
+      await getIt.get<AppLocalService>().login(currentUser);
+      await getIt.get<AppFireBaseLoc>().conversation.doc(resp.id).set({"conversation": []});
+      getIt.get<AppFireBaseLoc>().users.doc(getIt.get<AppLocalService>().currentUser!.id).update({
+        'chatId': resp.id,
+        'conversationId': resp.id,
+      });
+    }
+  }
+
   Future<void> addOrUpdateSellProduct({
     required ProductSellModel sellProduct,
     required List<PlatformFile> localFile,
@@ -96,6 +121,12 @@ class SellCubit extends Cubit<SellState> {
           filesCount--;
         }
         emit(SellUploading('Creating'));
+      }
+      if (sellProduct.conversationId == null) {
+        if (getIt.get<AppLocalService>().currentUser?.conversationId == null) {
+          await intializeUserChat(getIt.get<AppLocalService>().currentUser);
+        }
+        sellProduct.conversationId = getIt.get<AppLocalService>().currentUser?.conversationId;
       }
       if (sellProduct.id == null) {
         sellProduct.status = ProductSellStatus.InReview;
